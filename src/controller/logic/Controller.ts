@@ -9,10 +9,11 @@ import { OFCEvent } from "../interface/OFCEvent";
 import { PositionKeyFrame } from "../interface/PositionKeyFrame";
 import { TimeController } from "./TimeController";
 import { Drone } from "./Drone";
-import { IProjectDataRepository } from "../../repository/IProjectDataRepository";
+import type { IProjectDataRepository } from "../../repository/IProjectDataRepository";
 import { checkCollisions } from "./CollisionHandler";
+import { Project } from "./Project";
 
-class Controller implements IController {
+export class Controller implements IController {
     private settings: ISettings
     private timeController: ITimeController
     private project: IProject
@@ -24,9 +25,9 @@ class Controller implements IController {
     private dronesEvent: OFCEvent<number[]> = new OFCEvent();
     private collisionEvent: OFCEvent<Collision> = new OFCEvent();
     private droneSelectEvent: OFCEvent<number> = new OFCEvent();
-    constructor( settings: ISettings, project: IProject, repository: IProjectDataRepository) {
+    constructor( settings: ISettings, repository: IProjectDataRepository) {
         this.settings = settings;
-        this.project = project;
+        this.project = new Project(repository, this);
         this.repository = repository;
         this.timeController = new TimeController();
         // this.drones = new Map();
@@ -108,6 +109,7 @@ class Controller implements IController {
         const drone = this._getDrone(id);
         drone.removePositionKeyFrame(keyFrame);
         this.getDroneEvent(id).notify(id);
+        this._checkCollisions(drone);
     }
 
     getColorKeyFrames(id: number): ColorKeyFrame[] {

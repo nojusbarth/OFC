@@ -7,10 +7,10 @@ export class Drone {
     positionKeyFrames: PositionKeyFrame[] = [];
     colorKeyFrames: ColorKeyFrame[] = [];
 
-
     constructor(id: number) {
         this.id = id;
     }
+
     getId(): number {
         return this.id;
     }
@@ -34,14 +34,17 @@ export class Drone {
         }
         return new Vector3().copy(this.positionKeyFrames[this.positionKeyFrames.length-1].getPos());
     }
+    
     getPositionKeyFrames(): PositionKeyFrame[] {
         return this.positionKeyFrames;
     }
+    
     insertPositionKeyFrame(keyFrame: PositionKeyFrame): void {
         insert(this.positionKeyFrames, keyFrame);
     }
+    
     removePositionKeyFrame(keyFrame: PositionKeyFrame): void {
-        this.positionKeyFrames = this.positionKeyFrames.filter(e => e != keyFrame);
+        this.positionKeyFrames = this.positionKeyFrames.filter(e => e.getTime() != keyFrame.getTime() || e.getPos() != keyFrame.getPos());
     }
     
     getColorAtTime(t: number): Color {
@@ -62,21 +65,24 @@ export class Drone {
         }
         return new Color().copy(this.colorKeyFrames[this.colorKeyFrames.length-1].getColor());
     }
+    
     getColorKeyFrames(): ColorKeyFrame[] {
         return this.colorKeyFrames;
     }
+    
     insertColorKeyFrame(keyFrame: ColorKeyFrame): void {
         insert(this.colorKeyFrames, keyFrame);
     }
+    
     removeColorKeyFrame(keyFrame: ColorKeyFrame): void {
-        this.colorKeyFrames = this.colorKeyFrames.filter(e => e !== keyFrame);
+        this.colorKeyFrames = this.colorKeyFrames.filter(e => e.getTime() != keyFrame.getTime() || e.getColor() != keyFrame.getColor());
     }
 }
 
 function insert <T extends PositionKeyFrame|ColorKeyFrame>(keyFrames: T[], keyFrame: T) {
     for (let i = 0; i < keyFrames.length; i++) {
             if (keyFrames[i].getTime() >= keyFrame.getTime()) {
-                if (keyFrames[i].getTime() == keyFrame.time) {
+                if (keyFrames[i].getTime() == keyFrame.getTime()) {
                     // replace same time
                     keyFrames[i] = keyFrame;
                 } else {
@@ -85,7 +91,7 @@ function insert <T extends PositionKeyFrame|ColorKeyFrame>(keyFrames: T[], keyFr
                 return;
             }
         }
-        if (keyFrames[keyFrames.length - 1].getTime() === keyFrame.getTime()) {
+        if (keyFrames.length !== 0 && keyFrames[keyFrames.length - 1].getTime() === keyFrame.getTime()) {
             // replace same time end
             keyFrames.pop();
         }

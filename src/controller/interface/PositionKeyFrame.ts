@@ -1,8 +1,8 @@
 import type { Vector3 } from "three"
 
 export class PositionKeyFrame {
-    position: Vector3
-    time: number
+    private position: Vector3
+    private time: number
 
     constructor (position: Vector3, time: number) {
         this.position = position;

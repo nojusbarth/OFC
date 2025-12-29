@@ -1,26 +1,23 @@
 import type { IProject } from "../interface/IProject";
 import type { IProjectDataRepository } from "../../repository/IProjectDataRepository";
+import { IController } from "../interface/IController";
 
 export class Project implements IProject {
-    private repository?: IProjectDataRepository;
+    private repository: IProjectDataRepository;
+    private controller: IController;
 
-    constructor(repository?: IProjectDataRepository) {
+    constructor(repository: IProjectDataRepository, controller: IController) {
         this.repository = repository;
+        this.controller = controller;
     }
 
     exportVideo(): void {
-        // TODO: Implement video export
-        console.warn("exportVideo() not implemented");
+        throw new Error("Method not implemented.");
     }
     exportWayPointData(): void {
-        // TODO: Implement waypoint export
-        console.warn("exportWayPointData() not implemented");
+        throw new Error("Method not implemented.");
     }
     saveProject(): void {
-        if (this.repository) {
-            this.repository.saveProject(this);
-        } else {
-            console.warn("No repository configured for saveProject()");
-        }
+        throw new Error("Method not implemented.");
     }
 }

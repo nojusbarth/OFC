@@ -3,27 +3,24 @@ import type { Drone } from "../controller/logic/Drone";
 import { DayTime } from "../controller/interface/DayTime";
 
 export class ProjectDataRepository implements IProjectDataRepository {
-    drones: Drone[] = [];
+    drones: Map<number, Drone> = new Map();
     collisionRadius: number = 0;
     dayTime: DayTime = 0 as unknown as DayTime;
     maxTime: number = 0;
 
     getAllDrones(): Drone[] {
-        return this.drones;
+        return Array.from(this.drones.values());
     }
     getDroneById(id: number): Drone | null {
-        return this.drones.find(d => d.getId() === id) ?? null;
+        return this.drones.get(id) ?? null;
     }
     addDrone(drone: Drone): boolean {
         if (this.getDroneById(drone.getId()) != null) return false;
-        this.drones.push(drone);
+        this.drones.set(drone.getId(), drone);
         return true;
     }
     removeDrone(id: number): boolean {
-        const idx = this.drones.findIndex(d => d.getId() === id);
-        if (idx < 0) return false;
-        this.drones.splice(idx, 1);
-        return true;
+        return this.drones.delete(id);
     }
 
     getCollisionRadius(): number {

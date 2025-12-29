@@ -18,9 +18,10 @@ export function checkCollisions(drone: Drone, otherDrones: Drone[], collisionRad
 }
 
 function checkDroneCollision(droneA: Drone, droneB: Drone, collisionRadius: number): number {  
-    // TODO: check if less than 2 keyframes exist and handle collisions after/before last/ first keyframe
-    const keyFramesA = droneA.getPositionKeyFrames();
-    const keyFramesB = droneB.getPositionKeyFrames();
+    // Add stationary keyframes at time 0 and end time to capture collisions before first and after last keyframe
+    const endTime = Math.max(droneA.getPositionKeyFrames().slice(-1)[0]?.getTime() || 0, droneB.getPositionKeyFrames().slice(-1)[0]?.getTime() || 0);
+    const keyFramesA = [new PositionKeyFrame(droneA.getPositonAtTime(0), 0) ,...droneA.getPositionKeyFrames(), new PositionKeyFrame(droneA.getPositonAtTime(endTime), endTime)];
+    const keyFramesB = [new PositionKeyFrame(droneB.getPositonAtTime(0), 0) ,...droneB.getPositionKeyFrames(), new PositionKeyFrame(droneB.getPositonAtTime(endTime), endTime)];
     
     let i = 0;
     let j = 0;
@@ -31,11 +32,11 @@ function checkDroneCollision(droneA: Drone, droneB: Drone, collisionRadius: numb
         const keyB0 = keyFramesB[j];
         const keyB1 = keyFramesB[j + 1];
 
-        const tClosest = computeClosestApproach(keyA0, keyA1, keyB0, keyB1, collisionRadius);
+        const tClosest = computeClosestApproach(keyA0, keyA1, keyB0, keyB1);
         const posA = droneA.getPositonAtTime(tClosest);
         const posB = droneB.getPositonAtTime(tClosest);
         const distanceSq = posA.distanceToSquared(posB);
-        if (distanceSq <= collisionRadius * collisionRadius) {
+        if (distanceSq <= 4 * collisionRadius * collisionRadius) {
             return tClosest;
         }
 
@@ -56,10 +57,20 @@ function checkDroneCollision(droneA: Drone, droneB: Drone, collisionRadius: numb
     return -1;
 }
 
-function computeClosestApproach(p0: PositionKeyFrame, p1: PositionKeyFrame, q0: PositionKeyFrame, q1: PositionKeyFrame, collisionRadius: number): number {
+function computeClosestApproach(p0: PositionKeyFrame, p1: PositionKeyFrame, q0: PositionKeyFrame, q1: PositionKeyFrame): number {
     // direction vectors
-    const v0 = new Vector3().subVectors(p1.getPos(), p0.getPos()).multiplyScalar(1 / (p1.getTime() - p0.getTime()));
-    const v1 = new Vector3().subVectors(q1.getPos(), q0.getPos()).multiplyScalar(1 / (q1.getTime() - q0.getTime()));
+    let v0;
+    if (p1.getTime() === p0.getTime()) {
+        v0 = new Vector3(0, 0, 0);
+    } else {
+        v0 = new Vector3().subVectors(p1.getPos(), p0.getPos()).multiplyScalar(1 / (p1.getTime() - p0.getTime()));
+    }
+    let v1;
+    if (q1.getTime() === q0.getTime()) {
+        v1 = new Vector3(0, 0, 0);
+    } else {
+        v1 = new Vector3().subVectors(q1.getPos(), q0.getPos()).multiplyScalar(1 / (q1.getTime() - q0.getTime()));
+    }
     // base vectors
     const b0 = p0.getPos();
     // move b1 back so both start at the same time
@@ -71,6 +82,10 @@ function computeClosestApproach(p0: PositionKeyFrame, p1: PositionKeyFrame, q0: 
     // (b1 - b0) + (v1 - v0) * t  => find minimizing t, distance to 0 is now the closest approach
     const dv = new Vector3().subVectors(v1, v0);
     const db = new Vector3().subVectors(b1, b0);
+    if (dv.lengthSq() === 0) {
+        // parallel movement, closest approach is at start time
+        return Math.max(p0.getTime(), q0.getTime());
+    }
     // minimize |db + dv * t|^2
     // (db0 + dv0 * t)^2 + (db1 + dv1 * t)^2 + (db2 + dv2 * t)^2
     // = (dv0^2 + dv1^2 + dv2^2) * t^2 + 2 * (db0*dv0 + db1*dv1 + db2*dv2) * t + (db0^2 + db1^2 + db2^2)
