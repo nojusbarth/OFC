@@ -1,0 +1,121 @@
+@startuml name Rendering Pipeline Interaction (Controlled Mutability)
+
+' =====================================================
+' Rendering Pipeline & JSX Interaction
+' React- and Architecture-correct
+' =====================================================
+
+skinparam classAttributeIconSize 0
+skinparam ranksep 100
+
+' -----------------------------------------------------
+' Scene Renderer (JSX)
+' -----------------------------------------------------
+class SceneRenderer <<JSX Component>> {
+
+  + initCamera()
+  + initLight()
+}
+
+' -----------------------------------------------------
+' JSX Render Objects
+' -----------------------------------------------------
+class DroneView <<JSX Component>> {
+  + props : DroneStateList
+  + render() : JSX.Element
+}
+
+class KeyFrameView <<JSX Component>> {
+  + props : KeyFrameList
+  + render() : JSX.Element
+}
+
+' -----------------------------------------------------
+' State Stores (Render-relevant state)
+' -----------------------------------------------------
+class DroneStateStore {
+  - stateUpdater : StateUpdater<DroneFrame>
+  + update(mutator : DroneFrame)
+}
+'
+'  In short: Instead of Set, Get State one Function with
+'  mutable object type
+'
+note right of DroneStateStore
+  The 'mutator' parameter is actually a function
+  that receives a draft Frame to modify.
+  See Glossary entry "Controlled Mutability" for details.
+end note
+
+class KeyFrameStateStore {
+- stateUpdater : StateUpdater<PathFrame>  
++ update(mutator : PathFrame)
+}
+
+class LightStateStore {
+  - stateUpdater : StateUpdater<LightFrame>
+  + update(mutator : LightFrame)
+}
+
+' -----------------------------------------------------
+' Encapsulated Frames
+' -----------------------------------------------------
+
+class DroneFrame {
+  + dronePositions : Map<number,Vec3>
+  + droneColors : Map<number, string>
+}
+
+class PathFrame {
+  + pathPositions : List<Vec3>
+  + pathColor : string
+}
+
+class LightFrame {
+  + intensity : number
+  + color : string
+  + position : Vec3
+}
+
+' -----------------------------------------------------
+' Subsystems (Logic only, no rendering)
+' -----------------------------------------------------
+class TimeManager
+class PlaybackController
+class SelectionManager
+class CollisionManager
+class EventManager
+
+' -----------------------------------------------------
+' Subsystems modify STATE (not JSX)
+' -----------------------------------------------------
+TimeManager "1"-- "1" DroneStateStore : edit state >
+PlaybackController "1"-- "1" DroneStateStore : edit state >
+SelectionManager "1"-- "1" DroneStateStore : edit state >
+CollisionManager "1"-- "1" DroneStateStore : edit state >
+EventManager "1"-- "1" DroneStateStore : edit state >
+
+SelectionManager "1" -- "1" KeyFrameStateStore : edit state >
+CollisionManager "1" -- "1" KeyFrameStateStore : edit state >
+TimeManager "1" -- "1" LightStateStore : edit state >
+
+' -----------------------------------------------------
+' SceneRenderer reads state and passes props
+' -----------------------------------------------------
+SceneRenderer "1" -- "1 \n" DroneStateStore : read state >
+SceneRenderer "1" -- "1 \n" KeyFrameStateStore : read state >
+SceneRenderer "1" -- "1 \n" LightStateStore : read state >
+
+SceneRenderer "1" -- "1 \n droneView" DroneView : pass state >
+SceneRenderer "1" -- "1 \n keyFrameView" KeyFrameView : pass state >
+
+' -----------------------------------------------------
+' State Stores update data
+' -----------------------------------------------------
+
+DroneStateStore "1" -- "1" DroneFrame : updates > 
+KeyFrameStateStore "1" -- "1" PathFrame : updates >
+LightStateStore "1" -- "1" LightFrame : updates >
+
+@enduml
+

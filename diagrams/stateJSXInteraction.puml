@@ -1,0 +1,45 @@
+@startuml name JSX-State Interaction (English)
+
+' =====================================================
+' Sequence Diagram: State Store ↔ JSX Interaction
+' =====================================================
+
+actor User
+
+participant "DroneStateStore <<State>>" as DroneStore
+participant "KeyFrameStateStore <<State>>" as KeyFrameStore
+participant "LightStateStore <<State>>" as LightStore
+participant "SceneRenderer <<JSX>>" as SceneRenderer
+participant "DroneView <<JSX>>" as DroneView
+participant "KeyFramePathView <<JSX>>" as KeyFramePathView
+
+' -----------------------------------------------------
+' User triggers an action that updates DroneState
+' -----------------------------------------------------
+User -> DroneStore : update(mutator)
+DroneStore -> SceneRenderer : state changed
+SceneRenderer -> DroneView : pass updated DroneStateList
+SceneRenderer -> KeyFramePathView : pass updated KeyFrameList
+
+' -----------------------------------------------------
+' User triggers an action that updates KeyFrameState
+' -----------------------------------------------------
+User -> KeyFrameStore : update(mutator)
+KeyFrameStore -> SceneRenderer : state changed
+SceneRenderer -> KeyFramePathView : pass updated KeyFrameList
+
+' -----------------------------------------------------
+' User triggers an action that updates LightState
+' -----------------------------------------------------
+User -> LightStore : update(mutator)
+LightStore -> SceneRenderer : state changed
+SceneRenderer -> SceneRenderer : update light
+
+' -----------------------------------------------------
+' JSX Components render automatically
+' -----------------------------------------------------
+DroneView -> DroneView : render()
+KeyFramePathView -> KeyFramePathView : render()
+
+@enduml
+

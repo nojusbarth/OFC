@@ -1,0 +1,78 @@
+@startuml name Class Diagram: ISimulation + Subsystems
+skinparam classAttributeIconSize 0
+skinparam nodesep 80
+skinparam ranksep 100
+' =====================================================
+' Class Diagram: ISimulation + Subsystems
+' =====================================================
+
+class IController
+
+' ISimulation – the central interface (Facade)
+class ISimulation {
+
+  + NotifyChange()
+  + SetEditorTime(time: number)
+  + SetSimulationTime(time: number)
+  + SetPlaying()
+  + StopPlaying()
+  + SelectDrone(id: number)
+  + UnselectDrone()
+  + NotifyCollisionChange(collision : Collision)
+
+  + RequestDroneFrame(time : number) : DroneFrame
+  + RequestKeyFrames(id : number) : PathFrame
+}
+
+' Subsystems – internal logic
+class TimeManager {
+  - droneState : DroneStateStore
+  - lightState : LightStateStore
+  - currentEditorTime : number
+
+  + SetEditorTime(time: number)
+  + SetSimulationTime(time: number)
+}
+
+class PlaybackController {
+  - droneState : DroneStateStore
+  -currentPlayTime : number
+
+  + SetPlaying(startTime : number)
+  + StopPlaying()
+}
+
+class SelectionManager {
+  -droneState : DroneStateStore
+  -keyFrameState : KeyFrameStateStore
+  -selectedDroneId : number
+  -hasSelected : boolean
+
+  + SelectDrone(id: number)
+  + UnselectDrone()
+}
+
+class CollisionManager {
+  -droneState : DroneStateStore
+  -keyFrameState : KeyFrameStateStore
+  -currentCollision : Collision
+
+  + NotifyCollisionChange(collision : Collision)
+}
+
+class EventManager {
+  -droneState : DroneStateStore
+
+  + NotifyChange(time : number )
+}
+
+' Relationships: Delegation from ISimulation to subsystems
+ISimulation "1 \n simulation" -- "1 \n timeManager" TimeManager : delegates request >
+ISimulation "1 \n simulation" -- "1 \n playbackController" PlaybackController : delegates request >
+ISimulation "1 \n simulation" -- "1 \n selectionManager" SelectionManager : delegates request >
+ISimulation "1 \n simulation" -- "1 \n collisionManager" CollisionManager : delegates request >
+ISimulation "1 \n simulation" -- "1 \n eventManager" EventManager : delegates request >
+
+ISimulation "1" -- "1 \n controller" IController : request data >
+
+@enduml

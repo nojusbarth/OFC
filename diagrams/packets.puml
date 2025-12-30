@@ -1,0 +1,34 @@
+@startuml name Simulation Project Package Structure
+
+' =====================================================
+' Package Diagram: Simulation Module
+' =====================================================
+
+package "simulation" {
+
+  ' -----------------------------
+  ' State Stores
+  ' -----------------------------
+  package "state" {}
+
+  ' -----------------------------
+  ' Subsystems (Logic only)
+  ' -----------------------------
+  package "subsystems" {}
+
+  ' -----------------------------
+  ' Graphics / JSX Components
+  ' -----------------------------
+  package "graphics" {}
+
+  ' -----------------------------
+}
+
+' =====================================================
+' Dependencies
+' =====================================================
+
+subsystems ..> state : <<import>>
+graphics ..> state : <<import>>
+
+@enduml
