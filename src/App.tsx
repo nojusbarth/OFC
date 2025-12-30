@@ -4,6 +4,7 @@ import { useEffect } from 'react';
 
 import { useMemo } from 'react';
 import { initSimulation } from './simulation';
+import { Collision } from './Collision';
 
 
 
@@ -34,6 +35,15 @@ function App() {
           break;
         case "l":
           simulation.setSimulationTime(1);
+          break;
+        case "d":
+          var collsion : Collision = new Collision();
+          collsion.ids = [1,2,3];
+          simulation.notifiyCollisionChange(collsion);
+          break;
+        case "f":
+          simulation.notifiyCollisionChange(new Collision());
+          break;
       }
     };
 

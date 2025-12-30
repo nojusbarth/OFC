@@ -7,6 +7,8 @@ import { TimeManager } from "./subsystems/TimeManager";
 import { PathFrame } from "./state/PathFrame";
 import { SelectionManager } from "./subsystems/SelectionManager";
 import { EventManager } from "./subsystems/EventManager";
+import { Collision } from "../Collision";
+import { CollisionManager } from "./subsystems/CollisionManager";
 
 export class ISimulation {
   private droneStore?: DroneStateStore;
@@ -16,6 +18,7 @@ export class ISimulation {
   private timeManager: TimeManager;
   private selectionManager: SelectionManager;
   private eventManager: EventManager;
+  private collisionManager: CollisionManager;
 
   constructor(
     drone: DroneStateStore,
@@ -29,6 +32,7 @@ export class ISimulation {
     this.timeManager = new TimeManager(light, this);
     this.selectionManager = new SelectionManager(drone, path, this);
     this.eventManager = new EventManager(drone, this);
+    this.collisionManager = new CollisionManager(drone, path, this);
   }
 
   public notifyChange() {
@@ -38,6 +42,20 @@ export class ISimulation {
     this.selectionManager.getSelected().forEach((element: number) => {
       this.selectionManager.selectDrone(element);
     });
+
+    //redraw collisions
+    this.collisionManager.notifyCollisionChange(
+      this.collisionManager.getDronesInCollision(),
+      this.timeManager.getCurrentEditorTime()
+    );
+  }
+
+  public notifiyCollisionChange(newCollision: Collision) {
+    this.collisionManager.notifyCollisionChange(
+      newCollision,
+      this.timeManager.getCurrentEditorTime()
+    );
+    this.notifyChange();
   }
 
   public setEditorTime(time: number) {
@@ -48,6 +66,8 @@ export class ISimulation {
 
   public selectDrone(id: number) {
     this.selectionManager.selectDrone(id);
+
+    this.notifyChange();
   }
 
   public unselectDrone(id: number) {
@@ -55,6 +75,8 @@ export class ISimulation {
       id,
       this.timeManager.getCurrentEditorTime()
     );
+
+    this.notifyChange();
   }
 
   public setSimulationTime(time: number) {
@@ -202,6 +224,20 @@ export class ISimulation {
           ],
         ]),
         pathColors: new Map([[2, "#ffff"]]),
+      };
+    } else if (id == 3) {
+      return {
+        pathPositions: new Map([
+          [
+            3,
+            [
+              new Vector3(11.0, 1.0, 3.0),
+              new Vector3(7.0, 1.0, 3.0),
+              new Vector3(4.0, 1.0, 3.0),
+            ],
+          ],
+        ]),
+        pathColors: new Map([[3, "#ffff"]]),
       };
     } else {
       return new PathFrame();
