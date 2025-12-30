@@ -1,14 +1,15 @@
 import type { Vector3, Color } from "three";
 import type { Collision } from "../interface/Collision";
-import type { ColorKeyFrame } from "../interface/ColorKeyFrame";
+import { ColorKeyFrame } from "../interface/ColorKeyFrame";
 import type { IController } from "../interface/IController";
 import type { IProject } from "../interface/IProject";
 import type { ISettings } from "../interface/ISettings";
 import type { ITimeController } from "../interface/ITimeController";
 import type { OFCEvent } from "../interface/OFCEvent";
-import type { PositionKeyFrame } from "../interface/PositionKeyFrame";
+import { PositionKeyFrame } from "../interface/PositionKeyFrame";
+import { IUndoableController } from "../interface/IUndoableController";
 
-export class UndoableController implements IController {
+export class UndoableController implements IUndoableController {
     private controller: IController;
     private undoStack: Action[] = [];
     private redoStack: Action[] = [];
@@ -46,7 +47,6 @@ export class UndoableController implements IController {
     }
 
     private _reverseAction(action: Action): void {
-        this.controller.getTimeController().setTime(action.time);
 
         switch (action.type) {
             case ActionType.AddDrone: {
@@ -60,19 +60,19 @@ export class UndoableController implements IController {
                 const newId = this.addDrone();
                 this.idRemapping.set(droneData.id, newId);
                 for (const pkf of droneData.positionKeyFrames) {
-                    this.controller.addPositionKeyFrame(newId, pkf.getPos());
+                    this.controller.addPositionKeyFrame(newId, pkf);
                 }
                 for (const ckf of droneData.colorKeyFrames) {
-                    this.controller.addColorKeyFrame(newId, ckf.getColor());
+                    this.controller.addColorKeyFrame(newId, ckf);
                 }
                 break;
             }
 
             case ActionType.AddPositionKeyFrame: {
                 const id = this._getRemappedId(action.data.id);
-                const previousPosition = action.data.previousPosition;
-                if (previousPosition !== undefined) {
-                    this.addPositionKeyFrame(id, previousPosition);
+                const previousKeyFrame = action.data.previousKeyFrame;
+                if (previousKeyFrame) {
+                    this.addPositionKeyFrame(id, previousKeyFrame);
                 } else {
                     const keyFrame = this._findKeyFrameAtTime(
                         this.controller.getPositionKeyFrames(id),
@@ -87,15 +87,15 @@ export class UndoableController implements IController {
             case ActionType.RemovePositionKeyFrame: {
                 const id = this._getRemappedId(action.data.id);
                 const keyFrame: PositionKeyFrame = action.data.keyFrame;
-                this.addPositionKeyFrame(id, keyFrame.getPos());
+                this.addPositionKeyFrame(id, keyFrame);
                 break;
             }
 
             case ActionType.AddColorKeyFrame: {
                 const id = this._getRemappedId(action.data.id);
-                const previousColor = action.data.previousColor;
-                if (previousColor !== undefined) {
-                    this.addColorKeyFrame(id, previousColor);
+                const previousKeyFrame = action.data.previousKeyFrame;
+                if (previousKeyFrame) {
+                    this.addColorKeyFrame(id, previousKeyFrame);
                 } else {
                     const keyFrame = this._findKeyFrameAtTime(
                         this.controller.getColorKeyFrames(id),
@@ -110,7 +110,7 @@ export class UndoableController implements IController {
             case ActionType.RemoveColorKeyFrame: {
                 const id = this._getRemappedId(action.data.id);
                 const keyFrame: ColorKeyFrame = action.data.keyFrame;
-                this.addColorKeyFrame(id, keyFrame.getColor());
+                this.addColorKeyFrame(id, keyFrame);
                 break;
             }
 
@@ -120,6 +120,7 @@ export class UndoableController implements IController {
                 break;
             }
         }
+        this.controller.getTimeController().setTime(action.time);
     }
 
     private _pushAction(type: ActionType, data: any): void {
@@ -202,12 +203,16 @@ export class UndoableController implements IController {
         return this.controller.getPositionAt(id, time);
     }
     
-    addPositionKeyFrame(id: number, position: Vector3): void {
-        const keyFrames = this.controller.getPositionKeyFrames(id);
-        const previousPosition = this._findKeyFrameAtTime(keyFrames, this._currentTime())?.getPos();
+    addPositionKeyFrameNow(id: number, position: Vector3): void {
+        this.addPositionKeyFrame(id, new PositionKeyFrame(position, this.controller.getTimeController().getTime()));
+    }
 
-        this._pushAction(ActionType.AddPositionKeyFrame, { id, previousPosition });
-        this.controller.addPositionKeyFrame(id, position);
+    addPositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
+        const keyFrames = this.controller.getPositionKeyFrames(id);
+        const previousKeyFrame = this._findKeyFrameAtTime(keyFrames, keyFrame.getTime());
+
+        this._pushAction(ActionType.AddPositionKeyFrame, { id, previousKeyFrame });
+        this.controller.addPositionKeyFrame(id, keyFrame);
     }
     
     removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
@@ -230,13 +235,17 @@ export class UndoableController implements IController {
     getColorAt(id: number, time: number): Color {
         return this.controller.getColorAt(id, time);
     }
+
+    addColorKeyFrameNow(id: number, color: Color): void {
+        this.addColorKeyFrame(id, new ColorKeyFrame(color, this.controller.getTimeController().getTime()));
+    }
     
-    addColorKeyFrame(id: number, color: Color): void {
+    addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
         const keyFrames = this.controller.getColorKeyFrames(id);
-        const previousColor = this._findKeyFrameAtTime(keyFrames, this._currentTime())?.getColor();
+        const previousKeyFrame = this._findKeyFrameAtTime(keyFrames, this._currentTime());
         
-        this._pushAction(ActionType.AddColorKeyFrame, { id, previousColor });
-        this.controller.addColorKeyFrame(id, color);
+        this._pushAction(ActionType.AddColorKeyFrame, { id, previousKeyFrame });
+        this.controller.addColorKeyFrame(id, keyFrame);
     }
     
     removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {

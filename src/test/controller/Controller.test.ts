@@ -26,7 +26,7 @@ it("Controller - test collision detection on add", () => {
     const drone1Id = controller.addDrone();
     const drone2Id = controller.addDrone();
     
-    controller.addPositionKeyFrame(drone1Id, new Vector3(0, 0, 0));
+    controller.addPositionKeyFrameNow(drone1Id, new Vector3(0, 0, 0));
     
     let collisionDetected: boolean = false;
     controller.getCollisionEvent().register((collision) => {
@@ -35,13 +35,14 @@ it("Controller - test collision detection on add", () => {
         expect(collision.colliders.keys()).toContain(drone1Id);
     });
 
-    controller.addPositionKeyFrame(drone2Id, new Vector3(3, 0, 0));
+    controller.addPositionKeyFrameNow(drone2Id, new Vector3(3, 0, 0));
     expect(collisionDetected).toBe(true);
 });
 
 it("Controller - collision detection on remove", () => {
     const [controller, repository] = makeBasicController();
     repository.setCollisionRadius(2);
+    repository.setMaxTimelineTime(10);
 
     const drone1Id = controller.addDrone();
     const drone2Id = controller.addDrone();
@@ -52,17 +53,18 @@ it("Controller - collision detection on remove", () => {
         collisionDetected = collision.colliders.size > 0;
     });
 
-    controller.addPositionKeyFrame(drone1Id, new Vector3(0, 0, 0));
-    controller.addPositionKeyFrame(drone2Id, new Vector3(10, 0, 0));
+    controller.addPositionKeyFrameNow(drone1Id, new Vector3(0, 0, 0));
+    controller.addPositionKeyFrameNow(drone2Id, new Vector3(10, 0, 0));
     expect(collisionDetected).toBe(false);
 
     controller.getTimeController().setTime(10);
-    controller.addPositionKeyFrame(drone2Id, new Vector3(0, 10, 0));
-    controller.addPositionKeyFrame(drone2Id, new Vector3(10, 10, 0));
+    controller.addPositionKeyFrameNow(drone1Id, new Vector3(0, 10, 0));
+    controller.addPositionKeyFrameNow(drone2Id, new Vector3(10, 10, 0));
     expect(collisionDetected).toBe(false);
 
+
     controller.getTimeController().setTime(5);
-    controller.addPositionKeyFrame(drone2Id, controller.getPosition(drone1Id));
+    controller.addPositionKeyFrameNow(drone2Id, controller.getPosition(drone1Id));
     expect(collisionDetected).toBe(true);
 
     // reset for removal test

@@ -21,13 +21,15 @@ export interface IController {
     getPositionKeyFrames(id: number): PositionKeyFrame[];
     getPosition(id: number): Vector3;
     getPositionAt(id: number, time: number): Vector3;
-    addPositionKeyFrame(id: number, position: Vector3): void;
+    addPositionKeyFrameNow(id: number, position: Vector3): void;
+    addPositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void;
     removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void;
 
     getColorKeyFrames(id: number): ColorKeyFrame[];
     getColor(id: number): Color;
     getColorAt(id: number, time: number): Color;
-    addColorKeyFrame(id: number, color: Color): void;
+    addColorKeyFrameNow(id: number, color: Color): void;
+    addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void;
     removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void;
 
     getDroneEvent(id: number): OFCEvent<number>;

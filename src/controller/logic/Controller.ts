@@ -29,7 +29,7 @@ export class Controller implements IController {
         this.settings = settings;
         this.project = new Project(repository, this);
         this.repository = repository;
-        this.timeController = new TimeController();
+        this.timeController = new TimeController(settings);
         // this.drones = new Map();
     }
 
@@ -98,9 +98,13 @@ export class Controller implements IController {
         return drone.getPositonAtTime(time);
     }
 
-    addPositionKeyFrame(id: number, position: Vector3): void {
+    addPositionKeyFrameNow(id: number, position: Vector3): void {
+        this.addPositionKeyFrame(id, new PositionKeyFrame(position, this.timeController.getTime()));
+    }
+
+    addPositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
         const drone = this._getDrone(id);
-        drone.insertPositionKeyFrame(new PositionKeyFrame(position, this.timeController.getTime()));
+        drone.insertPositionKeyFrame(keyFrame);
         this.getDroneEvent(id).notify(id);
         this._checkCollisions(drone);
     }
@@ -126,9 +130,13 @@ export class Controller implements IController {
         return drone.getColorAtTime(time);
     }
 
-    addColorKeyFrame(id: number, color: Color): void {
+    addColorKeyFrameNow(id: number, color: Color): void {
+        this.addColorKeyFrame(id, new ColorKeyFrame(color, this.timeController.getTime()));
+    }
+
+    addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
         const drone = this._getDrone(id);
-        drone.insertColorKeyFrame(new ColorKeyFrame(color, this.timeController.getTime()));
+        drone.insertColorKeyFrame(keyFrame);
         this.getDroneEvent(id).notify(id);
     }
 

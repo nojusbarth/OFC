@@ -22,7 +22,7 @@ it("UndoableController: drone addition and removal", () => {
     const newDrone2Id = undoableController.getDrones().find(id => id !== drone1Id);
     expect(newDrone2Id).toBeDefined();
 
-    undoableController.addColorKeyFrame(drone1Id, new Color(1, 0, 0));
+    undoableController.addColorKeyFrameNow(drone1Id, new Color(1, 0, 0));
     expect(undoableController.getColorKeyFrames(drone1Id).length).toBe(1);
     undoableController.removeDrone(drone1Id);
     expect(undoableController.getDrones().length).toBe(1);
@@ -66,8 +66,8 @@ it("UndoableController: add/remove position keyframe", () => {
     const [undoableController, _repository] = makeUndoableController();
 
     const droneId = undoableController.addDrone();
-    // test add
-    undoableController.addPositionKeyFrame(droneId, new Vector3(1, 2, 3));
+    // test add 
+    undoableController.addPositionKeyFrameNow(droneId, new Vector3(1, 2, 3));
     expect(undoableController.getPositionKeyFrames(droneId).length).toBe(1);
     expect(undoableController.getPositionAt(droneId, 0).equals(new Vector3(1, 2, 3))).toBe(true);
     
@@ -79,7 +79,7 @@ it("UndoableController: add/remove position keyframe", () => {
     expect(undoableController.getPositionAt(droneId, 0).equals(new Vector3(1, 2, 3))).toBe(true);
 
     // test replace (same time keyframe)
-    undoableController.addPositionKeyFrame(droneId, new Vector3(4, 5, 6));
+    undoableController.addPositionKeyFrameNow(droneId, new Vector3(4, 5, 6));
     expect(undoableController.getPositionKeyFrames(droneId).length).toBe(1);
     expect(undoableController.getPositionAt(droneId, 0).equals(new Vector3(4, 5, 6))).toBe(true);
 
