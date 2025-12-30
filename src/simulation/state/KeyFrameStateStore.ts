@@ -2,11 +2,10 @@ import { PathFrame } from "./PathFrame";
 import React from "react";
 
 export class KeyFrameStateStore {
-  private setFrame: React.Dispatch<React.SetStateAction<PathFrame>> | null = null;
+  private setFrame: React.Dispatch<React.SetStateAction<PathFrame>> | null =
+    null;
 
-  bindState(
-    setFrame: React.Dispatch<React.SetStateAction<PathFrame>>
-  ) {
+  bindState(setFrame: React.Dispatch<React.SetStateAction<PathFrame>>) {
     this.setFrame = setFrame;
   }
 
@@ -15,10 +14,14 @@ export class KeyFrameStateStore {
       throw new Error("KeyFrameStateStore not bound to React state");
     }
 
-    this.setFrame(prev => {
+    this.setFrame((prev) => {
       const draft: PathFrame = {
-        pathPositions: [...prev.pathPositions],
-        pathColor: prev.pathColor,
+        pathPositions: new Map(
+          Array.from(prev.pathPositions.entries()).map(
+            ([id, points]) => [id, [...points]] // Array ebenfalls kopieren!
+          )
+        ),
+        pathColors: new Map(prev.pathColors),
       };
 
       mutator(draft);

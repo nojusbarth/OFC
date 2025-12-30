@@ -22,8 +22,8 @@ const initialDroneFrame: DroneFrame = {
 };
 
 const initialPathFrame: PathFrame = {
-  pathPositions: [],
-  pathColor: "white",
+  pathPositions: new Map([]),
+  pathColors: new Map([])
 };
 
 const initialLightFrame: LightFrame = {

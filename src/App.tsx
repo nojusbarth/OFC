@@ -18,16 +18,15 @@ function App() {
           simulation.setEditorTime(0);
           break;
         case "s":
-          simulation.setEditorTime(1);
+          simulation.selectDrone(1);
           break;
         case "a":
-          simulation.setEditorTime(2);
+          simulation.selectDrone(2);
           break;
         case "d":
-          simulation.setEditorTime(3);
+          simulation.unselectDrone(1);
           break;
         case "r":
-          simulation.setEditorTime(4);
           break;
       }
     };

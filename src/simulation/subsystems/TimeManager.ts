@@ -10,7 +10,7 @@ export class TimeManager {
   private lightState: LightStateStore;
   private currentEditorTime: number;
 
-  constructor(
+  public constructor(
     droneState: DroneStateStore,
     lightState: LightStateStore,
     simulation: ISimulation
@@ -21,7 +21,7 @@ export class TimeManager {
     this.simulation = simulation;
   }
 
-  setEditorTime(time: number) {
+  public setEditorTime(time: number) {
     this.currentEditorTime = time;
 
     var newFrame: DroneFrame = this.simulation.requestDroneFrame(time);
@@ -30,5 +30,9 @@ export class TimeManager {
       draft.dronePositions = new Map(newFrame.dronePositions);
       draft.droneColors = new Map(newFrame.droneColors);
     });
+  }
+
+  public getCurrentEditorTime() {
+    return this.currentEditorTime;
   }
 }
