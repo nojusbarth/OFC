@@ -21,13 +21,19 @@ function App() {
           simulation.selectDrone(1);
           break;
         case "a":
-          simulation.selectDrone(2);
-          break;
-        case "d":
           simulation.unselectDrone(1);
           break;
-        case "r":
+        case "h":
+          simulation.setSimulationTime(7.0);
           break;
+        case "j":
+          simulation.setSimulationTime(13);
+          break;
+        case "k":
+          simulation.setSimulationTime(19);
+          break;
+        case "l":
+          simulation.setSimulationTime(1);
       }
     };
 

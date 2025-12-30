@@ -6,6 +6,7 @@ import { Vector3 } from "three";
 import { TimeManager } from "./subsystems/TimeManager";
 import { PathFrame } from "./state/PathFrame";
 import { SelectionManager } from "./subsystems/SelectionManager";
+import { EventManager } from "./subsystems/EventManager";
 
 export class ISimulation {
   private droneStore?: DroneStateStore;
@@ -14,6 +15,7 @@ export class ISimulation {
 
   private timeManager: TimeManager;
   private selectionManager: SelectionManager;
+  private eventManager: EventManager;
 
   constructor(
     drone: DroneStateStore,
@@ -24,17 +26,24 @@ export class ISimulation {
     this.pathStore = path;
     this.lightStore = light;
 
-    this.timeManager = new TimeManager(drone, light, this);
+    this.timeManager = new TimeManager(light, this);
     this.selectionManager = new SelectionManager(drone, path, this);
+    this.eventManager = new EventManager(drone, this);
+  }
+
+  public notifyChange() {
+    this.eventManager.notifyChange(this.timeManager.getCurrentEditorTime());
+
+    //reselect because of change overwrites
+    this.selectionManager.getSelected().forEach((element: number) => {
+      this.selectionManager.selectDrone(element);
+    });
   }
 
   public setEditorTime(time: number) {
     this.timeManager.setEditorTime(time);
 
-    //reselect
-    this.selectionManager.getSelected().forEach((element: number) => {
-      this.selectionManager.selectDrone(element);
-    });
+    this.notifyChange();
   }
 
   public selectDrone(id: number) {
@@ -46,6 +55,10 @@ export class ISimulation {
       id,
       this.timeManager.getCurrentEditorTime()
     );
+  }
+
+  public setSimulationTime(time: number) {
+    this.timeManager.setSimulationTime(time);
   }
 
   public requestDroneFrame(time: number): DroneFrame {
