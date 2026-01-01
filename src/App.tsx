@@ -3,7 +3,7 @@ import { Canvas } from '@react-three/fiber';
 import { useEffect } from 'react';
 
 import { useMemo } from 'react';
-import { initSimulation } from './simulation';
+import { initSimulation } from './simulation-view';
 import { Collision } from './Collision';
 
 

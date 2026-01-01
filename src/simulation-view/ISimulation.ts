@@ -6,9 +6,9 @@ import { Vector3 } from "three";
 import { TimeManager } from "./subsystems/TimeManager";
 import { PathFrame } from "./state/PathFrame";
 import { SelectionManager } from "./subsystems/SelectionManager";
-import { EventManager } from "./subsystems/EventManager";
 import { Collision } from "../Collision";
 import { CollisionManager } from "./subsystems/CollisionManager";
+import { LightFrame } from "./state/LightFrame";
 
 export class ISimulation {
   private droneStore?: DroneStateStore;
@@ -17,7 +17,6 @@ export class ISimulation {
 
   private timeManager: TimeManager;
   private selectionManager: SelectionManager;
-  private eventManager: EventManager;
   private collisionManager: CollisionManager;
 
   constructor(
@@ -29,58 +28,86 @@ export class ISimulation {
     this.pathStore = path;
     this.lightStore = light;
 
-    this.timeManager = new TimeManager(light, this);
-    this.selectionManager = new SelectionManager(drone, path, this);
-    this.eventManager = new EventManager(drone, this);
-    this.collisionManager = new CollisionManager(drone, path, this);
+    this.timeManager = new TimeManager();
+    this.selectionManager = new SelectionManager();
+    this.collisionManager = new CollisionManager();
+  }
+
+  private drawChanges() {
+    //SEQUENCE OF CHANGES IS IMPORTANT, LATER CHANGES OVERWRITE CHANGES BEFORE
+
+    var currentDroneFrame: DroneFrame = this.requestDroneFrame(
+      this.timeManager.getCurrentEditorTime()
+    );
+    var allPathFrames: PathFrame = this.requestKeyFrames();
+    var currentPathFrame: PathFrame = new PathFrame();
+    var currentLightFrame: LightFrame = new LightFrame();
+
+    currentLightFrame = this.timeManager.applyLightChanges(currentLightFrame);
+
+    currentDroneFrame =
+      this.selectionManager.applyDroneChanges(currentDroneFrame);
+    currentPathFrame = this.selectionManager.applyPathChanges(
+      currentPathFrame,
+      allPathFrames
+    );
+
+    currentDroneFrame =
+      this.collisionManager.applyDroneChanges(currentDroneFrame);
+    currentPathFrame = this.collisionManager.applyPathChanges(
+      currentPathFrame,
+      allPathFrames
+    );
+
+    this.droneStore?.update((draft) => {
+      draft.droneColors = currentDroneFrame.droneColors;
+      draft.dronePositions = currentDroneFrame.dronePositions;
+    });
+
+    this.pathStore?.update((draft) => {
+      draft.pathColors = currentPathFrame.pathColors;
+      draft.pathPositions = currentPathFrame.pathPositions;
+    });
+
+    this.lightStore?.update((draft) => {
+      draft.color = currentLightFrame.color;
+      draft.intensity = currentLightFrame.intensity;
+      draft.position = currentLightFrame.position;
+    });
   }
 
   public notifyChange() {
-    this.eventManager.notifyChange(this.timeManager.getCurrentEditorTime());
-
-    //reselect because of change overwrites
-    this.selectionManager.getSelected().forEach((element: number) => {
-      this.selectionManager.selectDrone(element);
-    });
-
-    //redraw collisions
-    this.collisionManager.notifyCollisionChange(
-      this.collisionManager.getDronesInCollision(),
-      this.timeManager.getCurrentEditorTime()
-    );
+    this.drawChanges();
   }
 
   public notifiyCollisionChange(newCollision: Collision) {
-    this.collisionManager.notifyCollisionChange(
-      newCollision,
-      this.timeManager.getCurrentEditorTime()
-    );
-    this.notifyChange();
+    this.collisionManager.notifyCollisionChange(newCollision);
+
+    this.drawChanges();
   }
 
   public setEditorTime(time: number) {
     this.timeManager.setEditorTime(time);
 
-    this.notifyChange();
+    this.drawChanges();
   }
 
   public selectDrone(id: number) {
     this.selectionManager.selectDrone(id);
 
-    this.notifyChange();
+    this.drawChanges();
   }
 
   public unselectDrone(id: number) {
-    this.selectionManager.unselectDrone(
-      id,
-      this.timeManager.getCurrentEditorTime()
-    );
+    this.selectionManager.unselectDrone(id);
 
-    this.notifyChange();
+    this.drawChanges();
   }
 
   public setSimulationTime(time: number) {
     this.timeManager.setSimulationTime(time);
+
+    this.drawChanges();
   }
 
   public requestDroneFrame(time: number): DroneFrame {
@@ -196,51 +223,39 @@ export class ISimulation {
     }
   }
 
-  public requestKeyFrame(id: number): PathFrame {
-    if (id == 1) {
-      return {
-        pathPositions: new Map([
+  public requestKeyFrames(): PathFrame {
+    return {
+      pathPositions: new Map([
+        [
+          1,
           [
-            1,
-            [
-              new Vector3(4.0, 1.0, 3.0),
-              new Vector3(6.0, 1.0, 3.0),
-              new Vector3(6.0, 5.0, 3.0),
-            ],
+            new Vector3(4.0, 1.0, 3.0),
+            new Vector3(6.0, 1.0, 3.0),
+            new Vector3(6.0, 5.0, 3.0),
           ],
-        ]),
-        pathColors: new Map([[1, "#ffffff"]]),
-      };
-    } else if (id == 2) {
-      return {
-        pathPositions: new Map([
+        ],
+        [
+          2,
           [
-            2,
-            [
-              new Vector3(7.0, 1.0, 3.0),
-              new Vector3(7.0, 1.0, 1.0),
-              new Vector3(7.0, 1.0, 5.0),
-            ],
+            new Vector3(7.0, 1.0, 3.0),
+            new Vector3(7.0, 1.0, 1.0),
+            new Vector3(7.0, 1.0, 5.0),
           ],
-        ]),
-        pathColors: new Map([[2, "#ffff"]]),
-      };
-    } else if (id == 3) {
-      return {
-        pathPositions: new Map([
+        ],
+        [
+          3,
           [
-            3,
-            [
-              new Vector3(11.0, 1.0, 3.0),
-              new Vector3(7.0, 1.0, 3.0),
-              new Vector3(4.0, 1.0, 3.0),
-            ],
+            new Vector3(11.0, 1.0, 3.0),
+            new Vector3(7.0, 1.0, 3.0),
+            new Vector3(4.0, 1.0, 3.0),
           ],
-        ]),
-        pathColors: new Map([[3, "#ffff"]]),
-      };
-    } else {
-      return new PathFrame();
-    }
+        ],
+      ]),
+      pathColors: new Map([
+        [1, "#ffffff"],
+        [2, "#ffff"],
+        [3, "#ffff"],
+      ]),
+    };
   }
 }

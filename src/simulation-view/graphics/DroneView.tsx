@@ -1,5 +1,5 @@
 import React from "react";
-import { DroneFrame } from "..//state//DroneFrame";
+import { DroneFrame } from "../state/DroneFrame";
 
 type Props = {
   frame: DroneFrame;

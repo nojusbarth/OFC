@@ -1,13 +1,10 @@
-import { ISimulation } from "../ISimulation";
 import { LightFrame } from "../state/LightFrame";
-import { LightStateStore } from "../state/LightStateStore";
 import { Vector3 } from "three";
 
 export class TimeManager {
-  private simulation: ISimulation;
-
-  private lightState: LightStateStore;
   private currentEditorTime: number;
+
+  private chosenLight: LightFrame;
 
   private NIGHT: LightFrame = {
     intensity: 0.15,
@@ -31,10 +28,9 @@ export class TimeManager {
     position: new Vector3(-10, 4, -10),
   };
 
-  public constructor(lightState: LightStateStore, simulation: ISimulation) {
+  public constructor() {
     this.currentEditorTime = 0;
-    this.lightState = lightState;
-    this.simulation = simulation;
+    this.chosenLight = this.MORNING;
   }
 
   public setEditorTime(time: number) {
@@ -46,22 +42,18 @@ export class TimeManager {
   }
 
   public setSimulationTime(time: number) {
-    var chosenLight: LightFrame;
-
     if (time >= 5.0 && time <= 11) {
-      chosenLight = this.MORNING;
+      this.chosenLight = this.MORNING;
     } else if (time >= 12 && time <= 17) {
-      chosenLight = this.NOON;
+      this.chosenLight = this.NOON;
     } else if (time >= 18 && time <= 22) {
-      chosenLight = this.EVENING;
+      this.chosenLight = this.EVENING;
     } else {
-      chosenLight = this.NIGHT;
+      this.chosenLight = this.NIGHT;
     }
+  }
 
-    this.lightState.update((draft) => {
-      draft.color = chosenLight.color;
-      draft.intensity = chosenLight.intensity;
-      draft.position = chosenLight.position;
-    });
+  public applyLightChanges(currentLight: LightFrame): LightFrame {
+    return this.chosenLight;
   }
 }
