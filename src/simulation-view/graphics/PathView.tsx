@@ -7,7 +7,7 @@ type Props = {
   frame: PathFrame;
 };
 
-export const KeyFrameView: React.FC<Props> = ({ frame }) => {
+export const PathView: React.FC<Props> = ({ frame }) => {
   return (
     <>
       {Array.from(frame.pathPositions.entries()).map(([id, points]) => {

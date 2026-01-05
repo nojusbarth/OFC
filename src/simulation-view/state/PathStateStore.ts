@@ -1,7 +1,7 @@
 import { PathFrame } from "./PathFrame";
 import React from "react";
 
-export class KeyFrameStateStore {
+export class PathStateStore {
   private setFrame: React.Dispatch<React.SetStateAction<PathFrame>> | null =
     null;
 

@@ -1,6 +1,6 @@
 import { FC } from "react";
 import { DroneStateStore } from "./state/DroneStateStore";
-import { KeyFrameStateStore } from "./state/KeyFrameStateStore";
+import { PathStateStore } from "./state/PathStateStore";
 import { LightStateStore } from "./state/LightStateStore";
 import { ISimulation } from "./ISimulation";
 import { SceneRenderer } from "./graphics/SceneRenderer";
@@ -10,7 +10,7 @@ import { SceneRenderer } from "./graphics/SceneRenderer";
 //  EXECUTE ONLY ONCE
 export function initSimulation() {
   const droneStore = new DroneStateStore();
-  const pathStore = new KeyFrameStateStore();
+  const pathStore = new PathStateStore();
   const lightStore = new LightStateStore();
 
   const simulation = new ISimulation(

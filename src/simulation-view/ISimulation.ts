@@ -1,6 +1,6 @@
 import { DroneFrame } from "./state/DroneFrame";
 import { DroneStateStore } from "./state/DroneStateStore";
-import { KeyFrameStateStore } from "./state/KeyFrameStateStore";
+import { PathStateStore } from "./state/PathStateStore";
 import { LightStateStore } from "./state/LightStateStore";
 import { Vector3 } from "three";
 import { TimeManager } from "./subsystems/TimeManager";
@@ -12,7 +12,7 @@ import { LightFrame } from "./state/LightFrame";
 
 export class ISimulation {
   private droneStore?: DroneStateStore;
-  private pathStore?: KeyFrameStateStore;
+  private pathStore?: PathStateStore;
   private lightStore?: LightStateStore;
 
   private timeManager: TimeManager;
@@ -21,7 +21,7 @@ export class ISimulation {
 
   constructor(
     drone: DroneStateStore,
-    path: KeyFrameStateStore,
+    path: PathStateStore,
     light: LightStateStore
   ) {
     this.droneStore = drone;

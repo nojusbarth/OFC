@@ -21,12 +21,12 @@ class SceneRenderer <<JSX Component>> {
 ' JSX Render Objects
 ' -----------------------------------------------------
 class DroneView <<JSX Component>> {
-  + props : DroneStateList
+  + props : DroneFrame
   + render() : JSX.Element
 }
 
-class KeyFrameView <<JSX Component>> {
-  + props : KeyFrameList
+class PathView <<JSX Component>> {
+  + props : PathFrame
   + render() : JSX.Element
 }
 
@@ -47,7 +47,7 @@ note right of DroneStateStore
   See Glossary entry "Controlled Mutability" for details.
 end note
 
-class KeyFrameStateStore {
+class PathStateStore {
 - stateUpdater : StateUpdater<PathFrame>  
 + update(mutator : PathFrame)
 }
@@ -62,59 +62,55 @@ class LightStateStore {
 ' -----------------------------------------------------
 
 class DroneFrame {
-  + dronePositions : Map<number,Vec3>
+  + dronePositions : Map<number,Vector3>
   + droneColors : Map<number, string>
 }
 
 class PathFrame {
-  + pathPositions : List<Vec3>
-  + pathColor : string
+  + pathPositions : Map<number,Vector3>
+  + pathColor : Map<number,string>
 }
 
 class LightFrame {
   + intensity : number
   + color : string
-  + position : Vec3
+  + position : Vector3
 }
 
 ' -----------------------------------------------------
 ' Subsystems (Logic only, no rendering)
 ' -----------------------------------------------------
 class TimeManager
-class PlaybackController
 class SelectionManager
 class CollisionManager
-class EventManager
 
 ' -----------------------------------------------------
 ' Subsystems modify STATE (not JSX)
 ' -----------------------------------------------------
 TimeManager "1"-- "1" DroneStateStore : edit state >
-PlaybackController "1"-- "1" DroneStateStore : edit state >
 SelectionManager "1"-- "1" DroneStateStore : edit state >
 CollisionManager "1"-- "1" DroneStateStore : edit state >
-EventManager "1"-- "1" DroneStateStore : edit state >
 
-SelectionManager "1" -- "1" KeyFrameStateStore : edit state >
-CollisionManager "1" -- "1" KeyFrameStateStore : edit state >
+SelectionManager "1" -- "1" PathStateStore : edit state >
+CollisionManager "1" -- "1" PathStateStore : edit state >
 TimeManager "1" -- "1" LightStateStore : edit state >
 
 ' -----------------------------------------------------
 ' SceneRenderer reads state and passes props
 ' -----------------------------------------------------
 SceneRenderer "1" -- "1 \n" DroneStateStore : read state >
-SceneRenderer "1" -- "1 \n" KeyFrameStateStore : read state >
+SceneRenderer "1" -- "1 \n" PathStateStore : read state >
 SceneRenderer "1" -- "1 \n" LightStateStore : read state >
 
 SceneRenderer "1" -- "1 \n droneView" DroneView : pass state >
-SceneRenderer "1" -- "1 \n keyFrameView" KeyFrameView : pass state >
+SceneRenderer "1" -- "1 \n pathView" PathView : pass state >
 
 ' -----------------------------------------------------
 ' State Stores update data
 ' -----------------------------------------------------
 
 DroneStateStore "1" -- "1" DroneFrame : updates > 
-KeyFrameStateStore "1" -- "1" PathFrame : updates >
+PathStateStore "1" -- "1" PathFrame : updates >
 LightStateStore "1" -- "1" LightFrame : updates >
 
 @enduml

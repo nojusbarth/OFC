@@ -3,11 +3,11 @@ import { OrbitControls, PerspectiveCamera, Sky } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 
 import { DroneStateStore } from "../state/DroneStateStore";
-import { KeyFrameStateStore } from "../state/KeyFrameStateStore";
+import { PathStateStore } from "../state/PathStateStore";
 import { LightStateStore } from "../state/LightStateStore";
 
 import { DroneView } from "./DroneView";
-import { KeyFrameView } from "./KeyFrameView";
+import { PathView } from "./PathView";
 
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
@@ -34,7 +34,7 @@ const initialLightFrame: LightFrame = {
 
 type SceneRendererProps = {
   droneStore: DroneStateStore;
-  pathStore: KeyFrameStateStore;
+  pathStore: PathStateStore;
   lightStore: LightStateStore;
 };
 
@@ -110,7 +110,7 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
 
       {/* Szene */}
       <DroneView frame={droneFrame} />
-      <KeyFrameView frame={pathFrame} />
+      <PathView frame={pathFrame} />
     </>
   );
 };

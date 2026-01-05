@@ -11,67 +11,61 @@ class IController
 ' ISimulation – the central interface (Facade)
 class ISimulation {
 
-  + NotifyChange()
-  + SetEditorTime(time: number)
-  + SetSimulationTime(time: number)
-  + SetPlaying()
-  + StopPlaying()
-  + SelectDrone(id: number)
-  + UnselectDrone()
-  + NotifyCollisionChange(collision : Collision)
+  - droneStore : DroneStateStore
+  - pathStore : PathStateStore
+  - lightStore : LightStateStore
+
+  + ISimulation(drone : DroneStateStore, path : PathStateStore, light : LightStateStore)
+
+  + notifyChange()
+  + setEditorTime(time : number)
+  + setSimulationTime(time : number)
+  + selectDrone(id : number)
+  + unselectDrone(id : number)
+  + notifyCollisionChange(newCollision : Collision)
 
   + RequestDroneFrame(time : number) : DroneFrame
-  + RequestKeyFrames(id : number) : PathFrame
+  + RequestKeyFrames() : PathFrame
 }
 
 ' Subsystems – internal logic
 class TimeManager {
-  - droneState : DroneStateStore
-  - lightState : LightStateStore
   - currentEditorTime : number
+  - chosenLight : LightFrame
 
-  + SetEditorTime(time: number)
-  + SetSimulationTime(time: number)
+  + setEditorTime(time: number)
+  + setSimulationTime(time: number)
+  + getCurrentEditorTime() : number
+  + applyLightChanges(currentLight : Lightframe) : LightFrame
+
 }
 
-class PlaybackController {
-  - droneState : DroneStateStore
-  -currentPlayTime : number
 
-  + SetPlaying(startTime : number)
-  + StopPlaying()
-}
 
 class SelectionManager {
-  -droneState : DroneStateStore
-  -keyFrameState : KeyFrameStateStore
-  -selectedDroneId : number
-  -hasSelected : boolean
+  - selectedIds : number[]
 
-  + SelectDrone(id: number)
-  + UnselectDrone()
+  + applyPathChanges(currentPathFrame : PathFrame, allPaths : PathFrame) : PathFrame
+  + applyDroneChanges(currentDroneFrame : DroneFrame) : DroneFrame
+
+  + selectDrone(id: number)
+  + unselectDrone(id : number)
 }
 
 class CollisionManager {
-  -droneState : DroneStateStore
-  -keyFrameState : KeyFrameStateStore
   -currentCollision : Collision
 
-  + NotifyCollisionChange(collision : Collision)
+  + applyPathChanges(currentPathFrame : PathFrame, allPaths : PathFrame) : PathFrame
+  + applyDroneChanges(currentDroneFrame : DroneFrame) : DroneFrame
+
+  + notifyCollisionChange(newCollision : Collision)
 }
 
-class EventManager {
-  -droneState : DroneStateStore
-
-  + NotifyChange(time : number )
-}
 
 ' Relationships: Delegation from ISimulation to subsystems
-ISimulation "1 \n simulation" -- "1 \n timeManager" TimeManager : delegates request >
-ISimulation "1 \n simulation" -- "1 \n playbackController" PlaybackController : delegates request >
-ISimulation "1 \n simulation" -- "1 \n selectionManager" SelectionManager : delegates request >
-ISimulation "1 \n simulation" -- "1 \n collisionManager" CollisionManager : delegates request >
-ISimulation "1 \n simulation" -- "1 \n eventManager" EventManager : delegates request >
+ISimulation " " -- "1 \n timeManager" TimeManager : delegates request >
+ISimulation " " -- "1 \n selectionManager" SelectionManager : delegates request >
+ISimulation " " -- "1 \n collisionManager" CollisionManager : delegates request >
 
 ISimulation "1" -- "1 \n controller" IController : request data >
 
