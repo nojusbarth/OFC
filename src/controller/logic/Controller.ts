@@ -1,5 +1,4 @@
 import { Vector3, Color } from "three";
-import { Collision } from "../interface/Collision";
 import { ColorKeyFrame } from "../interface/ColorKeyFrame";
 import type { IController } from "../interface/IController";
 import type { IProject } from "../interface/IProject";
@@ -9,23 +8,24 @@ import { OFCEvent } from "../interface/OFCEvent";
 import { PositionKeyFrame } from "../interface/PositionKeyFrame";
 import { TimeController } from "./TimeController";
 import { Drone } from "./Drone";
-import type { IProjectDataRepository } from "../../repository/IProjectDataRepository";
 import { checkCollisions } from "./CollisionHandler";
 import { Project } from "./Project";
+import { IProjectRepository } from "../../repository/IProjectRepository";
+import { IDrone } from "../../entity/IDrone";
 
 export class Controller implements IController {
     private settings: ISettings
     private timeController: ITimeController
     private project: IProject
-    private repository: IProjectDataRepository;
+    private repository: IProjectRepository;
     // private drones: Map<number, Drone>
     private droneIdCounter: number = 0;
-    private selectedDrone: number = -1;
+    private selectedDrones: number[] = [];
     private droneEvents: Map<number, OFCEvent<number>> = new Map();
     private dronesEvent: OFCEvent<number[]> = new OFCEvent();
-    private collisionEvent: OFCEvent<Collision> = new OFCEvent();
-    private droneSelectEvent: OFCEvent<number> = new OFCEvent();
-    constructor( settings: ISettings, repository: IProjectDataRepository) {
+    private collisionEvent: OFCEvent<Map<number, Map<number, number>>> = new OFCEvent();
+    private droneSelectEvent: OFCEvent<number[]> = new OFCEvent();
+    constructor( settings: ISettings, repository: IProjectRepository) {
         this.settings = settings;
         this.project = new Project(repository, this);
         this.repository = repository;
@@ -59,9 +59,7 @@ export class Controller implements IController {
         this._getDrone(id); // validate id
         this.repository.removeDrone(id);
         this.droneEvents.delete(id);
-        if (this.selectedDrone === id) {
-            this.selectDrone(-1);
-        }
+        this.unselectDrone(id);
         this.dronesEvent.notify(this.getDrones());
     }
 
@@ -70,18 +68,25 @@ export class Controller implements IController {
     }
 
     selectDrone(id: number): void {
-        if (id === this.selectedDrone) {
+        if (this.selectedDrones.includes(id)) {
             return;
         }
         if (id !== -1) {
             this._getDrone(id); // validate id
         }
-        this.selectedDrone = id;
-        this.droneSelectEvent.notify(this.selectedDrone);
+        this.selectedDrones.push(id);
+        this.droneSelectEvent.notify(this.selectedDrones);
     }
 
-    getSelectedDrone(): number {
-        return this.selectedDrone;
+    unselectDrone(id: number): void {
+        if (this.selectedDrones.includes(id)) {
+            this.selectedDrones = this.selectedDrones.filter(e => e !== id);
+            this.droneSelectEvent.notify(this.selectedDrones);
+        }
+    }
+
+    getSelectedDrones(): number[] {
+        return this.selectedDrones;
     }
 
     getPositionKeyFrames(id: number): PositionKeyFrame[] {
@@ -146,10 +151,10 @@ export class Controller implements IController {
         this.getDroneEvent(id).notify(id);
     }
 
-    private _checkCollisions(drone: Drone): void {
+    private _checkCollisions(drone: IDrone): void {
         // TODO: properly update other drones as well
-        const collision = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
-        this.collisionEvent.notify(collision);
+        // const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
+        // this.collisionEvent.notify(collision);
     }
 
     private _getDrone(id: number) {
@@ -172,11 +177,11 @@ export class Controller implements IController {
         return this.dronesEvent;
     }
 
-    getCollisionEvent(): OFCEvent<Collision> {
+    getCollisionEvent(): OFCEvent<Map<number, Map<number, number>>> {
         return this.collisionEvent;
     }
 
-    getDroneSelectEvent(): OFCEvent<number> {
+    getDroneSelectEvent(): OFCEvent<number[]> {
         return this.droneSelectEvent;
     }
 

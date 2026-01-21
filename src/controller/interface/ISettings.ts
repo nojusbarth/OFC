@@ -1,4 +1,4 @@
-import type { DayTime } from "./DayTime"
+import type { DayTime } from "../../entity/DayTime"
 import { OFCEvent } from "./OFCEvent"
 
 export interface ISettings {

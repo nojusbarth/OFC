@@ -1,9 +1,9 @@
 import { Vector3 } from "three";
 import { PositionKeyFrame } from "../interface/PositionKeyFrame";
 import { Drone } from "./Drone";
-import { Collision } from "../interface/Collision";
+import { IDrone } from "../../entity/IDrone";
 
-export function checkCollisions(drone: Drone, otherDrones: Drone[], collisionRadius: number): Collision {
+export function checkCollisions(drone: IDrone, otherDrones: IDrone[], collisionRadius: number): Map<number, number> {
     const collisionAtlas = new Map<number, number>();
     for (const otherDrone of otherDrones) {
         if (otherDrone.getId() === drone.getId()) {
@@ -14,10 +14,10 @@ export function checkCollisions(drone: Drone, otherDrones: Drone[], collisionRad
             collisionAtlas.set(otherDrone.getId(), collisionTime);
         }
     }
-    return new Collision(drone.getId(), collisionAtlas);
+    return collisionAtlas;
 }
 
-function checkDroneCollision(droneA: Drone, droneB: Drone, collisionRadius: number): number {  
+function checkDroneCollision(droneA: IDrone, droneB: IDrone, collisionRadius: number): number {  
     // Add stationary keyframes at time 0 and end time to capture collisions before first and after last keyframe
     const endTime = Math.max(droneA.getPositionKeyFrames().slice(-1)[0]?.getTime() || 0, droneB.getPositionKeyFrames().slice(-1)[0]?.getTime() || 0);
     const keyFramesA = [new PositionKeyFrame(droneA.getPositonAtTime(0), 0) ,...droneA.getPositionKeyFrames(), new PositionKeyFrame(droneA.getPositonAtTime(endTime), endTime)];

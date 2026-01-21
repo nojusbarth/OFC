@@ -1,12 +1,12 @@
 import type { IProject } from "../interface/IProject";
-import type { IProjectDataRepository } from "../../repository/IProjectDataRepository";
 import { IController } from "../interface/IController";
+import { IProjectRepository } from "../../repository/IProjectRepository";
 
 export class Project implements IProject {
-    private repository: IProjectDataRepository;
+    private repository: IProjectRepository;
     private controller: IController;
 
-    constructor(repository: IProjectDataRepository, controller: IController) {
+    constructor(repository: IProjectRepository, controller: IController) {
         this.repository = repository;
         this.controller = controller;
     }
@@ -18,6 +18,9 @@ export class Project implements IProject {
         throw new Error("Method not implemented.");
     }
     saveProject(): void {
+        throw new Error("Method not implemented.");
+    }
+    loadProject(data: string): void {
         throw new Error("Method not implemented.");
     }
 }

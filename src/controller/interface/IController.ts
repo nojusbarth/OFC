@@ -5,7 +5,6 @@ import type { ISettings } from "./ISettings";
 import type { ITimeController } from "./ITimeController";
 import type { IProject } from "./IProject";
 import type { OFCEvent } from "./OFCEvent";
-import type { Collision } from "./Collision";
 
 export interface IController {
     getSettings(): ISettings;
@@ -16,7 +15,8 @@ export interface IController {
     removeDrone(id: number): void;
     getDrones(): number[];
     selectDrone(id: number): void;
-    getSelectedDrone(): number;
+    unselectDrone(id: number): void;
+    getSelectedDrones(): number[];
 
     getPositionKeyFrames(id: number): PositionKeyFrame[];
     getPosition(id: number): Vector3;
@@ -34,7 +34,7 @@ export interface IController {
 
     getDroneEvent(id: number): OFCEvent<number>;
     getDronesEvent(): OFCEvent<number[]>;
-    getCollisionEvent(): OFCEvent<Collision>;
-    getDroneSelectEvent(): OFCEvent<number>;
+    getCollisionEvent(): OFCEvent<Map<number, Map<number, number>>>;
+    getDroneSelectEvent(): OFCEvent<number[]>;
 }
 

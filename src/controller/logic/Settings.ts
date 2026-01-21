@@ -1,22 +1,22 @@
-import { DayTime } from "../interface/DayTime";
+import { DayTime } from "../../entity/DayTime";
 import { OFCEvent } from "../interface/OFCEvent";
 import type { ISettings } from "../interface/ISettings";
-import type { IProjectDataRepository } from "../../repository/IProjectDataRepository";
+import { IProjectRepository } from "../../repository/IProjectRepository";
 
 export class Settings implements ISettings {
-    private repository: IProjectDataRepository;
+    private repository: IProjectRepository;
 
     private endTimeChangedEvent: OFCEvent<number> = new OFCEvent();
     private dayTimeChangedEvent: OFCEvent<DayTime> = new OFCEvent();
     private droneDistanceChangedEvent: OFCEvent<number> = new OFCEvent();
 
-    constructor(repository: IProjectDataRepository) {
+    constructor(repository: IProjectRepository) {
         this.repository = repository;
     }
 
     setEndTime(time: number): void {
         if (this.getEndTime() !== time) {
-            this.repository.setMaxTimelineTime(time);
+            this.repository.setMaxTime(time);
             this.endTimeChangedEvent.notify(time);
         }
     }

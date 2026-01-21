@@ -1,14 +1,34 @@
 export interface IAction {
-
+    getType(): ActionType;
+    getData(): any;
+    getTime(): number;
 }
 
-class Action implements IAction {
-    data: any
-    time!: number
-    type!: ActionType
+export class Action implements IAction {
+    private type: ActionType;
+    private data: any;
+    private time: number;
+
+    constructor(type: ActionType, data: any, time: number) {
+        this.type = type;
+        this.data = data;
+        this.time = time;
+    }
+
+    getType(): ActionType {
+        return this.type;
+    }
+
+    getData(): any {
+        return this.data;
+    }
+
+    getTime(): number {
+        return this.time;
+    }
 }
 
-const enum ActionType {
+export enum ActionType {
     ADD_DRONE = 'ADD_DRONE',
     REMOVE_DRONE = 'REMOVE_DRONE',
     ADD_POSITION_KEYFRAME = 'ADD_POSITION_KEYFRAME',
