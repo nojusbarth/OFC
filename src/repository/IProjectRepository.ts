@@ -1,12 +1,12 @@
-import {IDrone} from "../entity/IDrone";
+import {IDrone} from "../entity/Drone";
 
 export interface IProjectRepository {
 
     getAllDrones(): Array<IDrone>
-    getDroneById(id: string): IDrone
+    getDroneById(id: number): IDrone
     addDrone(data: IDrone): void
     updateDrone(data: IDrone): void
-    removeDrone(id: string): void
+    removeDrone(id: number): void
 
     getCollisionRadius(): number
     setCollisionRadius(radius: number): void

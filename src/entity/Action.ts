@@ -1,11 +1,25 @@
 export interface IAction {
-
+    getData(): any
+    getTime(): number
+    getType(): ActionType
 }
 
 class Action implements IAction {
-    data: any
-    time!: number
-    type!: ActionType
+    private data: any
+    private time!: number
+    private type!: ActionType
+
+    getData(): any {
+        return this.data
+    }
+
+    getTime(): number {
+        return this.time
+    }
+
+    getType(): ActionType {
+        return this.type;
+    }
 }
 
 const enum ActionType {

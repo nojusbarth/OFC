@@ -15,6 +15,4 @@ class UndoRepository implements IUndoRepository {
     addAction(action: IAction): void {
         this.actions.push(action)
     }
-
-
 }
