@@ -16,7 +16,6 @@ interface Settings {
 }
 
 interface Drone {
-    id: number; // TODO: ÄNDERUNG: ADD
     waypoints: PositionKeyframe[]
     colors: ColorKeyframe[]
 }
@@ -35,5 +34,5 @@ interface ColorKeyframe {
  * Definiert die JSON-Datei für das Waypoint-at-time-Format
  */
 export interface WaypointAtTime {
-    waypoints: PositionKeyframe[];
+    drones: Drone[]
 }

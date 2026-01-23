@@ -1,7 +1,7 @@
 import {IProjectRepository} from "./IProjectRepository";
 import {IDrone} from "./entity/IDrone";
 import {DayTime} from "./entity/DayTime";
-import {ProjectConfig} from "./ProjectConfig";
+import {ProjectConfig, WaypointAtTime} from "./ProjectConfig";
 import {FILE_VERSION} from "./RepositoryConstants";
 
 class ProjectRepository implements IProjectRepository {
@@ -47,7 +47,7 @@ class ProjectRepository implements IProjectRepository {
     }
 
     getDroneById(id: number): IDrone {
-        return this.drones.find(d => d.id === id )!;
+        return this.drones.find(d => d.getId() === id )!;
     }
 
     getMaxTime(): number {
@@ -76,12 +76,28 @@ class ProjectRepository implements IProjectRepository {
     }
 
     export(): string {
-        // TODO create export string
-        return "";
+        const format: WaypointAtTime = {
+            drones: [
+                // TODO: Dronen mappen
+            ]
+        }
+        return JSON.stringify(format, null, 2);
     }
 
-    exportConfig(path: string): boolean { // TODO: ÄNDERUNG: METHODE ADD
-        // TODO save project at path
-        return false
+    exportConfig(): string { // TODO: ÄNDERUNG: METHODE ADD
+        const config: ProjectConfig = {
+            version: FILE_VERSION,
+            settings : {
+                endTime: this.endTime,
+                collisionRadius: this.collisionRadius,
+                dayTime: this.dayTime
+            },
+            drones: [
+                // TODO: Dronen mappen
+            ]
+        }
+
+        return JSON.stringify(config, null, 2)
+
     }
 }

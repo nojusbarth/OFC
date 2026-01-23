@@ -19,5 +19,5 @@ export interface IProjectRepository {
     setMaxTime(max: number): void
 
     export(): string
-    exportConfig(path: string): boolean
+    exportConfig(): string
 }
