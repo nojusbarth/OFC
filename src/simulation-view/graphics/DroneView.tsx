@@ -45,7 +45,7 @@ export const DroneView: React.FC<Props> = ({ frame }) => {
             <meshStandardMaterial
               color={color}
               emissive={frame.droneColors.get(droneId) ?? "white"} // das macht’s „leuchtend“
-              emissiveIntensity={1.0} // Stärke des Leuchtens
+              emissiveIntensity={5.0} // Stärke des Leuchtens
             />
           </mesh>
         );

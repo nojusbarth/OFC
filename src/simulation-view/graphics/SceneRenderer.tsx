@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from "react";
-import { OrbitControls, PerspectiveCamera, Sky } from "@react-three/drei";
+import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
+import * as THREE from "three";
+import { TextureLoader, RepeatWrapping } from "three";
+import { RGBELoader } from "three-stdlib";
 
 import { DroneStateStore } from "../state/DroneStateStore";
 import { PathStateStore } from "../state/PathStateStore";
@@ -13,29 +16,24 @@ import {
   cameraStartPosition,
   sceneBounds,
   controlsConfig,
-  planeSize,
-  planeColor,
-  skyConfig,
   defaultDroneFrame,
   defaultPathFrame,
   defaultLightFrame,
+  planeConfig,
+  lightFrames,
 } from "../config";
 
-type SceneRendererProps = {
+export const SceneRenderer: React.FC<{
   droneStore: DroneStateStore;
   pathStore: PathStateStore;
   lightStore: LightStateStore;
-};
-
-export const SceneRenderer: React.FC<SceneRendererProps> = ({
-  droneStore,
-  pathStore,
-  lightStore,
-}) => {
-  /* ---------------- React State ---------------- */
+}> = ({ droneStore, pathStore, lightStore }) => {
   const [droneFrame, setDroneFrame] = useState(defaultDroneFrame);
   const [pathFrame, setPathFrame] = useState(defaultPathFrame);
   const [lightFrame, setLightFrame] = useState(defaultLightFrame);
+
+  const { camera, gl, scene } = useThree();
+  const controlsRef = useRef<any>(null);
 
   /* ---------------- Store Binding ---------------- */
   useEffect(() => {
@@ -45,27 +43,92 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
   }, [droneStore, pathStore, lightStore]);
 
   /* ---------------- Kamera & Controls ---------------- */
-  const { camera } = useThree();
-  const controlsRef = useRef<any>(null);
-
   useFrame(() => {
-    // Kamera-Position clampen innerhalb der Bounds
-    camera.position.x = Math.max(sceneBounds.minX, Math.min(sceneBounds.maxX, camera.position.x));
-    camera.position.y = Math.max(sceneBounds.minY, Math.min(sceneBounds.maxY, camera.position.y));
-    camera.position.z = Math.max(sceneBounds.minZ, Math.min(sceneBounds.maxZ, camera.position.z));
+    camera.position.x = Math.max(
+      sceneBounds.minX,
+      Math.min(sceneBounds.maxX, camera.position.x),
+    );
+    camera.position.y = Math.max(
+      sceneBounds.minY,
+      Math.min(sceneBounds.maxY, camera.position.y),
+    );
+    camera.position.z = Math.max(
+      sceneBounds.minZ,
+      Math.min(sceneBounds.maxZ, camera.position.z),
+    );
 
-    // OrbitControls Target clampen
     if (controlsRef.current) {
-      controlsRef.current.target.x = Math.max(sceneBounds.minX, Math.min(sceneBounds.maxX, controlsRef.current.target.x));
-      controlsRef.current.target.z = Math.max(sceneBounds.minZ, Math.min(sceneBounds.maxZ, controlsRef.current.target.z));
+      controlsRef.current.target.x = Math.max(
+        sceneBounds.minX,
+        Math.min(sceneBounds.maxX, controlsRef.current.target.x),
+      );
+      controlsRef.current.target.z = Math.max(
+        sceneBounds.minZ,
+        Math.min(sceneBounds.maxZ, controlsRef.current.target.z),
+      );
     }
   });
 
-  /* ---------------- Render ---------------- */
+  /* ---------------- Boden ---------------- */
+  const { size, texturePath, textureRepeat, roughness, metalness } =
+    planeConfig;
+  const floorTexture = new TextureLoader().load(texturePath);
+  floorTexture.wrapS = floorTexture.wrapT = RepeatWrapping;
+  floorTexture.repeat.set(textureRepeat[0], textureRepeat[1]);
+
+  /* ---------------- Himmel ---------------- */
+  const [hdriMap, setHdriMap] = useState<Record<string, THREE.Texture>>({});
+
+  // Lade alle HDRIs einmal
+  useEffect(() => {
+    const loader = new RGBELoader();
+    const frames = [
+      lightFrames.night,
+      lightFrames.morning,
+      lightFrames.noon,
+      lightFrames.evening,
+    ];
+
+
+    frames.forEach((frame) => {
+      if (frame.skyTexturePath && !hdriMap[frame.skyTexturePath]) {
+        loader.load(frame.skyTexturePath, (tex) => {
+          tex.mapping = THREE.EquirectangularReflectionMapping;
+          setHdriMap((prev) => ({ ...prev, [frame.skyTexturePath!]: tex }));
+        });
+      }
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!lightFrame.skyTexturePath) return;
+    const tex = hdriMap[lightFrame.skyTexturePath];
+    if (!tex) return; // noch nicht geladen
+
+    const pmremGenerator = new THREE.PMREMGenerator(gl);
+    pmremGenerator.compileEquirectangularShader();
+    const envMap = pmremGenerator.fromEquirectangular(tex).texture;
+
+    scene.environment = envMap;
+    scene.background = envMap;
+    gl.toneMappingExposure = lightFrame.intensity;
+
+    return () => {
+      envMap.dispose();
+      pmremGenerator.dispose();
+    };
+  }, [lightFrame, hdriMap, gl, scene]); // <-- hdriMap im deps-Array
+
+  /*-------------- Rendering --------------------- */
+
   return (
     <>
       {/* Kamera */}
-      <PerspectiveCamera makeDefault position={cameraStartPosition.toArray()} fov={60} />
+      <PerspectiveCamera
+        makeDefault
+        position={cameraStartPosition.toArray()}
+        fov={60}
+      />
 
       {/* Controls */}
       <OrbitControls
@@ -81,25 +144,25 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
       <directionalLight
         intensity={lightFrame.intensity}
         color={lightFrame.color}
-        position={[lightFrame.position.x, lightFrame.position.y, lightFrame.position.z]}
+        position={[
+          lightFrame.position.x,
+          lightFrame.position.y,
+          lightFrame.position.z,
+        ]}
         castShadow
       />
 
       {/* Boden */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[planeSize, planeSize]} />
-        <meshStandardMaterial color={planeColor} />
+        <planeGeometry args={[size, size]} />
+        <meshStandardMaterial
+          map={floorTexture}
+          roughness={roughness}
+          metalness={metalness}
+        />
       </mesh>
 
-      {/* Himmel */}
-      <Sky
-        distance={skyConfig.distance}
-        sunPosition={[lightFrame.position.x, lightFrame.position.y, lightFrame.position.z]}
-        inclination={skyConfig.inclination}
-        azimuth={skyConfig.azimuth}
-      />
-
-      {/* Szene */}
+      {/* Drohnen & Pfad */}
       <DroneView frame={droneFrame} />
       <PathView frame={pathFrame} />
     </>

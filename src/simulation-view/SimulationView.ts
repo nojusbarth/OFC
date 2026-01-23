@@ -73,6 +73,7 @@ export class SimulationView implements ISimulationView {
       draft.color = currentLightFrame.color;
       draft.intensity = currentLightFrame.intensity;
       draft.position = currentLightFrame.position;
+      draft.skyTexturePath = currentLightFrame.skyTexturePath;
     });
   }
 

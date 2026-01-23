@@ -1,36 +1,15 @@
 import { LightFrame } from "../state/LightFrame";
-import { Vector3 } from "three";
+
+import { lightFrames } from "../config";
 
 export class TimeManager {
   private currentEditorTime: number;
 
   private chosenLight: LightFrame;
 
-  private NIGHT: LightFrame = {
-    intensity: 0.15,
-    color: "#6b7cff", // kühles Mondlicht
-    position: new Vector3(0, -10, 5),
-  };
-  private NOON: LightFrame = {
-    intensity: 1.2,
-    color: "#ffffff",
-    position: new Vector3(0, 20, 0),
-  };
-  private MORNING: LightFrame = {
-    intensity: 0.6,
-    color: "#ffb347", // warmes Orange
-    position: new Vector3(10, 5, 10),
-  };
-
-  private EVENING: LightFrame = {
-    intensity: 0.5,
-    color: "#ff7a18", // rötlicher Sunset
-    position: new Vector3(-10, 4, -10),
-  };
-
   public constructor() {
     this.currentEditorTime = 0;
-    this.chosenLight = this.MORNING;
+    this.chosenLight = lightFrames.noon;
   }
 
   public setEditorTime(time: number) {
@@ -43,13 +22,13 @@ export class TimeManager {
 
   public setSimulationTime(time: number) {
     if (time >= 5.0 && time <= 11) {
-      this.chosenLight = this.MORNING;
+      this.chosenLight = lightFrames.morning;
     } else if (time >= 12 && time <= 17) {
-      this.chosenLight = this.NOON;
+      this.chosenLight = lightFrames.noon;
     } else if (time >= 18 && time <= 22) {
-      this.chosenLight = this.EVENING;
+      this.chosenLight = lightFrames.evening;
     } else {
-      this.chosenLight = this.NIGHT;
+      this.chosenLight = lightFrames.night;
     }
   }
 
