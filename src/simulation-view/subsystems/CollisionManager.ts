@@ -1,19 +1,18 @@
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
-import { Collision } from "../../Collision";
 
 export class CollisionManager {
-  private currentCollision: Collision;
+  private currentCollision: Array<number>;
 
   public constructor() {
-    this.currentCollision = new Collision();
+    this.currentCollision = new Array();
   }
 
   public applyPathChanges(
     currentPathFrame: PathFrame,
-    allPaths: PathFrame
+    allPaths: PathFrame,
   ): PathFrame {
-    this.currentCollision.ids.forEach((id) => {
+    this.currentCollision.forEach((id: number) => {
       const positions = allPaths.pathPositions.get(id);
       if (!positions) throw new Error(`KeyFrame ${id} not found`);
 
@@ -25,14 +24,14 @@ export class CollisionManager {
   }
 
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
-    this.currentCollision.ids.forEach((id) => {
+    this.currentCollision.forEach((id: number) => {
       currentDroneFrame.droneColors.set(id, "red");
     });
 
     return currentDroneFrame;
   }
 
-  public notifyCollisionChange(newCollision: Collision) {
+  public notifyCollisionChange(newCollision: Array<number>) {
     this.currentCollision = newCollision;
   }
 }

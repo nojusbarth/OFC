@@ -6,11 +6,11 @@ import { Vector3 } from "three";
 import { TimeManager } from "./subsystems/TimeManager";
 import { PathFrame } from "./state/PathFrame";
 import { SelectionManager } from "./subsystems/SelectionManager";
-import { Collision } from "../Collision";
 import { CollisionManager } from "./subsystems/CollisionManager";
 import { LightFrame } from "./state/LightFrame";
+import { ISimulationView } from "./ISimulationView";
 
-export class SimulationView {
+export class SimulationView implements ISimulationView {
   private droneStore?: DroneStateStore;
   private pathStore?: PathStateStore;
   private lightStore?: LightStateStore;
@@ -22,7 +22,7 @@ export class SimulationView {
   constructor(
     drone: DroneStateStore,
     path: PathStateStore,
-    light: LightStateStore
+    light: LightStateStore,
   ) {
     this.droneStore = drone;
     this.pathStore = path;
@@ -37,7 +37,7 @@ export class SimulationView {
     //SEQUENCE OF CHANGES IS IMPORTANT, LATER CHANGES OVERWRITE CHANGES BEFORE
 
     var currentDroneFrame: DroneFrame = this.requestDroneFrame(
-      this.timeManager.getCurrentEditorTime()
+      this.timeManager.getCurrentEditorTime(),
     );
     var allPathFrames: PathFrame = this.requestKeyFrames();
     var currentPathFrame: PathFrame = new PathFrame();
@@ -49,14 +49,14 @@ export class SimulationView {
       this.selectionManager.applyDroneChanges(currentDroneFrame);
     currentPathFrame = this.selectionManager.applyPathChanges(
       currentPathFrame,
-      allPathFrames
+      allPathFrames,
     );
 
     currentDroneFrame =
       this.collisionManager.applyDroneChanges(currentDroneFrame);
     currentPathFrame = this.collisionManager.applyPathChanges(
       currentPathFrame,
-      allPathFrames
+      allPathFrames,
     );
 
     this.droneStore?.update((draft) => {
@@ -76,11 +76,11 @@ export class SimulationView {
     });
   }
 
-  public notifyChange() {
+  public notifyFrameChange() {
     this.drawChanges();
   }
 
-  public notifiyCollisionChange(newCollision: Collision) {
+  public notifyCollisionChange(newCollision: Array<number>) {
     this.collisionManager.notifyCollisionChange(newCollision);
 
     this.drawChanges();
