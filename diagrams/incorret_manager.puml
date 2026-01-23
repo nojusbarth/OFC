@@ -1,0 +1,18 @@
+@startuml
+
+
+interface IController
+
+class DrawCommand
+
+IController --> DrawCommand : draw xy
+
+
+class SelectionDraw 
+class CollisionDraw
+
+SelectionDraw --|> DrawCommand
+CollisionDraw --|> DrawCommand
+
+
+@enduml

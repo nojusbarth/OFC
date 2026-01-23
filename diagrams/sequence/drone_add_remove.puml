@@ -1,0 +1,43 @@
+@startuml
+
+participant ":Controller" as Controller
+
+participant ":SimulationView" as SimulationView
+
+
+'Drone hinzufügen
+
+Controller -> SimulationView : notifyFrameChange()
+'Simulation view start
+
+activate SimulationView
+SimulationView->SimulationView : drawChanges()
+activate SimulationView
+SimulationView -> Controller : requestFrameData(time)
+SimulationView <<-- Controller : frameData
+SimulationView -->> SimulationView
+deactivate SimulationView
+
+Controller <<-- SimulationView
+deactivate SimulationView
+
+'Simulation view end
+
+
+'Drone entfernen------------------------------------------
+Controller -> SimulationView : notifyFrameChange()
+'Simulation view start
+activate SimulationView
+SimulationView->SimulationView : drawChanges()
+activate SimulationView
+SimulationView -> Controller : requestFrameData(time)
+SimulationView <<-- Controller : frameData
+SimulationView -->> SimulationView
+deactivate SimulationView
+
+Controller <<-- SimulationView
+deactivate SimulationView
+
+'Simulation view end
+
+@enduml

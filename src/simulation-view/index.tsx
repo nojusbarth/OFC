@@ -2,7 +2,7 @@ import { FC } from "react";
 import { DroneStateStore } from "./state/DroneStateStore";
 import { PathStateStore } from "./state/PathStateStore";
 import { LightStateStore } from "./state/LightStateStore";
-import { ISimulation } from "./ISimulation";
+import { SimulationView } from "./SimulationView";
 import { SceneRenderer } from "./graphics/SceneRenderer";
 
 
@@ -13,7 +13,7 @@ export function initSimulation() {
   const pathStore = new PathStateStore();
   const lightStore = new LightStateStore();
 
-  const simulation = new ISimulation(
+  const simulation = new SimulationView(
     droneStore,
     pathStore,
     lightStore

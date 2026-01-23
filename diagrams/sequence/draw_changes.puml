@@ -1,0 +1,109 @@
+@startuml
+skinparam style strictuml
+' syncronous send: ->
+' asyncronous send: ->>
+' syncronous return: -->
+' asyncronous return: -->>
+
+
+participant ":Controller" as Controller
+
+participant ":SimulationView" as SimulationView
+participant ":SelectionManager" as SelectionManager
+participant ":TimeManager" as TimeManager
+participant ":CollisionManager" as CollisionManager
+
+participant ":DroneStateStore" as DroneStateStore
+participant ":DroneView" as DroneView
+participant ":PathStateStore" as PathStateStore
+participant ":PathView" as PathView
+participant ":LightStateStore" as LightStateStore
+participant ":SceneRenderer" as SceneRenderer
+
+activate Controller
+Controller -> SimulationView
+
+activate SimulationView
+
+SimulationView->SimulationView : drawChanges()
+activate SimulationView
+SimulationView -> TimeManager : getCurrentEditorTime()
+activate TimeManager
+SimulationView <<-- TimeManager : time
+deactivate TimeManager
+
+SimulationView -> Controller : getDrones()
+SimulationView <<-- Controller : numbers[]
+
+group loop (numers):
+
+SimulationView -> Controller : getPositionKeyFrames(number)
+SimulationView <<-- Controller : posKeyFrames[]
+SimulationView -> Controller : getColorKeyFrames(number)
+SimulationView <<-- Controller : colKeyFrames[]
+SimulationView -> Controller : getPositionAt(number, time)
+SimulationView <<-- Controller : position
+
+end
+
+SimulationView -> SelectionManager : applyDroneChanges(currentDroneFrame)
+activate SelectionManager
+SimulationView <<-- SelectionManager : modifiedDrones
+deactivate SelectionManager
+
+SimulationView -> SelectionManager : applyPathChanges(currentPathFrame)
+activate SelectionManager
+SimulationView <<-- SelectionManager : modifiedPath
+deactivate SelectionManager
+
+SimulationView -> CollisionManager : applyDroneChanges(modifiedDrones)
+activate CollisionManager
+SimulationView <<-- CollisionManager : modifiedDrones
+deactivate CollisionManager
+
+SimulationView -> CollisionManager : applyPathChanges(modifiedPath)
+activate CollisionManager
+SimulationView <<-- CollisionManager : modifiedPath
+deactivate CollisionManager
+
+SimulationView -> TimeManager : applyLightChanges(currentLightFrame)
+activate TimeManager
+SimulationView <<-- TimeManager : modifiedLight
+deactivate TimeManager
+
+SimulationView -> DroneStateStore : update(modifiedDrones)
+activate DroneStateStore
+DroneStateStore -> DroneView : render()
+activate DroneView
+DroneStateStore <<-- DroneView
+deactivate DroneView
+SimulationView <<-- DroneStateStore
+deactivate DroneStateStore
+
+SimulationView -> PathStateStore : update(modifiedPath)
+activate PathStateStore
+
+PathStateStore -> PathView : render()
+activate PathView
+PathStateStore <<-- PathView
+deactivate PathView
+SimulationView <<-- PathStateStore
+deactivate PathStateStore
+
+SimulationView -> LightStateStore : update(modifiedLight)
+activate LightStateStore
+
+LightStateStore -> SceneRenderer : render()
+activate SceneRenderer
+LightStateStore <<-- SceneRenderer
+deactivate SceneRenderer
+SimulationView <<-- LightStateStore
+deactivate LightStateStore
+
+
+SimulationView -->> SimulationView
+deactivate SimulationView
+Controller <<-- SimulationView
+deactivate SimulationView
+
+@enduml
