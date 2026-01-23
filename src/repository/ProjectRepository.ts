@@ -16,10 +16,10 @@ class ProjectRepository implements IProjectRepository {
             const content = e.target?.result;
             if (content != null) {
                 let data: ProjectConfig = JSON.parse(content as string)
-                if (data.version != FILE_VERSION) {
+                if (data.version !== FILE_VERSION) {
                     throw new Error(`Failed to load project: ${data.version} is not supported`);
                 }
-                this.drones = data.drones;
+                // TODO: Dronen setzten
                 this.collisionRadius = data.settings.collisionRadius
                 this.dayTime = data.settings.dayTime
                 this.endTime = data.settings.endTime
