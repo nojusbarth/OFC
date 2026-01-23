@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { OrbitControls, PerspectiveCamera, Sky } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 
@@ -9,28 +9,17 @@ import { LightStateStore } from "../state/LightStateStore";
 import { DroneView } from "./DroneView";
 import { PathView } from "./PathView";
 
-import { DroneFrame } from "../state/DroneFrame";
-import { PathFrame } from "../state/PathFrame";
-import { LightFrame } from "../state/LightFrame";
-
-import { Vector3 } from "three";
-
-
-const initialDroneFrame: DroneFrame = {
-  dronePositions: new Map([]),
-  droneColors: new Map([]),
-};
-
-const initialPathFrame: PathFrame = {
-  pathPositions: new Map([]),
-  pathColors: new Map([])
-};
-
-const initialLightFrame: LightFrame = {
-  intensity: 1,
-  color: "white",
-  position: new Vector3( 5, 5, 5 ),
-};
+import {
+  cameraStartPosition,
+  sceneBounds,
+  controlsConfig,
+  planeSize,
+  planeColor,
+  skyConfig,
+  defaultDroneFrame,
+  defaultPathFrame,
+  defaultLightFrame,
+} from "../config";
 
 type SceneRendererProps = {
   droneStore: DroneStateStore;
@@ -44,37 +33,47 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
   lightStore,
 }) => {
   /* ---------------- React State ---------------- */
-  const [droneFrame, setDroneFrame] = useState<DroneFrame>(initialDroneFrame);
-  const [pathFrame, setPathFrame] = useState<PathFrame>(initialPathFrame);
-  const [lightFrame, setLightFrame] = useState<LightFrame>(initialLightFrame);
+  const [droneFrame, setDroneFrame] = useState(defaultDroneFrame);
+  const [pathFrame, setPathFrame] = useState(defaultPathFrame);
+  const [lightFrame, setLightFrame] = useState(defaultLightFrame);
 
-  /* ---------------- Store ↔ React Binding ---------------- */
+  /* ---------------- Store Binding ---------------- */
   useEffect(() => {
     droneStore.bindState(setDroneFrame);
     pathStore.bindState(setPathFrame);
     lightStore.bindState(setLightFrame);
   }, [droneStore, pathStore, lightStore]);
 
-  /* ---------------- Kamera-Schutz ---------------- */
+  /* ---------------- Kamera & Controls ---------------- */
   const { camera } = useThree();
-  const minCameraHeight = 1;
+  const controlsRef = useRef<any>(null);
 
   useFrame(() => {
-    if (camera.position.y < minCameraHeight) {
-      camera.position.y = minCameraHeight;
+    // Kamera-Position clampen innerhalb der Bounds
+    camera.position.x = Math.max(sceneBounds.minX, Math.min(sceneBounds.maxX, camera.position.x));
+    camera.position.y = Math.max(sceneBounds.minY, Math.min(sceneBounds.maxY, camera.position.y));
+    camera.position.z = Math.max(sceneBounds.minZ, Math.min(sceneBounds.maxZ, camera.position.z));
+
+    // OrbitControls Target clampen
+    if (controlsRef.current) {
+      controlsRef.current.target.x = Math.max(sceneBounds.minX, Math.min(sceneBounds.maxX, controlsRef.current.target.x));
+      controlsRef.current.target.z = Math.max(sceneBounds.minZ, Math.min(sceneBounds.maxZ, controlsRef.current.target.z));
     }
   });
 
   /* ---------------- Render ---------------- */
   return (
     <>
-      {/* Kamera & Controls */}
-      <PerspectiveCamera makeDefault position={[10, 10, 10]} fov={60} />
+      {/* Kamera */}
+      <PerspectiveCamera makeDefault position={cameraStartPosition.toArray()} fov={60} />
+
+      {/* Controls */}
       <OrbitControls
-        maxPolarAngle={Math.PI / 2}
-        minPolarAngle={Math.PI / 6}
-        minDistance={5}
-        maxDistance={50}
+        ref={controlsRef}
+        maxPolarAngle={controlsConfig.maxPolarAngle}
+        minPolarAngle={controlsConfig.minPolarAngle}
+        minDistance={controlsConfig.minDistance}
+        maxDistance={controlsConfig.maxDistance}
       />
 
       {/* Licht */}
@@ -82,30 +81,22 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
       <directionalLight
         intensity={lightFrame.intensity}
         color={lightFrame.color}
-        position={[
-          lightFrame.position.x,
-          lightFrame.position.y,
-          lightFrame.position.z,
-        ]}
+        position={[lightFrame.position.x, lightFrame.position.y, lightFrame.position.z]}
         castShadow
       />
 
       {/* Boden */}
       <mesh receiveShadow rotation={[-Math.PI / 2, 0, 0]}>
-        <planeGeometry args={[100, 100]} />
-        <meshStandardMaterial color="#228B22" />
+        <planeGeometry args={[planeSize, planeSize]} />
+        <meshStandardMaterial color={planeColor} />
       </mesh>
 
       {/* Himmel */}
       <Sky
-        distance={450000}
-        sunPosition={[
-          lightFrame.position.x,
-          lightFrame.position.y,
-          lightFrame.position.z,
-        ]}
-        inclination={0.49}
-        azimuth={0.25}
+        distance={skyConfig.distance}
+        sunPosition={[lightFrame.position.x, lightFrame.position.y, lightFrame.position.z]}
+        inclination={skyConfig.inclination}
+        azimuth={skyConfig.azimuth}
       />
 
       {/* Szene */}
@@ -114,4 +105,3 @@ export const SceneRenderer: React.FC<SceneRendererProps> = ({
     </>
   );
 };
-

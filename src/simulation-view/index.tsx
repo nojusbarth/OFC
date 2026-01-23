@@ -6,8 +6,10 @@ import { SimulationView } from "./SimulationView";
 import { SceneRenderer } from "./graphics/SceneRenderer";
 
 
-
-//  EXECUTE ONLY ONCE
+/**
+ * Initialisiert das simulation-view Paket. NUR EINMAL AUSFÜHREN
+ * @returns simulation-view interface und scene React Komponente
+ */
 export function initSimulation() {
   const droneStore = new DroneStateStore();
   const pathStore = new PathStateStore();
