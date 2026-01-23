@@ -1,5 +1,5 @@
-import {IDrone} from "../entity/IDrone";
-import {DayTime} from "../entity/DayTime";
+import {IDrone} from "./entity/IDrone";
+import {DayTime} from "./entity/DayTime";
 
 export interface IProjectRepository {
 
@@ -19,5 +19,5 @@ export interface IProjectRepository {
     setMaxTime(max: number): void
 
     export(): string
-    saveProject(path: string): boolean
+    exportConfig(path: string): boolean
 }

@@ -1,4 +1,4 @@
-import {IAction} from "../entity/Action";
+import {IAction} from "./entity/Action";
 import {IUndoRepository} from "./IUndoRepository";
 
 class UndoRepository implements IUndoRepository {

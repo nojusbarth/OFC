@@ -1,4 +1,4 @@
-import {IAction} from "../entity/IAction";
+import {IAction} from "./entity/IAction";
 
 export interface IUndoRepository {
     popAction(): IAction | null

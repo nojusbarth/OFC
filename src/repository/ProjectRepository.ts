@@ -1,12 +1,34 @@
 import {IProjectRepository} from "./IProjectRepository";
-import {IDrone} from "../entity/IDrone";
-import {DayTime} from "../entity/DayTime";
+import {IDrone} from "./entity/IDrone";
+import {DayTime} from "./entity/DayTime";
+import {ProjectConfig} from "./ProjectConfig";
+import {FILE_VERSION} from "./RepositoryConstants";
 
 class ProjectRepository implements IProjectRepository {
     private drones: Array<IDrone> = []
     private collisionRadius: number = 0
     private dayTime: DayTime = DayTime.NOON
-    private maxTime: number = 0
+    private endTime: number = 0 // TODO: ÄNDERUNG: NAME CHANGE
+
+    constructor(file: File) { // TODO: ÄNDERUNG: ADD CONSTRUCTOR
+        let reader = new FileReader();
+        reader.onloadend = (e: ProgressEvent<FileReader>) => {
+            const content = e.target?.result;
+            if (content != null) {
+                let data: ProjectConfig = JSON.parse(content as string)
+                if (data.version != FILE_VERSION) {
+                    throw new Error(`Failed to load project: ${data.version} is not supported`);
+                }
+                this.drones = data.drones;
+                this.collisionRadius = data.settings.collisionRadius
+                this.dayTime = data.settings.dayTime
+                this.endTime = data.settings.endTime
+            } else {
+                throw new Error(`Failed to load project: ${e}`);
+            }
+        }
+        reader.readAsText(file);
+    }
 
     addDrone(drone: IDrone): void {
         this.drones.push(drone)
@@ -25,11 +47,11 @@ class ProjectRepository implements IProjectRepository {
     }
 
     getDroneById(id: number): IDrone {
-        return this.drones.find(d => d.getId() === id )!;
+        return this.drones.find(d => d.id === id )!;
     }
 
     getMaxTime(): number {
-        return this.maxTime;
+        return this.endTime;
     }
 
     removeDrone(id: number): void {
@@ -45,7 +67,7 @@ class ProjectRepository implements IProjectRepository {
     }
 
     setMaxTime(max: number): void {
-        this.maxTime = max;
+        this.endTime = max;
     }
 
     updateDrone(drone: IDrone): void {
@@ -58,7 +80,7 @@ class ProjectRepository implements IProjectRepository {
         return "";
     }
 
-    saveProject(path: string): boolean {
+    exportConfig(path: string): boolean { // TODO: ÄNDERUNG: METHODE ADD
         // TODO save project at path
         return false
     }
