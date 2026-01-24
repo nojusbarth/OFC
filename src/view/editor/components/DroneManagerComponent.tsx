@@ -13,5 +13,12 @@ export default function DroneManagerComponent({}: DroneManagerComponentProps) {
   const [collidingDrones, setCollidingDrones] = useState<Array<number>>([]);
   const [colors, setColors] = useState<Map<number, Color>>(new Map());
 
-  return <div>Drone Manager Component</div>;
+  return (
+    <div
+      className="bg-secondary text-light p-3 border-top border-dark"
+      style={{ height: "150px" }}
+    >
+      DroneManager
+    </div>
+  );
 }
