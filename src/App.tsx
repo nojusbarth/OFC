@@ -1,19 +1,27 @@
-import React from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React, { useState } from "react";
+
+import EditorComponent from "./view/editor/EditorComponent";
+import StartpageComponent from "./view/startpage/StartpageComponent";
+
+import "./App.css"; // Custom CSS
 
 function App() {
-  return (
-    // Bootstrap test
-    <div className="container mt-5">
-      <div className="alert alert-success" role="alert">
-        ✅ Bootstrap funktioniert!
-      </div>
+  // State Hooks
+  const [showStartpage, setShowStartpage] = useState<boolean>(false); //TODO true
 
-      <button className="btn btn-primary me-2">Primary</button>
-      <button className="btn btn-danger">Danger</button>
-    </div>
-  );
+  let inhalt: React.ReactNode;
+  if (showStartpage) {
+    inhalt = <StartpageComponent />;
+  } else {
+    inhalt = (
+      <EditorComponent
+        // controller={controller} TODO
+        toggleStartpage={() => setShowStartpage(true)}
+      />
+    );
+  }
+
+  return inhalt;
 }
 
 export default App;
