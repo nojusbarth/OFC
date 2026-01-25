@@ -143,7 +143,7 @@ export class UndoableController implements IUndoableController {
 
         this.undoStack.addAction(action);
         if (!this.redoFlag) {
-            while (this.redoStack.popAction() !== null) {}
+            while (this.redoStack.popAction()) {}
         }
     }
 

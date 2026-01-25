@@ -25,6 +25,7 @@ export class Controller implements IController {
     private dronesEvent: OFCEvent<number[]> = new OFCEvent();
     private collisionEvent: OFCEvent<Map<number, Map<number, number>>> = new OFCEvent();
     private droneSelectEvent: OFCEvent<number[]> = new OFCEvent();
+    private collisionState: Map<number, Map<number, number>> = new Map();
     constructor( settings: ISettings, repository: IProjectRepository) {
         this.settings = settings;
         this.project = new Project(repository, this);
@@ -61,6 +62,7 @@ export class Controller implements IController {
         this.droneEvents.delete(id);
         this.unselectDrone(id);
         this.dronesEvent.notify(this.getDrones());
+        this._mergeCollissions(id, new Map()); // remove collisions
     }
 
     getDrones(): number[] {
@@ -152,9 +154,32 @@ export class Controller implements IController {
     }
 
     private _checkCollisions(drone: IDrone): void {
-        // TODO: properly update other drones as well
-        // const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
-        // this.collisionEvent.notify(collision);
+        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
+        this._mergeCollissions(drone.getId(), collisions);
+    }
+
+    private _mergeCollissions(drone: number, collisions: Map<number, number>) {
+        if (collisions.size === 0) {
+            this.collisionState.delete(drone);
+        } else {
+            this.collisionState.set(drone, collisions);
+        }
+        for (const id of this.getDrones()) {
+            if (id !== drone) {
+                const state = this.collisionState.get(id) ?? new Map();
+                if (collisions.has(id)) {
+                    state.set(drone, collisions.get(id)!);
+                } else {
+                    state.delete(drone);
+                }
+                if (state.size === 0) {
+                    this.collisionState.delete(id);
+                } else {
+                    this.collisionState.set(id, state);
+                }
+            }
+        }
+        this.collisionEvent.notify(this.collisionState);
     }
 
     private _getDrone(id: number) {

@@ -21,8 +21,8 @@ it("Controller - remove drone invalid id", () => {
 
 it("Controller - test collision detection on add", () => {
     const [controller, repository] = makeBasicController();
-    repository.setCollisionRadius(5);
-
+    controller.getSettings().setDroneDistance(5);
+    
     const drone1Id = controller.addDrone();
     const drone2Id = controller.addDrone();
     
@@ -32,9 +32,9 @@ it("Controller - test collision detection on add", () => {
     controller.getCollisionEvent().register((collision) => {
         collisionDetected = true;
         expect(collision.get(drone2Id)?.size).toEqual(1);
-        expect(collision.get(drone2Id)?.values().next().value).toEqual(drone1Id);
+        expect(collision.get(drone2Id)?.keys().next().value).toEqual(drone1Id);
         expect(collision.get(drone1Id)?.size).toEqual(1);
-        expect(collision.get(drone1Id)?.values().next().value).toEqual(drone2Id);
+        expect(collision.get(drone1Id)?.keys().next().value).toEqual(drone2Id);
     });
 
     controller.addPositionKeyFrameNow(drone2Id, new Vector3(3, 0, 0));
