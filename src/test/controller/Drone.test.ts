@@ -1,7 +1,7 @@
 import { Color, Vector3 } from "three";
 import { Drone } from "../../controller/logic/Drone";
-import { PositionKeyFrame } from "../../controller/interface/PositionKeyFrame";
-import { ColorKeyFrame } from "../../controller/interface/ColorKeyFrame";
+import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
+import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
 
 it("Drone - basic" , () => {
     const drone = new Drone(1);

@@ -4,13 +4,16 @@ import {DayTime} from "./entity/DayTime";
 import {ProjectConfig, WaypointAtTime} from "./ProjectConfig";
 import {FILE_VERSION} from "./RepositoryConstants";
 
-class ProjectRepository implements IProjectRepository {
+export class ProjectRepository implements IProjectRepository {
     private drones: Array<IDrone> = []
     private collisionRadius: number = 0
     private dayTime: DayTime = DayTime.NOON
     private endTime: number = 0 // TODO: ÄNDERUNG: NAME CHANGE
 
-    constructor(file: File) { // TODO: ÄNDERUNG: ADD CONSTRUCTOR
+    constructor(file: File|null = null) { // TODO: ÄNDERUNG: ADD CONSTRUCTOR
+        if (!file) {
+            return; // neues Projekt
+        }
         let reader = new FileReader();
         reader.onloadend = (e: ProgressEvent<FileReader>) => {
             const content = e.target?.result;
@@ -55,7 +58,7 @@ class ProjectRepository implements IProjectRepository {
     }
 
     removeDrone(id: number): void {
-        this.drones = this.drones.filter(d => d.getId() === id)!;
+        this.drones = this.drones.filter(d => d.getId() !== id)!;
     }
 
     setCollisionRadius(radius: number): void {

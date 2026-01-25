@@ -3,16 +3,18 @@ import { IUndoableController } from "../../controller/interface/IUndoableControl
 import { Controller } from "../../controller/logic/Controller";
 import { Settings } from "../../controller/logic/Settings";
 import { UndoableController } from "../../controller/logic/UndoableController";
-import { IProjectDataRepository } from "../../repository/IProjectDataRepository";
-import { ProjectDataRepository } from "../../repository/ProjectDataRepository";
+import { IProjectRepository } from "../../repository/IProjectRepository";
+import { ProjectRepository } from "../../repository/ProjectRepository";
+import { UndoRepository } from "../../repository/UndoRepository";
 
-export function makeBasicController(): [IController, IProjectDataRepository] {
-    const repository = new ProjectDataRepository();
+
+export function makeBasicController(): [IController, IProjectRepository] {
+    const repository = new ProjectRepository();
     const settings = new Settings(repository);
     return [new Controller(settings, repository), repository] ;
 }
 
-export function makeUndoableController(): [IUndoableController, IProjectDataRepository] {
+export function makeUndoableController(): [IUndoableController, IProjectRepository] {
     const [controller, repository] = makeBasicController();
-    return [new UndoableController(controller), repository];
+    return [new UndoableController(controller, new UndoRepository(), new UndoRepository()), repository];
 }

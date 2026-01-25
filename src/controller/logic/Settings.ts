@@ -1,4 +1,4 @@
-import { DayTime } from "../../entity/DayTime";
+import { DayTime } from "../../repository/entity/DayTime";
 import { OFCEvent } from "../interface/OFCEvent";
 import type { ISettings } from "../interface/ISettings";
 import { IProjectRepository } from "../../repository/IProjectRepository";

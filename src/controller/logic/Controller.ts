@@ -1,17 +1,17 @@
 import { Vector3, Color } from "three";
-import { ColorKeyFrame } from "../interface/ColorKeyFrame";
+import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
 import type { IController } from "../interface/IController";
 import type { IProject } from "../interface/IProject";
 import type { ISettings } from "../interface/ISettings";
 import type { ITimeController } from "../interface/ITimeController";
 import { OFCEvent } from "../interface/OFCEvent";
-import { PositionKeyFrame } from "../interface/PositionKeyFrame";
+import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
 import { TimeController } from "./TimeController";
 import { Drone } from "./Drone";
 import { checkCollisions } from "./CollisionHandler";
 import { Project } from "./Project";
 import { IProjectRepository } from "../../repository/IProjectRepository";
-import { IDrone } from "../../entity/IDrone";
+import { IDrone } from "../../repository/entity/IDrone";
 
 export class Controller implements IController {
     private settings: ISettings

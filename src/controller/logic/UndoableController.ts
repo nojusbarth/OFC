@@ -1,14 +1,16 @@
 import type { Vector3, Color } from "three";
-import { ColorKeyFrame } from "../interface/ColorKeyFrame";
+import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
 import type { IController } from "../interface/IController";
 import type { IProject } from "../interface/IProject";
 import type { ISettings } from "../interface/ISettings";
 import type { ITimeController } from "../interface/ITimeController";
 import type { OFCEvent } from "../interface/OFCEvent";
-import { PositionKeyFrame } from "../interface/PositionKeyFrame";
+import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
 import { IUndoableController } from "../interface/IUndoableController";
-import { Action, ActionType, IAction } from "../../entity/Action";
 import type { IUndoRepository } from "../../repository/IUndoRepository";
+import { ActionType } from "../../repository/entity/ActionType";
+import { Action } from "../../repository/entity/Action";
+import { IAction } from "../../repository/entity/IAction";
 
 export class UndoableController implements IUndoableController {
     private controller: IController;
@@ -133,7 +135,7 @@ export class UndoableController implements IUndoableController {
     }
 
     private _pushAction(type: ActionType, data: any): void {
-        const action = new Action(type, data, this._currentTime());
+        const action = new Action(data, this._currentTime(), type);
         if (this.undoFlag) {
             this.redoStack.addAction(action);
             return;
@@ -141,7 +143,7 @@ export class UndoableController implements IUndoableController {
 
         this.undoStack.addAction(action);
         if (!this.redoFlag) {
-            // Clear redo stack (not currently supported)
+            while (this.redoStack.popAction() !== null) {}
         }
     }
 

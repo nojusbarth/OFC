@@ -1,6 +1,6 @@
 import type { Vector3, Color } from "three";
-import type { PositionKeyFrame } from "./PositionKeyFrame"
-import type { ColorKeyFrame } from "./ColorKeyFrame"
+import type { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame"
+import type { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame"
 import type { ISettings } from "./ISettings";
 import type { ITimeController } from "./ITimeController";
 import type { IProject } from "./IProject";

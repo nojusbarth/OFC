@@ -1,7 +1,7 @@
 import { Color, Vector3 } from "three";
-import type { PositionKeyFrame } from "../interface/PositionKeyFrame";
-import type { ColorKeyFrame } from "../interface/ColorKeyFrame";
-import { IDrone } from "../../entity/IDrone";
+import type { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
+import type { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
+import { IDrone } from "../../repository/entity/IDrone";
 
 export class Drone implements IDrone {
     id: number
