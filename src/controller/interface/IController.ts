@@ -32,7 +32,7 @@ export interface IController {
     addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void;
     removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void;
 
-    getDroneEvent(id: number): OFCEvent<number>;
+    getDroneChangedEvent(): OFCEvent<number>;
     getDronesEvent(): OFCEvent<number[]>;
     getCollisionEvent(): OFCEvent<Map<number, Map<number, number>>>;
     getDroneSelectEvent(): OFCEvent<number[]>;
