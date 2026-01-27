@@ -93,3 +93,14 @@ export const defaultPathFrame: PathFrame = {
   pathPositions: new Map(),
   pathColors: new Map(),
 };
+
+/* ---------------- Drohnen & Pfad Properties ---------------- */
+
+export const droneConfig = {
+  dimensions: [0.2, 16, 16],
+  emissiveIntensity: 5.0,
+};
+
+export const pathConfig = {
+  lineWidth: 2,
+};

@@ -3,6 +3,8 @@ import React from "react";
 import { Line } from "@react-three/drei";
 import { PathFrame } from "../state/PathFrame";
 
+import { pathConfig } from "../config";
+
 type Props = {
   frame: PathFrame;
 };
@@ -20,7 +22,7 @@ export const PathView: React.FC<Props> = ({ frame }) => {
             key={id}
             points={points}
             color={color}
-            lineWidth={2}
+            lineWidth={pathConfig.lineWidth}
           />
         );
       })}

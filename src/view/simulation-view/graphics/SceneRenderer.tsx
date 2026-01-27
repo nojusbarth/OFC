@@ -117,7 +117,7 @@ export const SceneRenderer: React.FC<{
       envMap.dispose();
       pmremGenerator.dispose();
     };
-  }, [lightFrame, hdriMap, gl, scene]); // <-- hdriMap im deps-Array
+  }, [lightFrame, hdriMap, gl, scene]);
 
   /*-------------- Rendering --------------------- */
 

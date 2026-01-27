@@ -19,6 +19,14 @@ export class SimulationView implements ISimulationView {
   private selectionManager: SelectionManager;
   private collisionManager: CollisionManager;
 
+  /**
+   * Initialisiert die SimulationView mit den erforderlichen State Stores
+   * und erstellt die Subsysteme (TimeManager, SelectionManager, CollisionManager).
+   *
+   * @param drone - Der DroneStateStore für die Verwaltung von Dronen-Positionen und -Farben
+   * @param path - Der PathStateStore für die Verwaltung von Pfad-Daten
+   * @param light - Der LightStateStore für die Verwaltung von Licht-Eigenschaften
+   */
   constructor(
     drone: DroneStateStore,
     path: PathStateStore,
@@ -33,9 +41,18 @@ export class SimulationView implements ISimulationView {
     this.collisionManager = new CollisionManager();
   }
 
+  /**
+   * Aktualisiert die Darstellung basierend auf den aktuellen Zuständen.
+   *
+   * Die Reihenfolge der Änderungen ist WICHTIG: Spätere Änderungen überschreiben frühere.
+   * 1. Lichtsystem-Änderungen anwenden
+   * 2. Auswahländerungen (SelectionManager) anwenden
+   * 3. Kollisionsänderungen (CollisionManager) anwenden
+   * 4. Alle State Stores aktualisieren
+   *
+   * @private
+   */
   private drawChanges() {
-    //SEQUENCE OF CHANGES IS IMPORTANT, LATER CHANGES OVERWRITE CHANGES BEFORE
-
     var currentDroneFrame: DroneFrame = this.requestDroneFrame(
       this.timeManager.getCurrentEditorTime(),
     );
@@ -77,41 +94,90 @@ export class SimulationView implements ISimulationView {
     });
   }
 
+  /**
+   * Benachrichtigt die SimulationView, dass sich ein Frame geändert hat
+   * und triggert eine Neu-Berechnung der Darstellung.
+   *
+   * @public
+   */
   public notifyFrameChange() {
     this.drawChanges();
   }
 
+  /**
+   * Benachrichtigt die SimulationView über Kollisionen und aktualisiert
+   * die Darstellung entsprechend (betroffene Dronen/Pfade werden rot gefärbt).
+   *
+   * @param newCollision - Array der Dronen-IDs, die in Kollision sind
+   * @public
+   */
   public notifyCollisionChange(newCollision: Array<number>) {
     this.collisionManager.notifyCollisionChange(newCollision);
 
     this.drawChanges();
   }
 
+  /**
+   * Setzt die aktuelle Editor-Zeit und aktualisiert die Darstellung.
+   * Dies beeinflusst, welche Dronen-Positionen und Lichteigenschaften angezeigt werden.
+   *
+   * @param time - Die neue Editor-Zeit in Sekunden
+   * @public
+   */
   public setEditorTime(time: number) {
     this.timeManager.setEditorTime(time);
 
     this.drawChanges();
   }
 
+  /**
+   * Wählt eine Drohne basierend auf ihrer ID aus.
+   * Ausgewählte Drohnen werden weiß gefärbt und ihre Pfade werden angezeigt.
+   *
+   * @param id - Die eindeutige ID der Drohne
+   * @public
+   */
   public selectDrone(id: number) {
     this.selectionManager.selectDrone(id);
 
     this.drawChanges();
   }
 
+  /**
+   * Deselektiert eine Drohne basierend auf ihrer ID.
+   * Die Drohne wird nicht mehr hervorgehoben und ihr Pfad wird ausgeblendet.
+   *
+   * @param id - Die eindeutige ID der Drohne
+   * @public
+   */
   public unselectDrone(id: number) {
     this.selectionManager.unselectDrone(id);
 
     this.drawChanges();
   }
 
+  /**
+   * Setzt die Simulationszeit und aktualisiert die Lichteigenschaften basierend
+   * auf der Tageszeit (Morgen, Mittag, Abend, Nacht).
+   *
+   * @param time - Die Simulationszeit in Stunden (0-24)
+   * @public
+   */
   public setSimulationTime(time: number) {
     this.timeManager.setSimulationTime(time);
 
     this.drawChanges();
   }
 
-  public requestDroneFrame(time: number): DroneFrame {
+  /**
+   * Fordert den aktuellen Dronen-Frame für eine bestimmte Zeit an.
+   *
+   *
+   * @param time - Die angeforderte Zeit in Sekunden
+   * @returns Ein DroneFrame mit Positionen und Farben aller Drohnen
+   * @private
+   */
+  private requestDroneFrame(time: number): DroneFrame {
     const offsetA = new Vector3(-20, 0, 0);
     const offsetB = new Vector3(-10, 0, 10);
     const offsetC = new Vector3(-20, 0, 10);
@@ -290,6 +356,12 @@ export class SimulationView implements ISimulationView {
           [208, "#ff9933"],
           [209, "#ffff00"],
           [210, "#ffff00"],
+          /**
+           * Fordert alle Keyframes (Pfade) für alle Drohnen an.
+           *
+           * @returns Ein PathFrame mit Positionen und Farben aller Pfade
+           * @public
+           */
           [211, "#ffff00"],
           [212, "#ffff00"],
           [213, "#ff9933"],
@@ -314,7 +386,13 @@ export class SimulationView implements ISimulationView {
     }
   }
 
-  public requestKeyFrames(): PathFrame {
+  /**
+   * Fordert alle Keyframes (Pfade) für alle Drohnen an.
+   *
+   * @returns Ein PathFrame mit Positionen und Farben aller Pfade
+   * @private
+   */
+  private requestKeyFrames(): PathFrame {
     return {
       pathPositions: new Map([
         [
