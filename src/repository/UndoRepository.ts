@@ -1,7 +1,7 @@
-import {IAction} from "./entity/Action";
+import {IAction} from "./entity/IAction";
 import {IUndoRepository} from "./IUndoRepository";
 
-class UndoRepository implements IUndoRepository {
+export class UndoRepository implements IUndoRepository {
     private actions: IAction[] = [];
 
     popAction(): IAction | null {

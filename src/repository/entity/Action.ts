@@ -1,7 +1,7 @@
 import {ActionType} from "./ActionType";
 import {IAction} from "./IAction";
 
-class Action implements IAction {
+export class Action implements IAction {
     private readonly data: any
     private readonly time: number
     private readonly type: ActionType

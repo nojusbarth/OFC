@@ -21,8 +21,8 @@ it("Controller - remove drone invalid id", () => {
 
 it("Controller - test collision detection on add", () => {
     const [controller, repository] = makeBasicController();
-    repository.setCollisionRadius(5);
-
+    controller.getSettings().setDroneDistance(5);
+    
     const drone1Id = controller.addDrone();
     const drone2Id = controller.addDrone();
     
@@ -31,8 +31,10 @@ it("Controller - test collision detection on add", () => {
     let collisionDetected: boolean = false;
     controller.getCollisionEvent().register((collision) => {
         collisionDetected = true;
-        expect(collision.drone).toEqual(drone2Id);
-        expect(collision.colliders.keys()).toContain(drone1Id);
+        expect(collision.get(drone2Id)?.size).toEqual(1);
+        expect(collision.get(drone2Id)?.keys().next().value).toEqual(drone1Id);
+        expect(collision.get(drone1Id)?.size).toEqual(1);
+        expect(collision.get(drone1Id)?.keys().next().value).toEqual(drone2Id);
     });
 
     controller.addPositionKeyFrameNow(drone2Id, new Vector3(3, 0, 0));
@@ -42,7 +44,7 @@ it("Controller - test collision detection on add", () => {
 it("Controller - collision detection on remove", () => {
     const [controller, repository] = makeBasicController();
     repository.setCollisionRadius(2);
-    repository.setMaxTimelineTime(10);
+    repository.setMaxTime(10);
 
     const drone1Id = controller.addDrone();
     const drone2Id = controller.addDrone();
@@ -50,7 +52,7 @@ it("Controller - collision detection on remove", () => {
     
     let collisionDetected: boolean = false;
     controller.getCollisionEvent().register((collision) => {
-        collisionDetected = collision.colliders.size > 0;
+        collisionDetected = collision.size > 0;
     });
 
     controller.addPositionKeyFrameNow(drone1Id, new Vector3(0, 0, 0));

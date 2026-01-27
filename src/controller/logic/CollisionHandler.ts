@@ -1,7 +1,6 @@
 import { Vector3 } from "three";
-import { PositionKeyFrame } from "../interface/PositionKeyFrame";
-import { Drone } from "./Drone";
-import { IDrone } from "../../entity/IDrone";
+import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
+import { IDrone } from "../../repository/entity/IDrone";
 
 export function checkCollisions(drone: IDrone, otherDrones: IDrone[], collisionRadius: number): Map<number, number> {
     const collisionAtlas = new Map<number, number>();

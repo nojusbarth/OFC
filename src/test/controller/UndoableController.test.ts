@@ -43,22 +43,24 @@ it("UndoableController: select drone, multi undo/redo", () => {
 
     const drone1Id = undoableController.addDrone();
     const drone2Id = undoableController.addDrone();
-    undoableController.selectDrone(-1);
-    expect(undoableController.getSelectedDrone()).toBe(-1);
+
     undoableController.selectDrone(drone1Id);
-    expect(undoableController.getSelectedDrone()).toBe(drone1Id);
     undoableController.selectDrone(drone2Id);
-    expect(undoableController.getSelectedDrone()).toBe(drone2Id);
+    expect(undoableController.getSelectedDrones()).toContain(drone1Id);
+    expect(undoableController.getSelectedDrones()).toContain(drone2Id);
     
     undoableController.undo();
-    expect(undoableController.getSelectedDrone()).toBe(drone1Id);
+    expect(undoableController.getSelectedDrones()).toContain(drone1Id);
+    expect(undoableController.getSelectedDrones().length).toBe(1);
     undoableController.undo();
-    expect(undoableController.getSelectedDrone()).toBe(-1);
+    expect(undoableController.getSelectedDrones().length).toBe(0);
 
     undoableController.redo();
-    expect(undoableController.getSelectedDrone()).toBe(drone1Id);
+    expect(undoableController.getSelectedDrones()).toContain(drone1Id);
+    expect(undoableController.getSelectedDrones().length).toBe(1);
     undoableController.redo();
-    expect(undoableController.getSelectedDrone()).toBe(drone2Id);
+    expect(undoableController.getSelectedDrones()).toContain(drone2Id);
+    expect(undoableController.getSelectedDrones().length).toBe(2);
 });
 
 
