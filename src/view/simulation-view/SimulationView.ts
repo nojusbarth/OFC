@@ -9,11 +9,14 @@ import { SelectionManager } from "./subsystems/SelectionManager";
 import { CollisionManager } from "./subsystems/CollisionManager";
 import { LightFrame } from "./state/LightFrame";
 import { ISimulationView } from "./ISimulationView";
+import { IController } from "../../controller/interface/IController";
 
 export class SimulationView implements ISimulationView {
   private droneStore?: DroneStateStore;
   private pathStore?: PathStateStore;
   private lightStore?: LightStateStore;
+
+  private controller: IController;
 
   private timeManager: TimeManager;
   private selectionManager: SelectionManager;
@@ -31,10 +34,13 @@ export class SimulationView implements ISimulationView {
     drone: DroneStateStore,
     path: PathStateStore,
     light: LightStateStore,
+    controller: IController,
   ) {
     this.droneStore = drone;
     this.pathStore = path;
     this.lightStore = light;
+
+    this.controller = controller;
 
     this.timeManager = new TimeManager();
     this.selectionManager = new SelectionManager();
