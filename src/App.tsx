@@ -4,43 +4,26 @@ import { useEffect } from 'react';
 
 import { useMemo } from 'react';
 import { initSimulation } from './view/simulation-view';
+import { Controller } from './controller/logic/Controller';
+import { ProjectRepository } from './repository/ProjectRepository';
+import { Settings } from './controller/logic/Settings';
+import { IController } from './controller/interface/IController';
 
 
 
 function App() {
+
+
+  const controller : IController = useMemo(() => { 
+    const repo = new ProjectRepository();
+    const settings = new Settings(repo)
+    return new Controller(settings, repo);
+   }, []);
+
   // initSimulation liefert die Simulation-Fassade und die Scene-Komponente
-  const { simulation, Scene } = useMemo(() => initSimulation(), []);
+  const { simulation, Scene } = useMemo(() => initSimulation(controller), []);
 
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      switch (e.key) {
-        case "w":
-          simulation.setEditorTime(0);
-          break;
-        case "s":
-          simulation.selectDrone(1);
-          break;
-        case "a":
-          simulation.unselectDrone(1);
-          break;
-        case "h":
-          simulation.setSimulationTime(7.0);
-          break;
-        case "j":
-          simulation.setSimulationTime(13);
-          break;
-        case "k":
-          simulation.setSimulationTime(19);
-          break;
-        case "l":
-          simulation.setSimulationTime(1);
-          break;
-      }
-    };
 
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [simulation]);
     /*
     // Bootstrap test
     <div className="container mt-5">

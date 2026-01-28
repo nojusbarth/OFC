@@ -4,13 +4,43 @@ import { PathStateStore } from "./state/PathStateStore";
 import { LightStateStore } from "./state/LightStateStore";
 import { SimulationView } from "./SimulationView";
 import { SceneRenderer } from "./graphics/SceneRenderer";
+import { IController } from "../../controller/interface/IController";
 
 
 /**
  * Initialisiert das simulation-view Paket. NUR EINMAL AUSFÜHREN
  * @returns simulation-view interface und scene React Komponente
  */
-export function initSimulation() {
+export function initSimulation(controller : IController) {
+
+  // Registriere Controller Events
+
+  controller.getDronesEvent().register((drones) => {
+    simulation.notifyFrameChange();
+  });
+
+  controller.getTimeController().getTimeChangedEvent().register((time) => {
+    simulation.setEditorTime(time);
+  });
+
+  controller.getCollisionEvent().register((collision) => {
+    
+    let drones = Array.from(collision.keys());
+
+    simulation.notifyCollisionChange(drones);
+  });
+
+  controller.getDroneChangedEvent().register((selectedDrone) => {
+    simulation.notifyFrameChange();
+  });
+
+  controller.getSettings().getDayTimeChangedEvent().register((daytime) => {
+
+    simulation.setSimulationTime(daytime);
+  });
+
+
+
   const droneStore = new DroneStateStore();
   const pathStore = new PathStateStore();
   const lightStore = new LightStateStore();
@@ -18,8 +48,11 @@ export function initSimulation() {
   const simulation = new SimulationView(
     droneStore,
     pathStore,
-    lightStore
+    lightStore,
+    controller
   );
+
+
 
   const Scene: FC = () => (
     < SceneRenderer
