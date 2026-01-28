@@ -42,7 +42,7 @@ export class TimeController implements ITimeController {
             return;
         }
         requestAnimationFrame((timestamp) =>  {
-            const delta = (timestamp - this.lastTimestamp) * this.speed;
+            const delta = (timestamp - this.lastTimestamp) / 1000 * this.speed;
             this.lastTimestamp = timestamp;
             this.setTime(this.time + delta);
             this.animate();
