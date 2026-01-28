@@ -2,6 +2,7 @@ import React from "react";
 import { DroneFrame } from "../state/DroneFrame";
 
 import { droneConfig } from "../config";
+import { Color } from "three";
 
 type Props = {
   frame: DroneFrame;

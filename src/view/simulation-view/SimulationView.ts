@@ -2,7 +2,7 @@ import { DroneFrame } from "./state/DroneFrame";
 import { DroneStateStore } from "./state/DroneStateStore";
 import { PathStateStore } from "./state/PathStateStore";
 import { LightStateStore } from "./state/LightStateStore";
-import { Vector3 } from "three";
+import { Color, Vector3 } from "three";
 import { TimeManager } from "./subsystems/TimeManager";
 import { PathFrame } from "./state/PathFrame";
 import { SelectionManager } from "./subsystems/SelectionManager";
@@ -189,13 +189,12 @@ export class SimulationView implements ISimulationView {
     let droneIds: number[] = this.controller.getDrones();
 
     let dronePositions: Map<number, Vector3> = new Map();
-    let droneColors: Map<number, string> = new Map();
+    let droneColors: Map<number, Color> = new Map();
 
     droneIds.forEach((drone) => {
       let position: Vector3 = this.controller.getPositionAt(drone, time);
-      let color: string = this.controller
-        .getColorAt(drone, time)
-        .getHexString();
+      let color = this.controller
+        .getColorAt(drone, time);
 
       dronePositions.set(drone, position);
       droneColors.set(drone, color);
