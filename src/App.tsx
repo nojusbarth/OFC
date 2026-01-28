@@ -8,7 +8,8 @@ import { Controller } from './controller/logic/Controller';
 import { ProjectRepository } from './repository/ProjectRepository';
 import { Settings } from './controller/logic/Settings';
 import { IController } from './controller/interface/IController';
-import { Vector3 } from 'three';
+import { Color, Vector3 } from 'three';
+import { DayTime } from './repository/entity/DayTime';
 
 
 
@@ -18,19 +19,22 @@ function App() {
   const controller : IController = useMemo(() => { 
     const repo = new ProjectRepository();
     const settings = new Settings(repo)
-    return new Controller(settings, repo);
+    const controller = new Controller(settings, repo);
+    controller.getSettings().setDayTime(DayTime.NIGHT);
+    return controller;
    }, []);
 
    const tolleSache = useMemo(() => [
-    () => controller.getSettings().setEndTime(30),
+    () => { controller.getSettings().setEndTime(30); controller.getSettings().setDayTime(DayTime.NIGHT); },
     () => controller.addDrone(),
+    () => controller.addColorKeyFrameNow(0, new Color(1, 0, 0)),
     () => controller.selectDrone(0),
-    () => controller.addPositionKeyFrameNow(0, new Vector3(10, 0, 0)),
+    () => controller.addPositionKeyFrameNow(0, new Vector3(1, 1, 0)),
     () => controller.addDrone(),
     () => {controller.selectDrone(1); controller.unselectDrone(0)},
-    () => controller.addPositionKeyFrameNow(1, new Vector3(0, 0, 0)),
+    () => controller.addPositionKeyFrameNow(1, new Vector3(0, 11, 0)),
     () => controller.getTimeController().setTime(10),
-    () => controller.addPositionKeyFrameNow(1, new Vector3(10, 10, 0)),
+    () => controller.addPositionKeyFrameNow(1, new Vector3(1, 1, 0)),
     () => controller.addDrone(),
    ], []);
 
@@ -49,11 +53,10 @@ function App() {
     return () => {
       window.removeEventListener('keydown', handleKeyPress);
     }
-  }, [tolleSache]);
+  }, []);
 
   // initSimulation liefert die Simulation-Fassade und die Scene-Komponente
   const { simulation, Scene } = useMemo(() => initSimulation(controller), []);
-
 
     /*
     // Bootstrap test
