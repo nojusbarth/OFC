@@ -35,8 +35,13 @@ export function initSimulation(controller : IController) {
     simulation.notifyCollisionChange(drones);
   });
 
-  controller.getDroneChangedEvent().register((selectedDrone) => {
-    console.log("Drone changed event ", selectedDrone);  
+  controller.getDroneSelectEvent().register((selectedDrones) => {
+    console.log("Drone selection changed event ", selectedDrones);  
+    simulation.notifyFrameChange();
+  });
+
+  controller.getDroneChangedEvent().register((drone) => {
+    console.log("Drone changed event ", drone);  
     simulation.notifyFrameChange();
   });
 
