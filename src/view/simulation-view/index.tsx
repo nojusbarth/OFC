@@ -12,17 +12,6 @@ import { IController } from "../../controller/interface/IController";
  * @returns simulation-view interface und scene React Komponente
  */
 export function initSimulation(controller : IController) {
-  const droneStore = new DroneStateStore();
-  const pathStore = new PathStateStore();
-  const lightStore = new LightStateStore();
-
-  const simulation = new SimulationView(
-    droneStore,
-    pathStore,
-    lightStore,
-    controller
-  );
-
 
   // Registriere Controller Events
 
@@ -41,9 +30,28 @@ export function initSimulation(controller : IController) {
     simulation.notifyCollisionChange(drones);
   });
 
-  controller.getDroneSelectEvent().register((selectedDrones) => {
-    //TODO
+  controller.getDroneChangedEvent().register((selectedDrone) => {
+    simulation.notifyFrameChange();
   });
+
+  controller.getSettings().getDayTimeChangedEvent().register((daytime) => {
+
+    simulation.setSimulationTime(daytime);
+  });
+
+
+
+  const droneStore = new DroneStateStore();
+  const pathStore = new PathStateStore();
+  const lightStore = new LightStateStore();
+
+  const simulation = new SimulationView(
+    droneStore,
+    pathStore,
+    lightStore,
+    controller
+  );
+
 
 
   const Scene: FC = () => (

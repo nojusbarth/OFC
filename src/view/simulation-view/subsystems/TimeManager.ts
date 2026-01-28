@@ -1,6 +1,7 @@
 import { LightFrame } from "../state/LightFrame";
 
 import { lightFrames } from "../config";
+import { DayTime } from "../../../repository/entity/DayTime";
 
 export class TimeManager {
   private currentEditorTime: number;
@@ -38,27 +39,21 @@ export class TimeManager {
   }
 
   /**
-   * Setzt die Simulationszeit und wählt basierend auf der Tageszeit
+   * Setzt die Simulationszeit und wählt
    * die entsprechenden Lichteigenschaften aus.
    *
-   * Tageszeiten:
-   * - 5:00 - 11:00 Uhr: Morgen
-   * - 12:00 - 17:00 Uhr: Mittag
-   * - 18:00 - 22:00 Uhr: Abend
-   * - Alle anderen Zeiten: Nacht
-   *
-   * @param time - Die Simulationszeit in Stunden (0-24)
+   * @param time - Die Simulationszeit
    * @public
    */
-  public setSimulationTime(time: number) {
-    if (time >= 5.0 && time <= 11) {
-      this.chosenLight = lightFrames.morning;
-    } else if (time >= 12 && time <= 17) {
-      this.chosenLight = lightFrames.noon;
-    } else if (time >= 18 && time <= 22) {
+  public setSimulationTime(time: DayTime) {
+    if (time == DayTime.SUNSET) {
       this.chosenLight = lightFrames.evening;
-    } else {
+    } else if (time == DayTime.NOON) {
+      this.chosenLight = lightFrames.noon;
+    } else if (time == DayTime.NIGHT) {
       this.chosenLight = lightFrames.night;
+    } else {
+      throw new Error("Ungültige Tageszeit für die Simulation gesetzt.");
     }
   }
 
