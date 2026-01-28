@@ -1,3 +1,4 @@
+import { Color } from "three";
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
 
@@ -45,7 +46,7 @@ export class CollisionManager {
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.currentCollision.forEach((id: number) => {
-      currentDroneFrame.droneColors.set(id, "red");
+      currentDroneFrame.droneColors.set(id, new Color(1, 0, 0));
     });
 
     return currentDroneFrame;
