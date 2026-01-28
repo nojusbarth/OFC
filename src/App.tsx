@@ -1,6 +1,6 @@
 import './App.css';
 import { Canvas } from '@react-three/fiber';
-import { useEffect } from 'react';
+import { use, useEffect } from 'react';
 
 import { useMemo } from 'react';
 import { initSimulation } from './view/simulation-view';
@@ -20,13 +20,12 @@ function App() {
     const repo = new ProjectRepository();
     const settings = new Settings(repo)
     const controller = new Controller(settings, repo);
-    controller.getSettings().setDayTime(DayTime.NIGHT);
     return controller;
    }, []);
 
    const tolleSache = useMemo(() => [
     ["Setup: End Time 30s, Night Mode", () => { controller.getSettings().setEndTime(30); 
-      controller.getSettings().setDayTime(DayTime.NIGHT); }],
+     controller.getSettings().setDayTime(DayTime.NIGHT); }],
     ["Add Drone 0", () => controller.addDrone()],
     ["Add Color Keyframe (Red) for Drone 0", () => controller.addColorKeyFrameNow(0, new Color(1, 0, 0))],
     ["Select Drone 0", () => controller.selectDrone(0)],

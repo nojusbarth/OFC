@@ -157,6 +157,9 @@ export class Controller implements IController {
     }
 
     private _mergeCollissions(drone: number, collisions: Map<number, number>) {
+        if (collisions.size === 0 && !this.collisionState.has(drone)) {
+            return;
+        }
         if (collisions.size === 0) {
             this.collisionState.delete(drone);
         } else {
