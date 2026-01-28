@@ -1,8 +1,12 @@
 import { useState } from "react";
+import {IController} from "../../controller/interface/IController";
 
 interface StartpageComponentProps {
   // Props
+  controller: IController;
   // TODO
+  toggleStartpage: () => void;
+  showPopup: boolean;
 }
 
 export default function StartpageComponent({}: StartpageComponentProps) {
