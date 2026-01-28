@@ -51,6 +51,7 @@ export class TimeManager {
     } else if (time == DayTime.NOON) {
       this.chosenLight = lightFrames.noon;
     } else if (time == DayTime.NIGHT) {
+      console.log("Setting night light frame");
       this.chosenLight = lightFrames.night;
     } else {
       throw new Error("Ungültige Tageszeit für die Simulation gesetzt.");

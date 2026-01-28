@@ -25,27 +25,29 @@ function App() {
    }, []);
 
    const tolleSache = useMemo(() => [
-    () => { controller.getSettings().setEndTime(30); controller.getSettings().setDayTime(DayTime.NIGHT); },
-    () => controller.addDrone(),
-    () => controller.addColorKeyFrameNow(0, new Color(1, 0, 0)),
-    () => controller.selectDrone(0),
-    () => controller.addPositionKeyFrameNow(0, new Vector3(1, 1, 0)),
-    () => controller.addDrone(),
-    () => {controller.selectDrone(1); controller.unselectDrone(0)},
-    () => controller.addPositionKeyFrameNow(1, new Vector3(0, 11, 0)),
-    () => controller.getTimeController().setTime(10),
-    () => controller.addPositionKeyFrameNow(1, new Vector3(1, 1, 0)),
-    () => controller.addDrone(),
-   ], []);
+    ["Setup: End Time 30s, Night Mode", () => { controller.getSettings().setEndTime(30); 
+      controller.getSettings().setDayTime(DayTime.NIGHT); }],
+    ["Add Drone 0", () => controller.addDrone()],
+    ["Add Color Keyframe (Red) for Drone 0", () => controller.addColorKeyFrameNow(0, new Color(1, 0, 0))],
+    ["Select Drone 0", () => controller.selectDrone(0)],
+    ["Add Position Keyframe for Drone 0", () => controller.addPositionKeyFrameNow(0, new Vector3(1, 1, 0))],
+    ["Add Drone 1", () => controller.addDrone()],
+    ["Select Drone 1, Unselect Drone 0", () => {controller.selectDrone(1); controller.unselectDrone(0)}],
+    ["Add Position Keyframe for Drone 1", () => controller.addPositionKeyFrameNow(1, new Vector3(0, 11, 0))],
+    ["Set Time to 10s", () => controller.getTimeController().setTime(10)],
+    ["Add Position Keyframe for Drone 1", () => controller.addPositionKeyFrameNow(1, new Vector3(1, 1, 0))],
+    ["Add Drone 2", () => controller.addDrone()],
+   ] as Array<[string, () => void]>, []);
 
   useEffect(() => {
     // keypress listener
     const handleKeyPress = (event: KeyboardEvent) => {
       if (event.key === 't') {
-        console.log('Tolle Sache drücken!');
         const action = tolleSache.shift();
         if (action) {
-          action();
+          const [msg, fn] = action;
+          console.log('Aktion:', msg);
+          fn();
         }
       }
     }
