@@ -1,21 +1,38 @@
 import { useState } from "react";
 import { Card } from "react-bootstrap";
+import { ISettings } from "../../../controller/interface/ISettings";
+import { ITimeController } from "../../../controller/interface/ITimeController";
 
 interface TimelineComponentProps {
   // Props
-  // TODO
+  settings: ISettings;
+  timeController: ITimeController;
 }
 
-export default function TimelineComponent({}: TimelineComponentProps) {
+export default function TimelineComponent({
+  settings,
+  timeController,
+}: TimelineComponentProps) {
   // State Hooks
-  const [time, setTime] = useState<number>(0); // TODO
-  const [endTime, setEndTime] = useState<number>(60);
-  const [animationSpeed, setAnimationSpeed] = useState<number>(1);
+  const [time, setTime] = useState<number>(timeController.getTime());
+  const [endTime, setEndTime] = useState<number>(settings.getEndTime());
+  const [animationSpeed, setAnimationSpeed] = useState<number>(
+    timeController.getAnimationSpeed(),
+  );
   const [playing, setPlaying] = useState<boolean>(false);
 
   const handlePlayPause = () => {
+    if (playing) {
+      timeController.stopAnimation();
+    } else {
+      timeController.startAnimation();
+    }
     setPlaying(!playing);
   };
+
+  timeController.getTimeChangedEvent().register((newTime: number) => {
+    setTime(newTime);
+  });
 
   const handleSpeedChange = () => {
     switch (animationSpeed) {
@@ -46,6 +63,7 @@ export default function TimelineComponent({}: TimelineComponentProps) {
   };
 
   const changeSpeed = (number: number) => {
+    timeController.setAnimationSpeed(number);
     setAnimationSpeed(number);
   };
 
@@ -73,13 +91,17 @@ export default function TimelineComponent({}: TimelineComponentProps) {
           />
         </button>
         {/* Speed Text */}
-        <span className="fw-bold">{animationSpeed}x</span>
+        <span className="fw-bold text-start" style={{ minWidth: "45px" }}>
+          {animationSpeed}x
+        </span>
       </div>
 
       {/* Time */}
       <div className="d-flex align-items-center gap-3 flex-grow-1">
         {/* Time Display */}
-        <span className="text-nowrap">00:00 / 01:00</span>
+        <span className="text-nowrap">
+          {formatTime(time)} / {formatTime(endTime)}
+        </span>
 
         {/* Slider */}
         <input
@@ -91,4 +113,10 @@ export default function TimelineComponent({}: TimelineComponentProps) {
       </div>
     </Card>
   );
+}
+
+function formatTime(seconds: number): string {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }

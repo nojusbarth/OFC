@@ -1,15 +1,20 @@
 import { useState } from "react";
 import { Vector3 } from "three";
 import { Color } from "three";
+import { IController } from "../../../controller/interface/IController";
 
 interface DroneEditorComponentProps {
   // Props
-  // TODO
+  controller: IController;
 }
 
-export default function DroneEditorComponent({}: DroneEditorComponentProps) {
+export default function DroneEditorComponent({
+  controller,
+}: DroneEditorComponentProps) {
   // State Hooks
-  const [selectedDrones, setSelectedDrones] = useState<Array<number>>([]);
+  const [selectedDrones, setSelectedDrones] = useState<Array<number>>(
+    controller.getSelectedDrones(),
+  );
   const [position, setPosition] = useState<Vector3>(new Vector3(0, 0, 0));
   const [color, setColor] = useState<Color>(new Color(0, 0, 0));
   const [positionKeyframes, setPositionKeyframes] = useState<null>(null); // TODO

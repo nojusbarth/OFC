@@ -7,11 +7,12 @@ import { IController } from "../../controller/interface/IController";
 
 interface EditorComponentProps {
   // Props
-  // controller: IController; TODO
+  controller: IController;
   toggleStartpage: () => void;
 }
 
 export default function EditorComponent({
+  controller,
   toggleStartpage,
 }: EditorComponentProps) {
   /* Layout Constants */
@@ -23,10 +24,17 @@ export default function EditorComponent({
       {/* Timeline + Settings - oben */}
       <Row className="g-0">
         <Col>
-          <TimelineComponent />
+          <TimelineComponent
+            settings={controller.getSettings()}
+            timeController={controller.getTimeController()}
+          />
         </Col>
         <Col xs="auto" style={{ width: droneEditorWidth }}>
-          <SettingsComponent toggleStartpage={toggleStartpage} />
+          <SettingsComponent
+            settings={controller.getSettings()}
+            timeController={controller.getTimeController()}
+            toggleStartpage={toggleStartpage}
+          />
         </Col>
       </Row>
 
@@ -37,12 +45,12 @@ export default function EditorComponent({
           <div className="flex-grow-1 border border-secondary m-2">
             {/* Viewport kommt später hier */}
           </div>
-          <DroneManagerComponent />
+          <DroneManagerComponent controller={controller} />
         </Col>
 
         {/* Rechts: DroneEditor */}
         <Col xs="auto" style={{ width: droneEditorWidth }}>
-          <DroneEditorComponent />
+          <DroneEditorComponent controller={controller} />
         </Col>
       </Row>
     </Container>
