@@ -26,6 +26,8 @@ function App() {
    const tolleSache = useMemo(() => [
     ["Setup: End Time 30s, Night Mode", () => { controller.getSettings().setEndTime(30); 
      controller.getSettings().setDayTime(DayTime.NIGHT); }],
+     ["Noon", () => controller.getSettings().setDayTime(DayTime.NOON)],
+     ["Sunset", () => controller.getSettings().setDayTime(DayTime.SUNSET)],
     ["Add Drone 0", () => controller.addDrone()],
     ["Add Color Keyframe (Red) for Drone 0", () => controller.addColorKeyFrameNow(0, new Color(1, 0, 0))],
     ["Select Drone 0", () => controller.selectDrone(0)],
@@ -35,7 +37,7 @@ function App() {
     ["Add Position Keyframe for Drone 1", () => controller.addPositionKeyFrameNow(1, new Vector3(0, 11, 0))],
     ["Set Time to 10s", () => controller.getTimeController().setTime(10)],
     ["Add Position Keyframe for Drone 1", () => controller.addPositionKeyFrameNow(1, new Vector3(1, 1, 0))],
-    ["Add Drone 2", () => controller.addDrone()],
+    // ["Animate", () => controller.getTimeController().startAnimation()],
    ] as Array<[string, () => void]>, []);
 
   useEffect(() => {
