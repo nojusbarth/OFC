@@ -21,7 +21,7 @@ export class Controller implements IController {
     // private drones: Map<number, Drone>
     private droneIdCounter: number = 0;
     private selectedDrones: number[] = [];
-    private droneEvents: Map<number, OFCEvent<number>> = new Map();
+    private droneChangedEvent: OFCEvent<number> = new OFCEvent();
     private dronesEvent: OFCEvent<number[]> = new OFCEvent();
     private collisionEvent: OFCEvent<Map<number, Map<number, number>>> = new OFCEvent();
     private droneSelectEvent: OFCEvent<number[]> = new OFCEvent();
@@ -50,7 +50,6 @@ export class Controller implements IController {
         const id = this.droneIdCounter++;
         const drone = new Drone(id);
         this.repository.addDrone(drone);
-        this.droneEvents.set(id, new OFCEvent());
         this.dronesEvent.notify(this.getDrones());
         this._checkCollisions(drone);
         return id;
@@ -59,7 +58,6 @@ export class Controller implements IController {
     removeDrone(id: number): void {
         this._getDrone(id); // validate id
         this.repository.removeDrone(id);
-        this.droneEvents.delete(id);
         this.unselectDrone(id);
         this.dronesEvent.notify(this.getDrones());
         this._mergeCollissions(id, new Map()); // remove collisions
@@ -77,13 +75,13 @@ export class Controller implements IController {
             this._getDrone(id); // validate id
         }
         this.selectedDrones.push(id);
-        this.droneSelectEvent.notify(this.selectedDrones);
+        this.droneSelectEvent.notify(Array.from(this.selectedDrones));
     }
 
     unselectDrone(id: number): void {
         if (this.selectedDrones.includes(id)) {
             this.selectedDrones = this.selectedDrones.filter(e => e !== id);
-            this.droneSelectEvent.notify(this.selectedDrones);
+            this.droneSelectEvent.notify(Array.from(this.selectedDrones));
         }
     }
 
@@ -112,14 +110,14 @@ export class Controller implements IController {
     addPositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
         const drone = this._getDrone(id);
         drone.insertPositionKeyFrame(keyFrame);
-        this.getDroneEvent(id).notify(id);
+        this.droneChangedEvent.notify(id);
         this._checkCollisions(drone);
     }
 
     removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
         const drone = this._getDrone(id);
         drone.removePositionKeyFrame(keyFrame);
-        this.getDroneEvent(id).notify(id);
+        this.droneChangedEvent.notify(id);
         this._checkCollisions(drone);
     }
 
@@ -144,13 +142,13 @@ export class Controller implements IController {
     addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
         const drone = this._getDrone(id);
         drone.insertColorKeyFrame(keyFrame);
-        this.getDroneEvent(id).notify(id);
+        this.droneChangedEvent.notify(id);
     }
 
     removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
         const drone = this._getDrone(id);
         drone.removeColorKeyFrame(keyFrame);
-        this.getDroneEvent(id).notify(id);
+        this.droneChangedEvent.notify(id);
     }
 
     private _checkCollisions(drone: IDrone): void {
@@ -179,7 +177,7 @@ export class Controller implements IController {
                 }
             }
         }
-        this.collisionEvent.notify(this.collisionState);
+        this.collisionEvent.notify(new Map(this.collisionState));
     }
 
     private _getDrone(id: number) {
@@ -190,12 +188,8 @@ export class Controller implements IController {
         throw new Error(`Invalid drone id (${id})!`);
     }
 
-    getDroneEvent(id: number): OFCEvent<number> {
-        const event = this.droneEvents.get(id);
-        if (!event) {
-            throw new Error(`Invalid drone id (${id})!`);
-        }
-        return event;
+    getDroneChangedEvent(): OFCEvent<number> {
+        return this.droneChangedEvent;
     }
 
     getDronesEvent(): OFCEvent<number[]> {

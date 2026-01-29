@@ -278,8 +278,8 @@ export class UndoableController implements IUndoableController {
         this.controller.removeColorKeyFrame(id, keyFrame);
     }
     
-    getDroneEvent(id: number): OFCEvent<number> {
-        return this.controller.getDroneEvent(id);
+    getDroneChangedEvent(): OFCEvent<number> {
+        return this.controller.getDroneChangedEvent();
     }
     
     getDronesEvent(): OFCEvent<number[]> {
