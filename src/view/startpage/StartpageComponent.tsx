@@ -14,10 +14,14 @@ export default function StartpageComponent({controller, toggleStartpage}: Startp
   // click handlers
   const onCreateProject = () => {
     //TODO
+    //controller.getProject().newProject();
+    toggleStartpage();
   }
 
   const onOpenProject = (path: string) => {
     //TODO
+    controller.getProject().loadProject("");
+    toggleStartpage();
   }
 
 

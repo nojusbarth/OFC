@@ -88,7 +88,10 @@ function App() {
 
   let inhalt: React.ReactNode;
   if (showStartpage) {
-    inhalt = <StartpageComponent />;
+    inhalt = <StartpageComponent
+        controller={controller}
+        toggleStartpage={() => setShowStartpage(true)}
+    />;
   } else {
     inhalt = (
       <EditorComponent
