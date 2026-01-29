@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useMemo } from "react";
 import { OrbitControls, PerspectiveCamera } from "@react-three/drei";
 import { useThree, useFrame } from "@react-three/fiber";
 import * as THREE from "three";
@@ -80,7 +80,7 @@ export const SceneRenderer: React.FC<{
   const [hdriMap, setHdriMap] = useState<Record<string, THREE.Texture>>({});
 
   // Lade alle HDRIs einmal
-  useEffect(() => {
+  useMemo(() => {
     const loader = new RGBELoader();
     const frames = [
       lightFrames.night,
@@ -100,7 +100,7 @@ export const SceneRenderer: React.FC<{
     });
   }, []);
 
-  useEffect(() => {
+  useMemo(() => {
     if (!lightFrame.skyTexturePath) return;
     const tex = hdriMap[lightFrame.skyTexturePath];
     if (!tex) return; // noch nicht geladen
