@@ -79,10 +79,10 @@ export default function DroneManagerComponent({
       {/* Heading */}
       <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom flex-shrink-0">
         <span className="fw-bold">Drohnen ({allDrones.length})</span>
-        <Button variant="primary" size="sm" onClick={onAddDrone}>
+        <button className="btn btn-primary btn-sm" onClick={onAddDrone}>
           <i className="bi bi-plus me-1" />
           Hinzufügen
-        </Button>
+        </button>
       </Card.Header>
 
       {/* Drone List */}
@@ -98,7 +98,6 @@ export default function DroneManagerComponent({
             const isSelected = selectedDrones.includes(droneId);
             const isColliding = collidingDrones.includes(droneId);
             const color = colors.get(droneId);
-            console.log("TEST", droneId, isSelected, isColliding, color); //TODO
 
             return (
               <div key={droneId} className="drone-manager drone-card col">
