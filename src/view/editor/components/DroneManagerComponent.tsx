@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Color } from "three";
 import { IController } from "../../../controller/interface/IController";
-import { Button, Card } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 
 import "./DroneManagerComponent.css";
 
