@@ -36,6 +36,7 @@ export class DroneStateStore {
       };
 
       mutator(draft);
+
       return draft;
     });
   }

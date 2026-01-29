@@ -193,8 +193,19 @@ export class SimulationView implements ISimulationView {
 
     droneIds.forEach((drone) => {
       let position: Vector3 = this.controller.getPositionAt(drone, time);
-      let color = this.controller
-        .getColorAt(drone, time);
+      console.log(
+        "Drone " +
+          drone +
+          " position at time " +
+          time +
+          ": " +
+          position.x +
+          ", " +
+          position.y +
+          ", " +
+          position.z,
+      );
+      let color = this.controller.getColorAt(drone, time);
 
       dronePositions.set(drone, position);
       droneColors.set(drone, color);

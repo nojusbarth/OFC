@@ -34,6 +34,8 @@ export const SceneRenderer: React.FC<{
 
   const { camera, gl, scene } = useThree();
   const controlsRef = useRef<any>(null);
+  const envMapCacheRef = useRef<Record<string, THREE.Texture>>({});
+
 
   /* ---------------- Store Binding ---------------- */
   useEffect(() => {
@@ -69,18 +71,23 @@ export const SceneRenderer: React.FC<{
     }
   });
 
-  /* ---------------- Boden ---------------- */
+  /* ---------------- Boden */
   const { size, texturePath, textureRepeat, roughness, metalness } =
     planeConfig;
-  const floorTexture = new TextureLoader().load(texturePath);
-  floorTexture.wrapS = floorTexture.wrapT = RepeatWrapping;
-  floorTexture.repeat.set(textureRepeat[0], textureRepeat[1]);
+  
+  // CRITICAL FIX #1: Texture memoizen statt bei jedem Render neu laden
+  const floorTexture = useMemo(() => {
+    const tex = new TextureLoader().load(texturePath);
+    tex.wrapS = tex.wrapT = RepeatWrapping;
+    tex.repeat.set(textureRepeat[0], textureRepeat[1]);
+    return tex;
+  }, [texturePath, textureRepeat]);
 
   /* ---------------- Himmel ---------------- */
   const [hdriMap, setHdriMap] = useState<Record<string, THREE.Texture>>({});
 
   // Lade alle HDRIs einmal
-  useMemo(() => {
+  useEffect(() => {
     const loader = new RGBELoader();
     const frames = [
       lightFrames.night,
@@ -100,24 +107,29 @@ export const SceneRenderer: React.FC<{
     });
   }, []);
 
-  useMemo(() => {
+  useEffect(() => {
     if (!lightFrame.skyTexturePath) return;
     const tex = hdriMap[lightFrame.skyTexturePath];
     if (!tex) return; // noch nicht geladen
 
-    const pmremGenerator = new THREE.PMREMGenerator(gl);
-    pmremGenerator.compileEquirectangularShader();
-    const envMap = pmremGenerator.fromEquirectangular(tex).texture;
-
-    scene.environment = envMap;
-    scene.background = envMap;
-    gl.toneMappingExposure = lightFrame.intensity;
-
-    return () => {
-      envMap.dispose();
+    // PMREM nur einmal pro Textur erzeugen und cachen
+    if (!envMapCacheRef.current[lightFrame.skyTexturePath]) {
+      const pmremGenerator = new THREE.PMREMGenerator(gl);
+      pmremGenerator.compileEquirectangularShader();
+      const envMap = pmremGenerator.fromEquirectangular(tex).texture;
+      envMapCacheRef.current[lightFrame.skyTexturePath] = envMap;
       pmremGenerator.dispose();
-    };
-  }, [lightFrame, hdriMap, gl, scene]);
+    }
+
+    const cachedEnvMap = envMapCacheRef.current[lightFrame.skyTexturePath];
+    scene.environment = cachedEnvMap;
+    scene.background = cachedEnvMap;
+  }, [lightFrame.skyTexturePath, hdriMap, gl, scene]);
+
+  // Exposure separat → ändert sich häufig, sollte nicht das Environment neuerzeigen
+  useEffect(() => {
+    gl.toneMappingExposure = lightFrame.intensity;
+  }, [lightFrame.intensity, gl]);
 
   /*-------------- Rendering --------------------- */
 
