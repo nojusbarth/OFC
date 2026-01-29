@@ -21,7 +21,6 @@ export default function DroneManagerComponent({
   const [collidingDrones, setCollidingDrones] = useState<Array<number>>([]);
   const [colors, setColors] = useState<Map<number, Color>>(getColors());
 
-<<<<<<< HEAD
   // Register Event Handlers
   useEffect(() => {
     controller.getDronesEvent().register(() => {
@@ -105,14 +104,5 @@ export default function DroneManagerComponent({
         ))}
       </div>
     </Card>
-=======
-  return (
-    <div
-      className="bg-secondary text-light p-3 border-top border-dark"
-      style={{ height: "150px" }}
-    >
-      DroneManager
-    </div>
->>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
   );
 }
