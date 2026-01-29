@@ -1,15 +1,6 @@
-import React, { useMemo, useState } from "react";
-
-import EditorComponent from "./view/editor/EditorComponent";
-import StartpageComponent from "./view/startpage/StartpageComponent";
-
-import "./App.css"; // Custom CSS
-import { Color, Vector3 } from "three";
-import { Controller } from "./controller/logic/Controller";
-import { Settings } from "./controller/logic/Settings";
-import { PositionKeyFrame } from "./repository/entity/PositionKeyFrame";
-import { ProjectRepository } from "./repository/ProjectRepository";
-import { ColorKeyFrame } from "./repository/entity/ColorKeyFrame";
+import React from "react";
+import logo from "./logo.svg";
+import "./App.css";
 
 function App() {
   // State Hooks

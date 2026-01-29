@@ -1,11 +1,19 @@
 import { useState } from "react";
 import { ISettings } from "../../../controller/interface/ISettings";
+<<<<<<< HEAD
 import { ITimeController } from "../../../controller/interface/ITimeController";
 
 interface SettingsComponentProps {
   // Props
   settings: ISettings;
   timeController: ITimeController;
+=======
+
+interface SettingsComponentProps {
+  // Props TODO
+  // settings : ISettings;
+  // timeController: ITimeController;
+>>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
   toggleStartpage: () => void;
 }
 

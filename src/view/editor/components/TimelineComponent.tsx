@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Card } from "react-bootstrap";
+<<<<<<< HEAD
 import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
+=======
+>>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
 
 interface TimelineComponentProps {
   // Props
@@ -22,6 +25,7 @@ export default function TimelineComponent({
   const [playing, setPlaying] = useState<boolean>(false);
 
   const handlePlayPause = () => {
+<<<<<<< HEAD
     if (playing) {
       timeController.stopAnimation();
     } else {
@@ -34,6 +38,11 @@ export default function TimelineComponent({
     setTime(newTime);
   });
 
+=======
+    setPlaying(!playing);
+  };
+
+>>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
   const handleSpeedChange = () => {
     switch (animationSpeed) {
       case 0.25:
@@ -63,7 +72,10 @@ export default function TimelineComponent({
   };
 
   const changeSpeed = (number: number) => {
+<<<<<<< HEAD
     timeController.setAnimationSpeed(number);
+=======
+>>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
     setAnimationSpeed(number);
   };
 
@@ -91,17 +103,25 @@ export default function TimelineComponent({
           />
         </button>
         {/* Speed Text */}
+<<<<<<< HEAD
         <span className="fw-bold text-start" style={{ minWidth: "45px" }}>
           {animationSpeed}x
         </span>
+=======
+        <span className="fw-bold">{animationSpeed}x</span>
+>>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
       </div>
 
       {/* Time */}
       <div className="d-flex align-items-center gap-3 flex-grow-1">
         {/* Time Display */}
+<<<<<<< HEAD
         <span className="text-nowrap">
           {formatTime(time)} / {formatTime(endTime)}
         </span>
+=======
+        <span className="text-nowrap">00:00 / 01:00</span>
+>>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
 
         {/* Slider */}
         <input
@@ -113,10 +133,13 @@ export default function TimelineComponent({
       </div>
     </Card>
   );
+<<<<<<< HEAD
 }
 
 function formatTime(seconds: number): string {
   const mins = Math.floor(seconds / 60);
   const secs = Math.floor(seconds % 60);
   return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+=======
+>>>>>>> 98e7e3fcee713862e6a8cf81187be69d34cbab64
 }
