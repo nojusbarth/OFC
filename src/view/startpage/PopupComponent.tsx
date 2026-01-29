@@ -1,10 +1,10 @@
 interface PopupComponentProps {
   // Props
-  // TODO
   message: String;
   messageType: string;
 }
 
-export default function PopupComponent({}: PopupComponentProps) {
+export default function PopupComponent({message, messageType}: PopupComponentProps) {
+  //TODO
   return <div>Popup Component</div>;
 }

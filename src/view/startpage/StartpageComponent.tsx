@@ -4,14 +4,23 @@ import {IController} from "../../controller/interface/IController";
 interface StartpageComponentProps {
   // Props
   controller: IController;
-  // TODO
   toggleStartpage: () => void;
-  showPopup: boolean;
 }
 
-export default function StartpageComponent({}: StartpageComponentProps) {
+export default function StartpageComponent({controller, toggleStartpage}: StartpageComponentProps) {
   // State Hooks
   const [showPopup, setShowPopup] = useState<boolean>(false);
 
+  // click handlers
+  const onCreateProject = () => {
+    //TODO
+  }
+
+  const onOpenProject = (path: string) => {
+    //TODO
+  }
+
+
+  //TODO
   return <div>Startpage Component</div>;
 }
