@@ -69,7 +69,7 @@ export default function TimelineComponent({
   };
 
   return (
-    <Card className="rounded-0 border-secondary border-2 d-flex flex-row align-items-center gap-4 p-3">
+    <Card className="rounded-0 border-2 border-secondary border-start-0 border-top-0 border-end-0 d-flex flex-row align-items-center gap-4 p-3">
       {/* Play Button */}
       <button className="btn btn-link p-0" onClick={handlePlayPause}>
         <i

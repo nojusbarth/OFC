@@ -3,6 +3,8 @@ import { Color } from "three";
 import { IController } from "../../../controller/interface/IController";
 import { Button, Card } from "react-bootstrap";
 
+import "./DroneManagerComponent.css";
+
 interface DroneManagerComponentProps {
   // Props
   controller: IController;
@@ -23,23 +25,23 @@ export default function DroneManagerComponent({
 
   // Register Event Handlers
   useEffect(() => {
-    controller.getDronesEvent().register(() => {
+    const onDronesChanged = () => {
       setAllDrones(controller.getDrones());
       setColors(getColors());
-    });
+    };
 
-    controller
-      .getCollisionEvent()
-      .register((droneIds: Map<number, Map<number, number>>) => {
-        setCollidingDrones(Array.from(droneIds.keys()));
-      });
+    const onCollision = (droneIds: Map<number, Map<number, number>>) => {
+      setCollidingDrones(Array.from(droneIds.keys()));
+    };
 
-    controller
-      .getDroneSelectEvent()
-      .register((selectedDroneIds: Array<number>) => {
-        setSelectedDrones(selectedDroneIds);
-      });
-  }, [controller]);
+    const onDroneSelected = (selectedDroneIds: Array<number>) => {
+      setSelectedDrones(selectedDroneIds);
+    };
+
+    controller.getDronesEvent().register(onDronesChanged);
+    controller.getCollisionEvent().register(onCollision);
+    controller.getDroneSelectEvent().register(onDroneSelected);
+  }, []);
 
   // Helper functions
   function getColors() {
@@ -51,10 +53,14 @@ export default function DroneManagerComponent({
     return colorMap;
   }
 
-  // click handlers
+  // Click handlers
   const onAddDrone = () => {
     controller.addDrone();
     setAllDrones(controller.getDrones());
+  };
+
+  const onRemoveDrone = (droneId: number) => {
+    controller.removeDrone(droneId);
   };
 
   const onDroneSelectionChange = (droneId: number) => {
@@ -63,46 +69,85 @@ export default function DroneManagerComponent({
     } else {
       controller.selectDrone(droneId);
     }
-    setSelectedDrones(controller.getSelectedDrones());
   };
 
   return (
-    <Card className="rounded-0 border-secondary border-2 border-bottom-0 border-start-0 p-3">
-      {/* Header */}
-      <div className="d-flex justify-content-between align-items-center mb-3">
+    <Card
+      className="rounded-0 border-2 border-secondary border-start-0 border-end-0 border-bottom-0 d-flex flex-column"
+      style={{ height: "100%" }}
+    >
+      {/* Heading */}
+      <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom flex-shrink-0">
         <span className="fw-bold">Drohnen ({allDrones.length})</span>
         <Button variant="primary" size="sm" onClick={onAddDrone}>
           <i className="bi bi-plus me-1" />
           Hinzufügen
         </Button>
-      </div>
+      </Card.Header>
 
       {/* Drone List */}
-      <div className="d-flex gap-3 overflow-auto">
-        {allDrones.map((droneId) => (
-          <Card
-            key={droneId}
-            className={`p-3 text-center rounded-3 ${selectedDrones.includes(droneId) ? "border-primary border-2" : "border-secondary border-1"}`}
-            style={{ minWidth: "120px", minHeight: "120px", cursor: "pointer" }}
-            onClick={() => {
-              console.log("Clicked drone with ID:", droneId);
-              onDroneSelectionChange(droneId);
-            }}
-          >
-            {/* Color Circle */}
-            <div
-              className="rounded-circle mx-auto mb-2"
-              style={{
-                width: "50px",
-                height: "50px",
-                backgroundColor: `#${colors.get(droneId)?.getHexString()}`,
-              }}
-            />
-            {/* ID */}
-            <div className="text-muted small">ID: {droneId}</div>
-          </Card>
-        ))}
-      </div>
+      <Card.Body
+        className="p-3 flex-grow-1"
+        style={{
+          overflowY: "auto",
+          minHeight: 0,
+        }}
+      >
+        <div className="row row-cols-auto justify-content-start g-3">
+          {allDrones.map((droneId) => {
+            const isSelected = selectedDrones.includes(droneId);
+            const isColliding = collidingDrones.includes(droneId);
+            const color = colors.get(droneId);
+            console.log("TEST", droneId, isSelected, isColliding, color); //TODO
+
+            return (
+              <div key={droneId} className="drone-manager drone-card col">
+                <Card
+                  onClick={() => onDroneSelectionChange(droneId)}
+                  className={`h-100 text-center ${
+                    isSelected
+                      ? "border-primary border-2 bg-primary bg-opacity-10"
+                      : "border-secondary"
+                  } ${isColliding ? "border-danger" : ""}`}
+                  style={{
+                    cursor: "pointer",
+                    width: "100px",
+                    height: "100px",
+                  }}
+                >
+                  <Card.Body className="d-flex flex-column align-items-center gap-2 p-3">
+                    {/* Drone Color */}
+                    <div
+                      className="rounded-circle border border-secondary"
+                      style={{
+                        width: "40px",
+                        height: "40px",
+                        backgroundColor: color
+                          ? `#${color.getHexString()}`
+                          : "#888888",
+                      }}
+                    />
+
+                    {/* Drone ID */}
+                    <div className="small fw-medium">ID: {droneId}</div>
+                  </Card.Body>
+
+                  {/* Remove Button */}
+                  <button
+                    className="drone-manager drone-card delete position-absolute top-0 end-0 m-0 p-0"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onRemoveDrone(droneId);
+                    }}
+                  >
+                    <i className="bi bi-trash" />
+                  </button>
+                </Card>
+              </div>
+            );
+          })}
+        </div>
+      </Card.Body>
     </Card>
   );
 }

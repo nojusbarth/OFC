@@ -1,6 +1,15 @@
 import React from "react";
 import logo from "./logo.svg";
 import "./App.css";
+import { useMemo, useState } from "react";
+import EditorComponent from "./view/editor/EditorComponent";
+import StartpageComponent from "./view/startpage/StartpageComponent";
+import { Controller } from "./controller/logic/Controller";
+import { ProjectRepository } from "./repository/ProjectRepository";
+import { Settings } from "./controller/logic/Settings";
+import { PositionKeyFrame } from "./repository/entity/PositionKeyFrame";
+import { Vector3, Color } from "three";
+import { ColorKeyFrame } from "./repository/entity/ColorKeyFrame";
 
 function App() {
   // State Hooks

@@ -18,41 +18,59 @@ export default function EditorComponent({
   /* Layout Constants */
   // Breite des DroneEditors und SettingsComponents
   const droneEditorWidth = "400px";
+  const droneManagerHeight = "250px";
+  const timelineHeight = "60px";
 
   return (
-    <Container fluid className="vh-100 d-flex flex-column bg-light p-0">
-      {/* Timeline + Settings - oben */}
-      <Row className="g-0">
-        <Col>
-          <TimelineComponent
-            settings={controller.getSettings()}
-            timeController={controller.getTimeController()}
-          />
-        </Col>
-        <Col xs="auto" style={{ width: droneEditorWidth }}>
-          <SettingsComponent
-            settings={controller.getSettings()}
-            timeController={controller.getTimeController()}
-            toggleStartpage={toggleStartpage}
-          />
-        </Col>
-      </Row>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: `1fr ${droneEditorWidth}`,
+        gridTemplateRows: `${timelineHeight} 1fr ${droneManagerHeight}`,
+        gridTemplateAreas: `
+          "timeline settings"
+          "viewport editor"
+          "drones   editor"
+        `,
+        height: "100vh",
+        width: "100vw",
+        overflow: "hidden",
+      }}
+    >
+      {/* Timeline */}
+      <div style={{ gridArea: "timeline" }}>
+        <TimelineComponent
+          settings={controller.getSettings()}
+          timeController={controller.getTimeController()}
+        />
+      </div>
 
-      {/* Hauptbereich */}
-      <Row className="flex-grow-1 g-0">
-        {/* Links: Viewport + DroneManager */}
-        <Col className="d-flex flex-column">
-          <div className="flex-grow-1 border border-secondary m-2">
-            {/* Viewport kommt später hier */}
-          </div>
-          <DroneManagerComponent controller={controller} />
-        </Col>
+      {/* Settings */}
+      <div style={{ gridArea: "settings" }}>
+        <SettingsComponent
+          settings={controller.getSettings()}
+          timeController={controller.getTimeController()}
+          toggleStartpage={toggleStartpage}
+        />
+      </div>
 
-        {/* Rechts: DroneEditor */}
-        <Col xs="auto" style={{ width: droneEditorWidth }}>
-          <DroneEditorComponent controller={controller} />
-        </Col>
-      </Row>
-    </Container>
+      {/* Viewport */}
+      <div
+        style={{ gridArea: "viewport", overflow: "hidden" }}
+        className="border border-secondary m-2"
+      >
+        {/* Viewport kommt später hier */}
+      </div>
+
+      {/* Drone Manager */}
+      <div style={{ gridArea: "drones", overflow: "hidden" }}>
+        <DroneManagerComponent controller={controller} />
+      </div>
+
+      {/* Drone Editor */}
+      <div style={{ gridArea: "editor", overflow: "auto" }}>
+        <DroneEditorComponent controller={controller} />
+      </div>
+    </div>
   );
 }
