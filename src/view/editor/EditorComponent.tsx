@@ -16,20 +16,19 @@ interface EditorComponentProps {
 export default function EditorComponent({
   controller,
   toggleStartpage,
-  viewport: Viewport,
+  viewport,
 }: EditorComponentProps) {
   /* Layout Constants */
   // Breite des DroneEditors und SettingsComponents
   const droneEditorWidth = "400px";
   const droneManagerHeight = "250px";
-  const timelineHeight = "60px";
 
   return (
     <div
       style={{
         display: "grid",
         gridTemplateColumns: `1fr ${droneEditorWidth}`,
-        gridTemplateRows: `${timelineHeight} 1fr ${droneManagerHeight}`,
+        gridTemplateRows: `auto 1fr ${droneManagerHeight}`,
         gridTemplateAreas: `
           "timeline settings"
           "viewport editor"
@@ -41,7 +40,7 @@ export default function EditorComponent({
       }}
     >
       {/* Timeline */}
-      <div style={{ gridArea: "timeline" }}>
+      <div style={{ gridArea: "timeline", overflow: "hidden" }}>
         <TimelineComponent
           settings={controller.getSettings()}
           timeController={controller.getTimeController()}
@@ -49,7 +48,7 @@ export default function EditorComponent({
       </div>
 
       {/* Settings */}
-      <div style={{ gridArea: "settings" }}>
+      <div style={{ gridArea: "settings", overflow: "hidden" }}>
         <SettingsComponent
           settings={controller.getSettings()}
           timeController={controller.getTimeController()}
@@ -59,11 +58,12 @@ export default function EditorComponent({
 
       {/* Viewport */}
       <div
-        style={{ gridArea: "viewport", overflow: "hidden" }}
-        className="border border-secondary m-2"
+        style={{
+          gridArea: "viewport",
+          overflow: "hidden",
+        }}
       >
-        {Viewport}
-        {/* Viewport kommt später hier */}
+        {viewport}
       </div>
 
       {/* Drone Manager */}
