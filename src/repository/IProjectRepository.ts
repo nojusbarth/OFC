@@ -4,6 +4,8 @@ import {DayTime} from "./entity/DayTime";
 export interface IProjectRepository {
 
     load(file: File|string|null): void
+    loadLastProject(): boolean
+    saveToLocalStorage(): void
 
     getNextDroneId(): number // TODO: ADD NEW METHODE
     getAllDrones(): Array<IDrone>
