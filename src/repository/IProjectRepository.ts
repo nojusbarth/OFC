@@ -3,8 +3,11 @@ import {DayTime} from "./entity/DayTime";
 
 export interface IProjectRepository {
 
+    load(file: File|string|null): void
+
+    getNextDroneId(): number // TODO: ADD NEW METHODE
     getAllDrones(): Array<IDrone>
-    getDroneById(id: number): IDrone
+    getDroneById(id: number): IDrone|undefined
     addDrone(drone: IDrone): void
     updateDrone(drone: IDrone): void
     removeDrone(id: number): void
