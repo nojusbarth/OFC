@@ -35,7 +35,7 @@ export class SelectionManager {
       currentPathFrame.pathPositions.set(id, positions);
       currentPathFrame.pathColors.set(
         id,
-        allPaths.pathColors.get(id) ?? "white",
+        allPaths.pathColors.get(id) ?? "green",
       );
     });
 

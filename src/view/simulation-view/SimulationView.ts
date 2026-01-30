@@ -180,18 +180,7 @@ export class SimulationView implements ISimulationView {
 
     droneIds.forEach((drone) => {
       let position: Vector3 = this.controller.getPositionAt(drone, time);
-      console.log(
-        "Drone " +
-          drone +
-          " position at time " +
-          time +
-          ": " +
-          position.x +
-          ", " +
-          position.y +
-          ", " +
-          position.z,
-      );
+
       let color = this.controller.getColorAt(drone, time);
 
       dronePositions.set(drone, position);
@@ -224,7 +213,7 @@ export class SimulationView implements ISimulationView {
         keyframe.getPos(),
       );
 
-      let color: string = "#ffffff";
+      let color: string = "#00ff00";
 
       pathPositions.set(drone, positionVectors);
       pathColors.set(drone, color);
