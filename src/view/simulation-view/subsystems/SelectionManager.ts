@@ -1,3 +1,4 @@
+import { Color } from "three";
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
 
@@ -48,7 +49,7 @@ export class SelectionManager {
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.selectedIds.forEach((id) => {
-      currentDroneFrame.droneColors.set(id, "white");
+      currentDroneFrame.droneColors.set(id, new Color(0, 0, 0));
     });
 
     return currentDroneFrame;
