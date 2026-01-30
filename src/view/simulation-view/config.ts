@@ -97,10 +97,16 @@ export const defaultPathFrame: PathFrame = {
 /* ---------------- Drohnen & Pfad Properties ---------------- */
 
 export const droneConfig = {
-  dimensions: [0.2, 16, 16],
+  // SphereGeometry: [radius, widthSegments, heightSegments]
+  dimensions: [0.3, 16, 16],
   emissiveIntensity: 5.0,
 };
 
 export const pathConfig = {
-  lineWidth: 2,
+  lineWidth: 4,
+  // Line-Rendering (gestrichelte Pfade)
+  dashSize: 0.3,
+  gapSize: 0.2,
+  opacity: 0.9,
+  dashOffsetSpeed: 0.01,
 };
