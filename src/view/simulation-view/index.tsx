@@ -37,7 +37,7 @@ export function initSimulation(controller : IController) {
 
   controller.getDroneSelectEvent().register((selectedDrones) => {
     console.log("Drone selection changed event ", selectedDrones);  
-    simulation.notifyFrameChange();
+    simulation.selectDrones(selectedDrones);
   });
 
   controller.getDroneChangedEvent().register((drone) => {
@@ -70,6 +70,7 @@ export function initSimulation(controller : IController) {
       droneStore={droneStore}
       pathStore={pathStore}
       lightStore={lightStore}
+      onReady={() => simulation.notifyFrameChange()}
     />
   );
 

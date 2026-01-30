@@ -27,7 +27,8 @@ export const SceneRenderer: React.FC<{
   droneStore: DroneStateStore;
   pathStore: PathStateStore;
   lightStore: LightStateStore;
-}> = ({ droneStore, pathStore, lightStore }) => {
+  onReady?: () => void;
+}> = ({ droneStore, pathStore, lightStore, onReady }) => {
   const [droneFrame, setDroneFrame] = useState(defaultDroneFrame);
   const [pathFrame, setPathFrame] = useState(defaultPathFrame);
   const [lightFrame, setLightFrame] = useState(defaultLightFrame);
@@ -42,7 +43,8 @@ export const SceneRenderer: React.FC<{
     droneStore.bindState(setDroneFrame);
     pathStore.bindState(setPathFrame);
     lightStore.bindState(setLightFrame);
-  }, [droneStore, pathStore, lightStore]);
+    onReady?.();
+  }, [droneStore, pathStore, lightStore, onReady]);
 
   /* ---------------- Kamera & Controls ---------------- */
   useFrame(() => {

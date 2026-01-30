@@ -52,7 +52,7 @@ export class SelectionManager {
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.selectedIds.forEach((id) => {
-      currentDroneFrame.droneColors.set(id, new Color(0, 0, 0));
+      currentDroneFrame.droneColors.set(id, new Color(1, 1, 1));
     });
 
     return currentDroneFrame;
@@ -64,21 +64,7 @@ export class SelectionManager {
    * @param id - Die ID der Drohne
    * @public
    */
-  public selectDrone(id: number) {
-    if (!this.selectedIds.includes(id)) {
-      this.selectedIds.push(id);
-    }
-  }
-
-  /**
-   * Deselektiert eine Drohne, falls sie ausgewählt ist.
-   *
-   * @param id - Die ID der Drohne
-   * @public
-   */
-  public unselectDrone(id: number) {
-    if (this.selectedIds.includes(id)) {
-      this.selectedIds = this.selectedIds.filter((item) => item != id);
-    }
+  public selectDrone(ids: number[]) {
+    this.selectedIds = ids;
   }
 }

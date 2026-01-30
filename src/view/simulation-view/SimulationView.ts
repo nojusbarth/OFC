@@ -145,21 +145,8 @@ export class SimulationView implements ISimulationView {
    * @param id - Die eindeutige ID der Drohne
    * @public
    */
-  public selectDrone(id: number) {
-    this.selectionManager.selectDrone(id);
-
-    this.drawChanges();
-  }
-
-  /**
-   * Deselektiert eine Drohne basierend auf ihrer ID.
-   * Die Drohne wird nicht mehr hervorgehoben und ihr Pfad wird ausgeblendet.
-   *
-   * @param id - Die eindeutige ID der Drohne
-   * @public
-   */
-  public unselectDrone(id: number) {
-    this.selectionManager.unselectDrone(id);
+  public selectDrones(ids: number[]) {
+    this.selectionManager.selectDrone(ids);
 
     this.drawChanges();
   }
