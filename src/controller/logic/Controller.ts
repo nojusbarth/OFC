@@ -59,8 +59,8 @@ export class Controller implements IController {
         this._getDrone(id); // validate id
         this.repository.removeDrone(id);
         this.unselectDrone(id);
-        this.dronesEvent.notify(this.getDrones());
         this._mergeCollissions(id, new Map()); // remove collisions
+        this.dronesEvent.notify(this.getDrones());
     }
 
     getDrones(): number[] {
@@ -117,8 +117,8 @@ export class Controller implements IController {
     removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
         const drone = this._getDrone(id);
         drone.removePositionKeyFrame(keyFrame);
-        this.droneChangedEvent.notify(id);
         this._checkCollisions(drone);
+        this.droneChangedEvent.notify(id);
     }
 
     getColorKeyFrames(id: number): ColorKeyFrame[] {

@@ -27,7 +27,10 @@ export class SelectionManager {
   ): PathFrame {
     this.selectedIds.forEach((id) => {
       const positions = allPaths.pathPositions.get(id);
-      if (!positions) throw new Error(`KeyFrame ${id} not found`);
+      if (!positions) {
+        console.log(`KeyFrame ${id} not found`);
+        return;
+      }
 
       currentPathFrame.pathPositions.set(id, positions);
       currentPathFrame.pathColors.set(

@@ -4,16 +4,19 @@ import DroneEditorComponent from "./components/DroneEditorComponent";
 import TimelineComponent from "./components/TimelineComponent";
 import SettingsComponent from "./components/SettingsComponent";
 import { IController } from "../../controller/interface/IController";
+import { JSX } from "react";
 
 interface EditorComponentProps {
   // Props
   controller: IController;
   toggleStartpage: () => void;
+  viewport: JSX.Element;
 }
 
 export default function EditorComponent({
   controller,
   toggleStartpage,
+  viewport: Viewport,
 }: EditorComponentProps) {
   /* Layout Constants */
   // Breite des DroneEditors und SettingsComponents
@@ -59,6 +62,7 @@ export default function EditorComponent({
         style={{ gridArea: "viewport", overflow: "hidden" }}
         className="border border-secondary m-2"
       >
+        {Viewport}
         {/* Viewport kommt später hier */}
       </div>
 
