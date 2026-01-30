@@ -75,13 +75,13 @@ export class Controller implements IController {
             this._getDrone(id); // validate id
         }
         this.selectedDrones.push(id);
-        this.droneSelectEvent.notify(this.selectedDrones);
+        this.droneSelectEvent.notify(Array.from(this.selectedDrones));
     }
 
     unselectDrone(id: number): void {
         if (this.selectedDrones.includes(id)) {
             this.selectedDrones = this.selectedDrones.filter(e => e !== id);
-            this.droneSelectEvent.notify(this.selectedDrones);
+            this.droneSelectEvent.notify(Array.from(this.selectedDrones));
         }
     }
 
@@ -180,7 +180,7 @@ export class Controller implements IController {
                 }
             }
         }
-        this.collisionEvent.notify(this.collisionState);
+        this.collisionEvent.notify(new Map(this.collisionState));
     }
 
     private _getDrone(id: number) {
