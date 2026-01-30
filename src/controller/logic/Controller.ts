@@ -1,17 +1,17 @@
-import { Vector3, Color } from "three";
-import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
-import type { IController } from "../interface/IController";
-import type { IProject } from "../interface/IProject";
-import type { ISettings } from "../interface/ISettings";
-import type { ITimeController } from "../interface/ITimeController";
-import { OFCEvent } from "../interface/OFCEvent";
-import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
-import { TimeController } from "./TimeController";
-import { Drone } from "./Drone";
-import { checkCollisions } from "./CollisionHandler";
-import { Project } from "./Project";
-import { IProjectRepository } from "../../repository/IProjectRepository";
-import { IDrone } from "../../repository/entity/IDrone";
+import {Color, Vector3} from "three";
+import {ColorKeyFrame} from "../../repository/entity/ColorKeyFrame";
+import type {IController} from "../interface/IController";
+import type {IProject} from "../interface/IProject";
+import type {ISettings} from "../interface/ISettings";
+import type {ITimeController} from "../interface/ITimeController";
+import {OFCEvent} from "../interface/OFCEvent";
+import {PositionKeyFrame} from "../../repository/entity/PositionKeyFrame";
+import {TimeController} from "./TimeController";
+import {Drone} from "./Drone";
+import {checkCollisions} from "./CollisionHandler";
+import {Project} from "./Project";
+import {IProjectRepository} from "../../repository/IProjectRepository";
+import {IDrone} from "../../repository/entity/IDrone";
 
 export class Controller implements IController {
     private settings: ISettings
@@ -19,7 +19,6 @@ export class Controller implements IController {
     private project: IProject
     private repository: IProjectRepository;
     // private drones: Map<number, Drone>
-    private droneIdCounter: number = 0;
     private selectedDrones: number[] = [];
     private droneChangedEvent: OFCEvent<number> = new OFCEvent();
     private dronesEvent: OFCEvent<number[]> = new OFCEvent();
@@ -47,7 +46,7 @@ export class Controller implements IController {
     }
 
     addDrone(): number {
-        const id = this.droneIdCounter++;
+        const id = this.repository.getNextDroneId();
         const drone = new Drone(id);
         this.repository.addDrone(drone);
         this.dronesEvent.notify(this.getDrones());

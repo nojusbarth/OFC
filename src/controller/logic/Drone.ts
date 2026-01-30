@@ -1,15 +1,17 @@
-import { Color, Vector3 } from "three";
-import type { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
-import type { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
-import { IDrone } from "../../repository/entity/IDrone";
+import {Color, Vector3} from "three";
+import type {PositionKeyFrame} from "../../repository/entity/PositionKeyFrame";
+import type {ColorKeyFrame} from "../../repository/entity/ColorKeyFrame";
+import {IDrone} from "../../repository/entity/IDrone";
 
 export class Drone implements IDrone {
     id: number
     positionKeyFrames: PositionKeyFrame[] = [];
     colorKeyFrames: ColorKeyFrame[] = [];
 
-    constructor(id: number) {
+    constructor(id: number, positionKeyFrames: PositionKeyFrame[] = [], colorKeyFrames: ColorKeyFrame[] = []) {
         this.id = id;
+        this.positionKeyFrames = positionKeyFrames;
+        this.colorKeyFrames = colorKeyFrames;
     }
 
     getId(): number {
