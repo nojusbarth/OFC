@@ -30,7 +30,7 @@ export class Controller implements IController {
         this.project = new Project(repository, this);
         this.repository = repository;
         this.timeController = new TimeController(settings);
-        // this.drones = new Map();
+        this.project.getProjectLoadedEvent().register(() => this.reset());
     }
 
     getSettings(): ISettings {
@@ -43,6 +43,17 @@ export class Controller implements IController {
 
     getProject(): IProject {
         return this.project;
+    }
+
+    private reset(): void {
+        this.selectedDrones = [];
+        this.collisionState = new Map();
+        const drones = this.repository.getAllDrones();
+        for (const drone of drones) {
+            const result = checkCollisions(drone, drones, this.settings.getDroneDistance());
+            this.collisionState.set(drone.getId(), result);
+        }
+        this.droneSelectEvent.notify(this.selectedDrones);
     }
 
     addDrone(): number {
@@ -58,7 +69,7 @@ export class Controller implements IController {
         this._getDrone(id); // validate id
         this.repository.removeDrone(id);
         this.unselectDrone(id);
-        this._mergeCollissions(id, new Map()); // remove collisions
+        this._mergeCollisions(id, new Map()); // remove collisions
         this.dronesEvent.notify(this.getDrones());
     }
 
@@ -150,12 +161,16 @@ export class Controller implements IController {
         this.droneChangedEvent.notify(id);
     }
 
-    private _checkCollisions(drone: IDrone): void {
-        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
-        this._mergeCollissions(drone.getId(), collisions);
+    getCollisions(): Map<number, Map<number, number>> {
+        return this.collisionState;
     }
 
-    private _mergeCollissions(drone: number, collisions: Map<number, number>) {
+    private _checkCollisions(drone: IDrone): void {
+        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
+        this._mergeCollisions(drone.getId(), collisions);
+    }
+
+    private _mergeCollisions(drone: number, collisions: Map<number, number>) {
         if (collisions.size === 0 && !this.collisionState.has(drone)) {
             return;
         }
