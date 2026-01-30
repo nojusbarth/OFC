@@ -2,7 +2,7 @@ import {IProjectRepository} from "./IProjectRepository";
 import {IDrone} from "./entity/IDrone";
 import {DayTime} from "./entity/DayTime";
 import {mapToJsonDrones, parseJsonToDrones, ProjectConfig, WaypointAtTime} from "./ProjectConfig";
-import {FILE_VERSION} from "./RepositoryConstants";
+import {FILE_VERSION, LAST_PROJECT_DATA_KEY} from "./RepositoryConstants";
 
 export class ProjectRepository implements IProjectRepository {
     private drones: Array<IDrone> = []
@@ -18,7 +18,7 @@ export class ProjectRepository implements IProjectRepository {
             let reader = new FileReader();
             reader.onloadend = (e: ProgressEvent<FileReader>) => {
                 const content = e.target?.result;
-                if (content != null) {
+                if (!content) {
                     this.parseJson(content as string)
                 } else {
                     throw new Error(`Failed to load project: ${e}`);
@@ -28,6 +28,15 @@ export class ProjectRepository implements IProjectRepository {
         } else {
             this.parseJson(input);
         }
+    }
+
+    loadLastProject(): boolean {
+        const data = localStorage.getItem(LAST_PROJECT_DATA_KEY)
+        if (data == null) {
+            return false
+        }
+        this.load(data)
+        return true
     }
 
     private parseJson(content: string) {
@@ -112,6 +121,9 @@ export class ProjectRepository implements IProjectRepository {
         }
 
         return JSON.stringify(config, null, 0)
+    }
 
+    saveToLocalStorage(): void {
+        localStorage.setItem(LAST_PROJECT_DATA_KEY, this.exportConfig());
     }
 }
