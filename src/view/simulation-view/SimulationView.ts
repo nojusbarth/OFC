@@ -90,6 +90,7 @@ export class SimulationView implements ISimulationView {
     this.droneStore?.update((draft) => {
       draft.droneColors = currentDroneFrame.droneColors;
       draft.dronePositions = currentDroneFrame.dronePositions;
+      draft.outlineColors = currentDroneFrame.outlineColors;
     });
 
     this.pathStore?.update((draft) => {
@@ -180,6 +181,7 @@ export class SimulationView implements ISimulationView {
 
     let dronePositions: Map<number, Vector3> = new Map();
     let droneColors: Map<number, Color> = new Map();
+    let outlineColors: Map<number, [string, string] | null> = new Map();
 
     droneIds.forEach((drone) => {
       let position: Vector3 = this.controller.getPositionAt(drone, time);
@@ -193,6 +195,7 @@ export class SimulationView implements ISimulationView {
     return {
       dronePositions: dronePositions,
       droneColors: droneColors,
+      outlineColors: outlineColors,
     };
   }
 

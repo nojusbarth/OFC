@@ -48,7 +48,7 @@ export class CollisionManager {
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.currentCollision.forEach((id: number) => {
-      currentDroneFrame.droneColors.set(id, new Color(1, 0, 0));
+      currentDroneFrame.outlineColors.set(id, ["#ff0000", "#880000"]);
     });
 
     return currentDroneFrame;

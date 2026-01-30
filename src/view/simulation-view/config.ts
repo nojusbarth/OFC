@@ -87,6 +87,7 @@ export const defaultLightFrame: LightFrame = sceneLightFrames.NOON;
 export const defaultDroneFrame: DroneFrame = {
   dronePositions: new Map(),
   droneColors: new Map(),
+  outlineColors: new Map(),
 };
 
 export const defaultPathFrame: PathFrame = {
@@ -107,6 +108,16 @@ export const pathConfig = {
   // Line-Rendering (gestrichelte Pfade)
   dashSize: 0.3,
   gapSize: 0.2,
+  opacity: 0.9,
+  dashOffsetSpeed: 0.01,
+};
+
+export const zebraRingConfig = {
+  // ZebraRing-Outline für Drohnen (zwei versetzte gestrichelte Ringe)
+  lineWidth: 3,
+  dashSize: 0.25,
+  gapSize: 0.25,
+  dashOffset: 0.25,
   opacity: 0.9,
   dashOffsetSpeed: 0.01,
 };
