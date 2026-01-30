@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 
 import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
+
+import { SPEED_VALUES } from "../config";
 
 interface TimelineComponentProps {
   // Props
@@ -22,6 +24,28 @@ export default function TimelineComponent({
   );
   const [playing, setPlaying] = useState<boolean>(false);
 
+  // Register Event Handlers
+  useEffect(() => {
+    // Define Functions
+    const onPlayingChanged = (isPlaying: boolean) => {
+      setPlaying(isPlaying);
+    };
+
+    const onTimeChanged = (newTime: number) => {
+      setTime(newTime);
+    };
+
+    // Register Events
+    timeController.getAnimationRunningEvent().register(onPlayingChanged);
+    timeController.getTimeChangedEvent().register(onTimeChanged);
+
+    return () => {
+      // Remove Events
+      timeController.getAnimationRunningEvent().remove(onPlayingChanged);
+      timeController.getTimeChangedEvent().remove(onTimeChanged);
+    };
+  }, [timeController]);
+
   const handlePlayPause = () => {
     if (playing) {
       timeController.stopAnimation();
@@ -31,41 +55,20 @@ export default function TimelineComponent({
     setPlaying(!playing);
   };
 
-  timeController.getTimeChangedEvent().register((newTime: number) => {
-    setTime(newTime);
-  });
-
   const handleSpeedChange = () => {
-    switch (animationSpeed) {
-      case 0.25:
-        changeSpeed(0.5);
-        break;
-      case 0.5:
-        changeSpeed(0.75);
-        break;
-      case 0.75:
-        changeSpeed(1);
-        break;
-      case 1:
-        changeSpeed(1.5);
-        break;
-      case 1.5:
-        changeSpeed(2);
-        break;
-      case 2:
-        changeSpeed(3);
-        break;
-      case 3:
-        changeSpeed(0.25);
-        break;
-      default:
-        changeSpeed(1);
-    }
+    const currentIndex = SPEED_VALUES.indexOf(animationSpeed);
+    const nextIndex = (currentIndex + 1) % SPEED_VALUES.length;
+    changeSpeed(SPEED_VALUES[nextIndex]);
   };
 
   const changeSpeed = (number: number) => {
     timeController.setAnimationSpeed(number);
     setAnimationSpeed(number);
+  };
+
+  const handleSliderChange = (newTime: number) => {
+    setTime(newTime);
+    timeController.setTime(newTime);
   };
 
   return (
@@ -109,7 +112,11 @@ export default function TimelineComponent({
           type="range"
           className="form-range flex-grow-1"
           min={0}
-          max={100}
+          max={endTime * 60}
+          step={1}
+          value={time * 60}
+          onChange={(e) => handleSliderChange(Number(e.target.value) / 60)}
+          disabled={playing}
         />
       </div>
     </Card>

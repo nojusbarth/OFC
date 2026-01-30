@@ -5,6 +5,7 @@ import TimelineComponent from "./components/TimelineComponent";
 import SettingsComponent from "./components/SettingsComponent";
 import { IController } from "../../controller/interface/IController";
 import { JSX } from "react";
+import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
 
 interface EditorComponentProps {
   // Props
@@ -18,17 +19,12 @@ export default function EditorComponent({
   toggleStartpage,
   viewport,
 }: EditorComponentProps) {
-  /* Layout Constants */
-  // Breite des DroneEditors und SettingsComponents
-  const droneEditorWidth = "400px";
-  const droneManagerHeight = "250px";
-
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: `1fr ${droneEditorWidth}`,
-        gridTemplateRows: `auto 1fr ${droneManagerHeight}`,
+        gridTemplateColumns: `1fr ${DRONE_EDITOR_WIDTH}`,
+        gridTemplateRows: `auto 1fr ${DRONE_MANAGER_HEIGHT}`,
         gridTemplateAreas: `
           "timeline settings"
           "viewport editor"

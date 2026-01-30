@@ -25,6 +25,7 @@ export default function DroneManagerComponent({
 
   // Register Event Handlers
   useEffect(() => {
+    // Define Functions
     const onDronesChanged = () => {
       setAllDrones(controller.getDrones());
       setColors(getColors());
@@ -38,10 +39,18 @@ export default function DroneManagerComponent({
       setSelectedDrones(selectedDroneIds);
     };
 
+    // Register Events
     controller.getDronesEvent().register(onDronesChanged);
     controller.getCollisionEvent().register(onCollision);
     controller.getDroneSelectEvent().register(onDroneSelected);
-  }, []);
+
+    return () => {
+      // Remove Events
+      controller.getDronesEvent().remove(onDronesChanged);
+      controller.getCollisionEvent().remove(onCollision);
+      controller.getDroneSelectEvent().remove(onDroneSelected);
+    };
+  }, [controller]);
 
   // Helper functions
   function getColors() {
@@ -93,7 +102,7 @@ export default function DroneManagerComponent({
           minHeight: 0,
         }}
       >
-        <div className="row row-cols-auto justify-content-start g-3">
+        <div className="row row-cols-auto justify-content-start g-4">
           {allDrones.map((droneId) => {
             const isSelected = selectedDrones.includes(droneId);
             const isColliding = collidingDrones.includes(droneId);
