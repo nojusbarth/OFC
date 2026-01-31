@@ -152,6 +152,12 @@ export interface IController {
     removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void;
 
     /**
+     * Ruft den aktuellen Kollisionszustand ab.
+     * @returns Eine Zuordnung von Drohnen-IDs zu ihren Kollisionspartnern und -zeiten
+     */
+    getCollisions(): Map<number, Map<number, number>>;
+
+    /**
      * Ruft den Event-Emitter für Drohneneigenschaftsänderungen ab.
      * Wird ausgelöst, wenn Keyframes einer Drohne geändert werden, stellt die ID der geänderten Drohne bereit.
      * @returns Event-Emitter, der ausgelöst wird, wenn sich eine Drohneneigenschaft ändert

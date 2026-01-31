@@ -24,6 +24,14 @@ export class UndoableController implements IUndoableController {
         this.controller = controller;
         this.undoStack = undoStack;
         this.redoStack = redoStack;
+
+        this.controller.getProject().getProjectLoadedEvent().register(() => {
+            this.idRemapping.clear();
+            while (this.undoStack.popAction()) {}
+            while (this.redoStack.popAction()) {}
+            this.undoFlag = false;
+            this.redoFlag = false;
+        });
     }
 
     undo(): void {
@@ -276,6 +284,10 @@ export class UndoableController implements IUndoableController {
             this._pushAction(ActionType.REMOVE_COLOR_KEYFRAME, { id, keyFrame });
         }
         this.controller.removeColorKeyFrame(id, keyFrame);
+    }
+
+    getCollisions(): Map<number, Map<number, number>> {
+        return this.controller.getCollisions();
     }
     
     getDroneChangedEvent(): OFCEvent<number> {
