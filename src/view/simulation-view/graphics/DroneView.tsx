@@ -3,9 +3,10 @@ import { DroneFrame } from "../state/DroneFrame";
 
 import { droneConfig, zebraRingConfig } from "../config";
 import { useFrame } from '@react-three/fiber'
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { Line } from '@react-three/drei'
+import { useThree } from '@react-three/fiber'
 
 
 type Props = {
@@ -74,6 +75,9 @@ function ZebraRing({
 }) {
   const refA = useRef<any>(null)
   const refB = useRef<any>(null)
+  const [lineWidth, setLineWidth] = useState(zebraRingConfig.lineWidth)
+  const { camera } = useThree()
+  const worldPosition = useRef(new THREE.Vector3())
 
   const points = useMemo(() => {
     const pts: THREE.Vector3[] = []
@@ -92,6 +96,15 @@ function ZebraRing({
   useFrame(() => {
     if (refA.current) refA.current.material.dashOffset -= zebraRingConfig.dashOffsetSpeed
     if (refB.current) refB.current.material.dashOffset -= zebraRingConfig.dashOffsetSpeed
+
+    // Berechne Entfernung zwischen Kamera und diesem Ring
+    if (refA.current) {
+      refA.current.getWorldPosition(worldPosition.current)
+      const distance = camera.position.distanceTo(worldPosition.current)
+      // Skaliere lineWidth basierend auf Entfernung (je weiter weg, desto dünner)
+      const scaledWidth = Math.max(0.5, zebraRingConfig.lineWidth * (5 / distance))
+      setLineWidth(scaledWidth)
+    }
   })
 
   return (
@@ -101,7 +114,7 @@ function ZebraRing({
         ref={refA}
         points={points}
         color={colorA}
-        lineWidth={zebraRingConfig.lineWidth}
+        lineWidth={lineWidth}
         dashed
         dashSize={zebraRingConfig.dashSize}
         gapSize={zebraRingConfig.gapSize}
@@ -113,7 +126,7 @@ function ZebraRing({
         ref={refB}
         points={points}
         color={colorB}
-        lineWidth={zebraRingConfig.lineWidth}
+        lineWidth={lineWidth}
         dashed
         dashSize={zebraRingConfig.dashSize}
         gapSize={zebraRingConfig.gapSize}
