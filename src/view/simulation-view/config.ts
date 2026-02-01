@@ -16,7 +16,7 @@ export const sceneBounds = {
   minZ: -50,
   maxZ: 50,
   minY: 1,
-  maxY: 20,
+  maxY: 50,
 };
 
 /* ---------------- OrbitControls ---------------- */
@@ -100,7 +100,7 @@ export const defaultPathFrame: PathFrame = {
 export const droneConfig = {
   // SphereGeometry: [radius, widthSegments, heightSegments]
   dimensions: [0.3, 16, 16],
-  emissiveIntensity: 5.0,
+  emissiveIntensity: 5,
 };
 
 export const pathConfig = {

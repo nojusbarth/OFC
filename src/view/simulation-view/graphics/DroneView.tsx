@@ -7,6 +7,7 @@ import { useRef, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { Line } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
+import { RGBA_ASTC_5x4_Format } from "three";
 
 
 type Props = {
@@ -50,8 +51,9 @@ export const DroneView: React.FC<Props> = ({ frame }) => {
               <sphereGeometry args={[radius, dim[1], dim[2]]} />
               <meshStandardMaterial
                 color={color}
-                emissive={color}
+                emissive={new THREE.Color(color).multiplyScalar(0.6)}
                 emissiveIntensity={droneConfig.emissiveIntensity}
+     
               />
             </mesh>
           </group>
