@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
+import { DayTime } from "../../../repository/entity/DayTime";
 
 interface SettingsComponentProps {
   // Props
@@ -10,16 +11,24 @@ interface SettingsComponentProps {
 }
 
 export default function SettingsComponent({
+  settings,
+  timeController,
   toggleStartpage,
 }: SettingsComponentProps) {
   // State Hooks
-  const [dayTime, setDayTime] = useState<null>(null); // TODO
-  const [collisionRadius, setCollisionRadius] = useState<number>(0);
-  const [endTime, setEndTime] = useState<number>(60);
+  const [dayTime, setDayTime] = useState<DayTime>(settings.getDayTime());
+  const [collisionRadius, setCollisionRadius] = useState<number>(
+    settings.getDroneDistance(),
+  );
+  const [endTime, setEndTime] = useState<number>(settings.getEndTime());
 
   return (
-    <div className="bg-secondary text-light p-2 border-start border-dark h-100">
-      Settings
-    </div>
+    <button
+      onClick={toggleStartpage}
+      className="btn btn-light d-flex align-items-center h-100 w-100 rounded-0 border-2 border-end-0 border-top-0 border-secondary p-3 gap-2"
+    >
+      <i className="bi bi-gear-fill" />
+      <span className="fw-bold">Einstellungen</span>
+    </button>
   );
 }

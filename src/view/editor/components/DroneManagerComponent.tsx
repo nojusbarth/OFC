@@ -82,7 +82,7 @@ export default function DroneManagerComponent({
 
   return (
     <Card
-      className="rounded-0 border-2 border-secondary border-start-0 border-end-0 border-bottom-0 d-flex flex-column"
+      className="d-flex flex-column h-100 w-100 rounded-0 border-2 border-secondary border-start-0 border-end-0 border-bottom-0"
       style={{ height: "100%" }}
     >
       {/* Heading */}
@@ -95,13 +95,7 @@ export default function DroneManagerComponent({
       </Card.Header>
 
       {/* Drone List */}
-      <Card.Body
-        className="p-3 flex-grow-1"
-        style={{
-          overflowY: "auto",
-          minHeight: 0,
-        }}
-      >
+      <Card.Body className="p-3 flex-grow-1 overflow-y-auto">
         <div className="row row-cols-auto justify-content-start g-4">
           {allDrones.map((droneId) => {
             const isSelected = selectedDrones.includes(droneId);
@@ -112,7 +106,7 @@ export default function DroneManagerComponent({
               <div key={droneId} className="drone-manager drone-card col">
                 <Card
                   onClick={() => onDroneSelectionChange(droneId)}
-                  className={`h-100 text-center ${
+                  className={` text-center ${
                     isSelected
                       ? "border-primary border-2 bg-primary bg-opacity-10"
                       : "border-secondary"
