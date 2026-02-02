@@ -129,7 +129,7 @@ function App() {
   if (showStartpage) {
     inhalt = <StartpageComponent
         controller={controller}
-        toggleStartpage={() => setShowStartpage(true)}
+        toggleStartpage={() => setShowStartpage(false)}
     />;
   } else {
     inhalt = (

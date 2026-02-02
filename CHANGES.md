@@ -4,6 +4,8 @@
 
 ### Startpage
 
+- **StartpageComponent**: _file_ gespeichert als State
+
 ### Editor
 
 - **SettingsComponent**: _droneDistance_ geändert zu _collisionRadius_

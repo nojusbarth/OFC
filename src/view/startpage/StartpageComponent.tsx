@@ -10,21 +10,56 @@ interface StartpageComponentProps {
 export default function StartpageComponent({controller, toggleStartpage}: StartpageComponentProps) {
   // State Hooks
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [file, setFile] = useState<File | null>(null);
 
   // click handlers
   const onCreateProject = () => {
-    //TODO
-    //controller.getProject().newProject();
+    controller.getProject().newProject();
     toggleStartpage();
   }
 
-  const onOpenProject = (path: string) => {
-    //TODO
-    controller.getProject().loadProject("");
-    toggleStartpage();
+  const onOpenProject = () => {
+    if(!file) {
+      //TODO popup keine datei
+      return
+    }
+    try {
+      controller.getProject().loadProject(file);
+      toggleStartpage();
+    }
+    catch {
+      //TODO Fehlerpopup
+    }
   }
 
+  const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length === 1) {
+      setFile(e.target.files[0]);
+    } else {
+      //TODO popup nur eine datei
+    }
+  };
 
-  //TODO
-  return <div>Startpage Component</div>;
+  //TODO hübsch machen
+  return (
+      <div>
+        <h2>Olympian Flight Control</h2>
+        <form>
+          <div className="mb-3">
+            <label htmlFor="formFile" className="form-label">Dateipfad auswählen</label>
+            <input className="form-control" type="file" id="fileInput" onChange={onFileChange} />
+          </div>
+          <button type="button"
+                  className="btn btn-primary"
+                  onClick={onCreateProject}>
+            Projekt erstellen
+          </button>
+          <button type="button"
+                  className="btn btn-primary"
+                  onClick={onOpenProject}>
+            Projekt öffnen
+          </button>
+        </form>
+      </div>
+  );
 }
