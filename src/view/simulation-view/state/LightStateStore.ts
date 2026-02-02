@@ -40,7 +40,15 @@ export class LightStateStore {
 
       mutator(draft);
 
-      return draft;
+      const isSame =
+        draft.intensity === prev.intensity &&
+        draft.color === prev.color &&
+        draft.skyTexturePath === prev.skyTexturePath &&
+        draft.position.x === prev.position.x &&
+        draft.position.y === prev.position.y &&
+        draft.position.z === prev.position.z;
+
+      return isSame ? prev : draft;
     });
   }
 }

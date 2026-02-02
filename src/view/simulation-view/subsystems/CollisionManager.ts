@@ -1,3 +1,4 @@
+import { Color } from "three";
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
 
@@ -26,8 +27,10 @@ export class CollisionManager {
   ): PathFrame {
     this.currentCollision.forEach((id: number) => {
       const positions = allPaths.pathPositions.get(id);
-      if (!positions) throw new Error(`KeyFrame ${id} not found`);
-
+      if (!positions) {
+        console.log(`KeyFrame ${id} not found`);
+        return;
+      }
       currentPathFrame.pathPositions.set(id, positions);
       currentPathFrame.pathColors.set(id, "red");
     });
@@ -45,7 +48,7 @@ export class CollisionManager {
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.currentCollision.forEach((id: number) => {
-      currentDroneFrame.droneColors.set(id, "red");
+      currentDroneFrame.droneColors.set(id, new Color(1, 0, 0));
     });
 
     return currentDroneFrame;

@@ -2,7 +2,7 @@ import { DroneFrame } from "./state/DroneFrame";
 import { DroneStateStore } from "./state/DroneStateStore";
 import { PathStateStore } from "./state/PathStateStore";
 import { LightStateStore } from "./state/LightStateStore";
-import { Vector3 } from "three";
+import { Color, Vector3 } from "three";
 import { TimeManager } from "./subsystems/TimeManager";
 import { PathFrame } from "./state/PathFrame";
 import { SelectionManager } from "./subsystems/SelectionManager";
@@ -145,21 +145,8 @@ export class SimulationView implements ISimulationView {
    * @param id - Die eindeutige ID der Drohne
    * @public
    */
-  public selectDrone(id: number) {
-    this.selectionManager.selectDrone(id);
-
-    this.drawChanges();
-  }
-
-  /**
-   * Deselektiert eine Drohne basierend auf ihrer ID.
-   * Die Drohne wird nicht mehr hervorgehoben und ihr Pfad wird ausgeblendet.
-   *
-   * @param id - Die eindeutige ID der Drohne
-   * @public
-   */
-  public unselectDrone(id: number) {
-    this.selectionManager.unselectDrone(id);
+  public selectDrones(ids: number[]) {
+    this.selectionManager.selectDrone(ids);
 
     this.drawChanges();
   }
@@ -189,13 +176,12 @@ export class SimulationView implements ISimulationView {
     let droneIds: number[] = this.controller.getDrones();
 
     let dronePositions: Map<number, Vector3> = new Map();
-    let droneColors: Map<number, string> = new Map();
+    let droneColors: Map<number, Color> = new Map();
 
     droneIds.forEach((drone) => {
       let position: Vector3 = this.controller.getPositionAt(drone, time);
-      let color: string = this.controller
-        .getColorAt(drone, time)
-        .getHexString();
+
+      let color = this.controller.getColorAt(drone, time);
 
       dronePositions.set(drone, position);
       droneColors.set(drone, color);
@@ -227,7 +213,7 @@ export class SimulationView implements ISimulationView {
         keyframe.getPos(),
       );
 
-      let color: string = "#ffffff";
+      let color: string = "#00ff00";
 
       pathPositions.set(drone, positionVectors);
       pathColors.set(drone, color);

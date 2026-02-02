@@ -1,3 +1,4 @@
+import { Color } from "three";
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
 
@@ -26,12 +27,15 @@ export class SelectionManager {
   ): PathFrame {
     this.selectedIds.forEach((id) => {
       const positions = allPaths.pathPositions.get(id);
-      if (!positions) throw new Error(`KeyFrame ${id} not found`);
+      if (!positions) {
+        console.log(`KeyFrame ${id} not found`);
+        return;
+      }
 
       currentPathFrame.pathPositions.set(id, positions);
       currentPathFrame.pathColors.set(
         id,
-        allPaths.pathColors.get(id) ?? "white",
+        allPaths.pathColors.get(id) ?? "green",
       );
     });
 
@@ -48,7 +52,7 @@ export class SelectionManager {
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.selectedIds.forEach((id) => {
-      currentDroneFrame.droneColors.set(id, "white");
+      currentDroneFrame.droneColors.set(id, new Color(1, 1, 1));
     });
 
     return currentDroneFrame;
@@ -60,21 +64,7 @@ export class SelectionManager {
    * @param id - Die ID der Drohne
    * @public
    */
-  public selectDrone(id: number) {
-    if (!this.selectedIds.includes(id)) {
-      this.selectedIds.push(id);
-    }
-  }
-
-  /**
-   * Deselektiert eine Drohne, falls sie ausgewählt ist.
-   *
-   * @param id - Die ID der Drohne
-   * @public
-   */
-  public unselectDrone(id: number) {
-    if (this.selectedIds.includes(id)) {
-      this.selectedIds = this.selectedIds.filter((item) => item != id);
-    }
+  public selectDrone(ids: number[]) {
+    this.selectedIds = ids;
   }
 }

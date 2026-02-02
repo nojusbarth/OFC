@@ -1,17 +1,17 @@
-import { Vector3, Color } from "three";
-import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
-import type { IController } from "../interface/IController";
-import type { IProject } from "../interface/IProject";
-import type { ISettings } from "../interface/ISettings";
-import type { ITimeController } from "../interface/ITimeController";
-import { OFCEvent } from "../interface/OFCEvent";
-import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
-import { TimeController } from "./TimeController";
-import { Drone } from "./Drone";
-import { checkCollisions } from "./CollisionHandler";
-import { Project } from "./Project";
-import { IProjectRepository } from "../../repository/IProjectRepository";
-import { IDrone } from "../../repository/entity/IDrone";
+import {Color, Vector3} from "three";
+import {ColorKeyFrame} from "../../repository/entity/ColorKeyFrame";
+import type {IController} from "../interface/IController";
+import type {IProject} from "../interface/IProject";
+import type {ISettings} from "../interface/ISettings";
+import type {ITimeController} from "../interface/ITimeController";
+import {OFCEvent} from "../interface/OFCEvent";
+import {PositionKeyFrame} from "../../repository/entity/PositionKeyFrame";
+import {TimeController} from "./TimeController";
+import {Drone} from "./Drone";
+import {checkCollisions} from "./CollisionHandler";
+import {Project} from "./Project";
+import {IProjectRepository} from "../../repository/IProjectRepository";
+import {IDrone} from "../../repository/entity/IDrone";
 
 export class Controller implements IController {
     private settings: ISettings
@@ -19,7 +19,6 @@ export class Controller implements IController {
     private project: IProject
     private repository: IProjectRepository;
     // private drones: Map<number, Drone>
-    private droneIdCounter: number = 0;
     private selectedDrones: number[] = [];
     private droneChangedEvent: OFCEvent<number> = new OFCEvent();
     private dronesEvent: OFCEvent<number[]> = new OFCEvent();
@@ -31,7 +30,7 @@ export class Controller implements IController {
         this.project = new Project(repository, this);
         this.repository = repository;
         this.timeController = new TimeController(settings);
-        // this.drones = new Map();
+        this.project.getProjectLoadedEvent().register(() => this.reset());
     }
 
     getSettings(): ISettings {
@@ -46,8 +45,19 @@ export class Controller implements IController {
         return this.project;
     }
 
+    private reset(): void {
+        this.selectedDrones = [];
+        this.collisionState = new Map();
+        const drones = this.repository.getAllDrones();
+        for (const drone of drones) {
+            const result = checkCollisions(drone, drones, this.settings.getDroneDistance());
+            this.collisionState.set(drone.getId(), result);
+        }
+        this.droneSelectEvent.notify(this.selectedDrones);
+    }
+
     addDrone(): number {
-        const id = this.droneIdCounter++;
+        const id = this.repository.getNextDroneId();
         const drone = new Drone(id);
         this.repository.addDrone(drone);
         this.dronesEvent.notify(this.getDrones());
@@ -59,8 +69,8 @@ export class Controller implements IController {
         this._getDrone(id); // validate id
         this.repository.removeDrone(id);
         this.unselectDrone(id);
+        this._mergeCollisions(id, new Map()); // remove collisions
         this.dronesEvent.notify(this.getDrones());
-        this._mergeCollissions(id, new Map()); // remove collisions
     }
 
     getDrones(): number[] {
@@ -117,8 +127,8 @@ export class Controller implements IController {
     removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
         const drone = this._getDrone(id);
         drone.removePositionKeyFrame(keyFrame);
-        this.droneChangedEvent.notify(id);
         this._checkCollisions(drone);
+        this.droneChangedEvent.notify(id);
     }
 
     getColorKeyFrames(id: number): ColorKeyFrame[] {
@@ -151,12 +161,19 @@ export class Controller implements IController {
         this.droneChangedEvent.notify(id);
     }
 
-    private _checkCollisions(drone: IDrone): void {
-        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
-        this._mergeCollissions(drone.getId(), collisions);
+    getCollisions(): Map<number, Map<number, number>> {
+        return this.collisionState;
     }
 
-    private _mergeCollissions(drone: number, collisions: Map<number, number>) {
+    private _checkCollisions(drone: IDrone): void {
+        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
+        this._mergeCollisions(drone.getId(), collisions);
+    }
+
+    private _mergeCollisions(drone: number, collisions: Map<number, number>) {
+        if (collisions.size === 0 && !this.collisionState.has(drone)) {
+            return;
+        }
         if (collisions.size === 0) {
             this.collisionState.delete(drone);
         } else {

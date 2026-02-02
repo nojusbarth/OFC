@@ -16,26 +16,37 @@ export function initSimulation(controller : IController) {
   // Registriere Controller Events
 
   controller.getDronesEvent().register((drones) => {
+    console.log("Drones changed event ", drones);  
+  
     simulation.notifyFrameChange();
   });
 
   controller.getTimeController().getTimeChangedEvent().register((time) => {
+    console.log("Time changed event ", time);  
+
     simulation.setEditorTime(time);
   });
 
   controller.getCollisionEvent().register((collision) => {
+    console.log("Collision changed event ", collision);  
     
     let drones = Array.from(collision.keys());
 
     simulation.notifyCollisionChange(drones);
   });
 
-  controller.getDroneChangedEvent().register((selectedDrone) => {
+  controller.getDroneSelectEvent().register((selectedDrones) => {
+    console.log("Drone selection changed event ", selectedDrones);  
+    simulation.selectDrones(selectedDrones);
+  });
+
+  controller.getDroneChangedEvent().register((drone) => {
+    console.log("Drone changed event ", drone);  
     simulation.notifyFrameChange();
   });
 
   controller.getSettings().getDayTimeChangedEvent().register((daytime) => {
-
+    console.log("Daytime changed event ", daytime);  
     simulation.setSimulationTime(daytime);
   });
 
@@ -59,6 +70,7 @@ export function initSimulation(controller : IController) {
       droneStore={droneStore}
       pathStore={pathStore}
       lightStore={lightStore}
+      onReady={() => simulation.notifyFrameChange()}
     />
   );
 
