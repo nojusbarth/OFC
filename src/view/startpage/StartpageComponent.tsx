@@ -33,10 +33,8 @@ export default function StartpageComponent({controller, toggleStartpage}: Startp
   }
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.length === 1) {
+    if (e.target.files?.[0]) {
       setFile(e.target.files[0]);
-    } else {
-      //TODO popup nur eine datei
     }
   };
 
