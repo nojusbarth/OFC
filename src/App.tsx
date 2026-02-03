@@ -9,6 +9,7 @@ import EditorComponent from './view/editor/EditorComponent';
 import StartpageComponent from './view/startpage/StartpageComponent';
 import { Canvas } from '@react-three/fiber';
 import { DayTime } from './repository/entity/DayTime';
+import { runnerShow } from './shows/runner';
 
 
 function App() {
@@ -21,7 +22,7 @@ function App() {
     const settings = new Settings(repository);
     let ctrl = new Controller(settings, repository);
 
-    helloKitShow(ctrl);
+    runnerShow(ctrl);
     console.log("App: Controller mit Testdaten initialisiert");
     console.log(ctrl.getDrones().length);
     return ctrl;
