@@ -1,3 +1,4 @@
+import { Result } from "../../repository/Result"
 import { OFCEvent } from "./OFCEvent"
 // Kommentare von KI verfasst
 /**
@@ -30,12 +31,12 @@ export interface IProject {
      * @param data - Serialisierter Projektdaten-String
      * @throws wenn die Daten ungültig sind
      */
-    loadProject(file: File): void
+    loadProject(file: File, onCompleted: (result: Result<null>) => void): void
 
     /**
      * Lädt das zuletzt gespeicherte Projekt aus dem lokalen Speicher.
      */
-    loadLastProject(): void
+    loadLastProject(): Result<boolean>;
 
     /**
      * Prüft, ob ein zuletzt gespeichertes Projekt im lokalen Speicher vorhanden ist.

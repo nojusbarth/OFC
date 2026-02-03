@@ -4,6 +4,7 @@ import { IProjectRepository } from "../../repository/IProjectRepository";
 import { saveAs } from 'file-saver';
 import { LAST_PROJECT_DATA_KEY } from "../../repository/RepositoryConstants";
 import { OFCEvent } from "../interface/OFCEvent";
+import { Result } from "../../repository/Result";
 
 export class Project implements IProject {
     private repository: IProjectRepository;
@@ -31,20 +32,23 @@ export class Project implements IProject {
     }
 
     newProject(): void {
-        this.repository.load(null);
+        this.repository.load(null, () => {});
         this.onLoad();
     }
 
-    loadProject(file: File): void {
-        this.repository.load(file);
-        this.onLoad();
+    loadProject(file: File, onCompleted: (result: Result<null>) => void): void {
+        this.repository.load(file, (result) => {
+            this.onLoad();
+            onCompleted(result);
+        });
     }
 
-    loadLastProject(): void {
-        const success = this.repository.loadLastProject();
-        if (success) {
+    loadLastProject(): Result<boolean> {
+        const result = this.repository.loadLastProject();
+        if (result.isSuccess()) {
             this.onLoad();
         }
+        return result;
     }
 
     canLoadLastProject(): boolean {
