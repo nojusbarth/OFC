@@ -2,7 +2,7 @@ import { ISettings } from "../../controller/interface/ISettings";
 import { ITimeController } from "../../controller/interface/ITimeController";
 import { DayTime } from "../../repository/entity/DayTime";
 import { makeBasicController } from "./testHelper";
-
+// Tests von KI generiert
 describe("Subcontroller Event Emission Tests", () => {
     let settings: ISettings;
     let timeController: ITimeController;
@@ -148,20 +148,20 @@ describe("Subcontroller Event Emission Tests", () => {
     describe("Settings - getDroneDistanceChangedEvent()", () => {
         it("should emit droneDistanceChangedEvent when setDroneDistance is called with different value", () => {
             const handler = jest.fn();
-            settings.getDroneDistanceChangedEvent().register(handler);
+            settings.getCollisionDistanceChangedEvent().register(handler);
 
-            settings.setDroneDistance(10);
+            settings.setCollisionDistance(10);
 
             expect(handler).toHaveBeenCalledWith(10);
         });
 
         it("should emit droneDistanceChangedEvent with correct value for multiple calls", () => {
             const handler = jest.fn();
-            settings.getDroneDistanceChangedEvent().register(handler);
+            settings.getCollisionDistanceChangedEvent().register(handler);
 
-            settings.setDroneDistance(5);
-            settings.setDroneDistance(10);
-            settings.setDroneDistance(20);
+            settings.setCollisionDistance(5);
+            settings.setCollisionDistance(10);
+            settings.setCollisionDistance(20);
 
             expect(handler).toHaveBeenNthCalledWith(1, 5);
             expect(handler).toHaveBeenNthCalledWith(2, 10);
@@ -171,10 +171,10 @@ describe("Subcontroller Event Emission Tests", () => {
 
         it("should not emit droneDistanceChangedEvent when setting same value twice", () => {
             const handler = jest.fn();
-            settings.getDroneDistanceChangedEvent().register(handler);
+            settings.getCollisionDistanceChangedEvent().register(handler);
 
-            settings.setDroneDistance(15);
-            settings.setDroneDistance(15);
+            settings.setCollisionDistance(15);
+            settings.setCollisionDistance(15);
 
             expect(handler).toHaveBeenCalledTimes(1);
             expect(handler).toHaveBeenCalledWith(15);
@@ -184,10 +184,10 @@ describe("Subcontroller Event Emission Tests", () => {
             const handler1 = jest.fn();
             const handler2 = jest.fn();
 
-            settings.getDroneDistanceChangedEvent().register(handler1);
-            settings.getDroneDistanceChangedEvent().register(handler2);
+            settings.getCollisionDistanceChangedEvent().register(handler1);
+            settings.getCollisionDistanceChangedEvent().register(handler2);
 
-            settings.setDroneDistance(8);
+            settings.setCollisionDistance(8);
 
             expect(handler1).toHaveBeenCalledWith(8);
             expect(handler2).toHaveBeenCalledWith(8);
@@ -197,11 +197,11 @@ describe("Subcontroller Event Emission Tests", () => {
             const handler1 = jest.fn();
             const handler2 = jest.fn();
 
-            settings.getDroneDistanceChangedEvent().register(handler1);
-            settings.getDroneDistanceChangedEvent().register(handler2);
-            settings.getDroneDistanceChangedEvent().remove(handler1);
+            settings.getCollisionDistanceChangedEvent().register(handler1);
+            settings.getCollisionDistanceChangedEvent().register(handler2);
+            settings.getCollisionDistanceChangedEvent().remove(handler1);
 
-            settings.setDroneDistance(12);
+            settings.setCollisionDistance(12);
 
             expect(handler1).not.toHaveBeenCalled();
             expect(handler2).toHaveBeenCalledWith(12);
@@ -216,11 +216,11 @@ describe("Subcontroller Event Emission Tests", () => {
 
             settings.getEndTimeChangedEvent().register(endTimeHandler);
             settings.getDayTimeChangedEvent().register(dayTimeHandler);
-            settings.getDroneDistanceChangedEvent().register(distanceHandler);
+            settings.getCollisionDistanceChangedEvent().register(distanceHandler);
 
             settings.setEndTime(50);
             settings.setDayTime(DayTime.SUNSET);
-            settings.setDroneDistance(7);
+            settings.setCollisionDistance(7);
 
             expect(endTimeHandler).toHaveBeenCalledWith(50);
             expect(dayTimeHandler).toHaveBeenCalledWith(DayTime.SUNSET);
