@@ -3,6 +3,7 @@ import {IDrone} from "./entity/IDrone";
 import {DayTime} from "./entity/DayTime";
 import {mapToJsonDrones, parseJsonToDrones, ProjectConfig, WaypointAtTime} from "./ProjectConfig";
 import {FILE_VERSION, LAST_PROJECT_DATA_KEY} from "./RepositoryConstants";
+import {Result} from "./Result";
 
 /**
  * Implementiert das ProjectRepository.
@@ -13,7 +14,7 @@ export class ProjectRepository implements IProjectRepository {
     private dayTime: DayTime = DayTime.NOON
     private endTime: number = 0 // TODO: ÄNDERUNG: NAME CHANGE
 
-    load(input: File|string|null) { // TODO: ÄNDERUNG: ADD FUNCTION
+    load(input: File|string|null, onFinished: (result: Result<null>) => void) { // TODO: ÄNDERUNG: ADD FUNCTION
         if (input == null) {
             this.drones = []
             this.collisionRadius = 0
@@ -26,40 +27,60 @@ export class ProjectRepository implements IProjectRepository {
             reader.onloadend = (e: ProgressEvent<FileReader>) => {
                 const content = e.target?.result;
                 if (content && !(content instanceof ArrayBuffer)) {
-                    this.parseJson(content)
+                    const jsonResult = this.parseJson(content)
+                    const config = jsonResult.getResult();
+                    if (jsonResult.isSuccess() && config != null) {
+                        this.setProjectConfig(config);
+                    }
+                    onFinished(new Result(null, jsonResult.getError()))
                 } else {
-                    throw new Error(`Failed to load project: ${e}`);
+                    onFinished(new Result(null, new Error(`Failed to load project: ${e}`)));
                 }
             }
             reader.readAsText(input);
         } else {
-            this.parseJson(input);
+            const jsonResult = this.parseJson(input)
+            const config = jsonResult.getResult();
+            if (jsonResult.isSuccess() && config != null) {
+                this.setProjectConfig(config);
+            }
+            onFinished(new Result(null, jsonResult.getError()))
         }
     }
 
-    loadLastProject(): boolean {
+    private setProjectConfig(config: ProjectConfig) {
+        this.drones = parseJsonToDrones(config.drones)
+        this.collisionRadius = config.settings.collisionRadius
+        this.dayTime = config.settings.dayTime
+        this.endTime = config.settings.endTime
+    }
+
+    loadLastProject(): Result<boolean> {
         const data = localStorage.getItem(LAST_PROJECT_DATA_KEY)
         if (data == null) {
-            return false
+            return new Result(false, new Error(`Failed to load project from local storage`))
         }
-        this.load(data)
-        return true
+        const jsonResult = this.parseJson(data)
+        const config = jsonResult.getResult();
+        if (config != null && jsonResult.isSuccess()) {
+          this.setProjectConfig(config);
+          return new Result(true)
+        } else {
+            return new Result(false, jsonResult.getError())
+        }
     }
 
-    private parseJson(content: string) {
+    private parseJson(content: string): Result<ProjectConfig|null> {
         let data: ProjectConfig
         try {
             data = JSON.parse(content)
         } catch (e) {
-            throw Error(`Failed to parse project: SyntaxError`);
+            return new Result(null, new Error(`Failed to parse project: SyntaxError`))
         }
         if (data.version !== FILE_VERSION) {
-            throw new Error(`Failed to load project: ${data.version} is not supported`);
+            return new Result(null, new Error(`Failed to load project: ${data.version} is not supported`));
         }
-        this.drones = parseJsonToDrones(data.drones)
-        this.collisionRadius = data.settings.collisionRadius
-        this.dayTime = data.settings.dayTime
-        this.endTime = data.settings.endTime
+        return new Result(data);
     }
 
     getNextDroneId(): number {

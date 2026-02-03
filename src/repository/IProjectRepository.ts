@@ -1,5 +1,6 @@
 import {IDrone} from "./entity/IDrone";
 import {DayTime} from "./entity/DayTime";
+import {Result} from "./Result";
 
 /**
  * Das ProjectRepository verwaltet den gesamten Zustand des aktuellen Projekts.
@@ -14,16 +15,16 @@ export interface IProjectRepository {
      * - `null`: Setzt das Projekt komplett zurück (Neues Projekt).
      * - `File`: Liest eine Datei ein und parst den Inhalt.
      * - `string`: Ein JSON-String.
+     * @param onFinished gibt das Ergebnis als `Result<null>` zurück, sobald das Projekt geladen wurde oder ein Fehler auftritt.
      * @throws Error Bei einem Fehler beim Einlesen der Eingabe.
      */
-    load(input: File|string|null): void
+    load(input: File|string|null, onFinished: (result: Result<null>) => void): void
 
     /**
      * Versucht, das zuletzt bearbeitete Projekt aus dem LocalStorage des Browsers wiederherzustellen.
-     * @returns `true`, wenn Daten gefunden und geladen wurden, sonst `false`.
-     * @throws Error Bei einem Fehler beim Einlesen.
+     * @returns Result `true`, wenn Daten gefunden und geladen wurden, sonst `false` und gibt eine Fehlermeldung.
      */
-    loadLastProject(): boolean
+    loadLastProject(): Result<boolean>
 
     /**
      * Speichert die Projektkonfiguration ins LocalStorage des Browsers.
