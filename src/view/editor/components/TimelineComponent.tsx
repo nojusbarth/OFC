@@ -5,17 +5,19 @@ import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
 
 import { SPEED_VALUES } from "../config";
+import { IController } from "../../../controller/interface/IController";
 
 interface TimelineComponentProps {
-  // Props
-  settings: ISettings;
-  timeController: ITimeController;
+  controller: IController;
 }
 
 export default function TimelineComponent({
-  settings,
-  timeController,
+  controller,
 }: TimelineComponentProps) {
+  // Used Controllers
+  const settings: ISettings = controller.getSettings();
+  const timeController: ITimeController = controller.getTimeController();
+
   // State Hooks
   const [time, setTime] = useState<number>(timeController.getTime());
   const [endTime, setEndTime] = useState<number>(settings.getEndTime());

@@ -7,7 +7,6 @@ import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
 import { Card, Form, Button } from "react-bootstrap";
 
 interface DroneEditorComponentProps {
-  // Props
   controller: IController;
 }
 
@@ -32,7 +31,15 @@ export default function DroneEditorComponent({
   useEffect(() => {
     // Define Functions
     const onSelectionChange = () => {
-      setSelectedDrones(controller.getSelectedDrones());
+      const newSelectedDrones = controller.getSelectedDrones();
+
+      // Update Color and Position if no drones were previously selected
+      if (selectedDrones.length == 0 && newSelectedDrones.length != 0) {
+        setPosition(controller.getPosition(newSelectedDrones[0]));
+        setColor(new Color(controller.getColor(newSelectedDrones[0])));
+      }
+
+      setSelectedDrones([...newSelectedDrones]); //TODO Im Controller anders ausgeben?
       updateKeyframes();
     };
 
@@ -101,7 +108,7 @@ export default function DroneEditorComponent({
   return (
     <Card className="d-flex flex-column h-100 w-100 rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0">
       {/* Heading */}
-      <Card.Header className="bg-light border-bottom flex-shrink-0">
+      <Card.Header className="bg-light border-bottom">
         <span className="fw-bold">Aktionen</span>
       </Card.Header>
 
@@ -115,85 +122,96 @@ export default function DroneEditorComponent({
 
         {/* Position Section */}
         <div className="mb-4">
-          <h6 className="fw-bold text-uppercase mb-3">Position Setzen</h6>
+          <h6 className="fw-bold text-uppercase text-xs mb-3">
+            Position Setzen
+          </h6>
+          <Card>
+            <Card.Body>
+              <div className="row g-2 mb-3">
+                <div className="col-4">
+                  <Form.Group>
+                    <Form.Label className="small">X</Form.Label>
+                    <Form.Control
+                      type="number"
+                      step="0.1"
+                      size="sm"
+                      value={position.x}
+                      onChange={(e) =>
+                        handlePositionChange(
+                          "x",
+                          parseFloat(e.target.value) || 0,
+                        )
+                      }
+                      className="border-secondary"
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-4">
+                  <Form.Group>
+                    <Form.Label className="small">Y</Form.Label>
+                    <Form.Control
+                      type="number"
+                      step="0.1"
+                      size="sm"
+                      value={position.y}
+                      onChange={(e) =>
+                        handlePositionChange(
+                          "y",
+                          parseFloat(e.target.value) || 0,
+                        )
+                      }
+                      className="border-secondary"
+                    />
+                  </Form.Group>
+                </div>
+                <div className="col-4">
+                  <Form.Group>
+                    <Form.Label className="small">Z</Form.Label>
+                    <Form.Control
+                      type="number"
+                      step="0.1"
+                      size="sm"
+                      value={position.z}
+                      onChange={(e) =>
+                        handlePositionChange(
+                          "z",
+                          parseFloat(e.target.value) || 0,
+                        )
+                      }
+                      className="border-secondary"
+                    />
+                  </Form.Group>
+                </div>
+              </div>
 
-          <div className="row g-2 mb-3">
-            <div className="col-4">
-              <Form.Group>
-                <Form.Label className="small">X</Form.Label>
-                <Form.Control
-                  type="number"
-                  size="sm"
-                  value={position.x}
-                  onChange={(e) =>
-                    handlePositionChange("x", parseFloat(e.target.value) || 0)
-                  }
-                  className="border-secondary"
-                />
-              </Form.Group>
-            </div>
-            <div className="col-4">
-              <Form.Group>
-                <Form.Label className="small">Y</Form.Label>
-                <Form.Control
-                  type="number"
-                  size="sm"
-                  value={position.y}
-                  onChange={(e) =>
-                    handlePositionChange("y", parseFloat(e.target.value) || 0)
-                  }
-                  className="border-secondary"
-                />
-              </Form.Group>
-            </div>
-            <div className="col-4">
-              <Form.Group>
-                <Form.Label className="small">Z</Form.Label>
-                <Form.Control
-                  type="number"
-                  size="sm"
-                  value={position.z}
-                  onChange={(e) =>
-                    handlePositionChange("z", parseFloat(e.target.value) || 0)
-                  }
-                  className="border-secondary"
-                />
-              </Form.Group>
-            </div>
-          </div>
-
-          <button
-            className="btn btn-info w-100 mb-2"
-            onClick={handleAddPositionKeyframe}
-            disabled={selectedDrones.length === 0}
-          >
-            <i className="bi bi-pencil me-2" />
-            Keyframe hinzufügen
-          </button>
+              <button
+                className="btn btn-info w-100 mb-2"
+                onClick={handleAddPositionKeyframe}
+                disabled={selectedDrones.length === 0}
+              >
+                <i className="bi bi-pencil me-2" />
+                Keyframe hinzufügen
+              </button>
+            </Card.Body>
+          </Card>
         </div>
 
         {/* Color Section */}
         <div className="mb-4">
-          <h6 className="fw-bold text-uppercase mb-3">Farbe Setzen</h6>
+          <h6 className="fw-bold text-uppercase text-xs mb-3">Farbe Setzen</h6>
 
           <Form.Group className="mb-3">
             <Form.Label className="small">LED-Farbe wählen</Form.Label>
-            <div
-              className="rounded border border-2 border-secondary p-2"
+            <input
+              type="color"
+              value={`#${color.getHexString()}`}
+              onChange={(e) => handleColorChange(e.target.value)}
               style={{
-                backgroundColor: `#${color.getHexString()}`,
-                height: "40px",
                 cursor: "pointer",
+                height: "40px",
+                width: "100%",
               }}
-            >
-              <input
-                type="color"
-                value={`#${color.getHexString()}`}
-                onChange={(e) => handleColorChange(e.target.value)}
-                className="invisible"
-                style={{ cursor: "pointer" }}
-              />
-            </div>
+            />
           </Form.Group>
 
           <button
@@ -221,7 +239,7 @@ export default function DroneEditorComponent({
             />
           </button>
 
-          {showKeyframes && (
+          {showKeyframes && ( //TODO Funktionalität implementieren
             <div className="mt-3 ps-3 border-start border-secondary">
               <p className="text-muted small mb-2">Keine Keyframes vorhanden</p>
             </div>

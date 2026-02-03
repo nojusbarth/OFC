@@ -6,7 +6,6 @@ import { Card } from "react-bootstrap";
 import "./DroneManagerComponent.css";
 
 interface DroneManagerComponentProps {
-  // Props
   controller: IController;
 }
 
