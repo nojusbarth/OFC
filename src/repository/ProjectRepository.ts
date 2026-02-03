@@ -4,6 +4,9 @@ import {DayTime} from "./entity/DayTime";
 import {mapToJsonDrones, parseJsonToDrones, ProjectConfig, WaypointAtTime} from "./ProjectConfig";
 import {FILE_VERSION, LAST_PROJECT_DATA_KEY} from "./RepositoryConstants";
 
+/**
+ * Implementiert das ProjectRepository.
+ */
 export class ProjectRepository implements IProjectRepository {
     private drones: Array<IDrone> = []
     private collisionRadius: number = 0
@@ -12,14 +15,18 @@ export class ProjectRepository implements IProjectRepository {
 
     load(input: File|string|null) { // TODO: ÄNDERUNG: ADD FUNCTION
         if (input == null) {
+            this.drones = []
+            this.collisionRadius = 0
+            this.dayTime = DayTime.NOON
+            this.endTime = 0
             return; // neues Projekt
         }
         if (input instanceof File) {
             let reader = new FileReader();
             reader.onloadend = (e: ProgressEvent<FileReader>) => {
                 const content = e.target?.result;
-                if (!content) {
-                    this.parseJson(content as string)
+                if (content && !(content instanceof ArrayBuffer)) {
+                    this.parseJson(content)
                 } else {
                     throw new Error(`Failed to load project: ${e}`);
                 }
@@ -40,7 +47,12 @@ export class ProjectRepository implements IProjectRepository {
     }
 
     private parseJson(content: string) {
-        let data: ProjectConfig = JSON.parse(content)
+        let data: ProjectConfig
+        try {
+            data = JSON.parse(content)
+        } catch (e) {
+            throw Error(`Failed to parse project: SyntaxError`);
+        }
         if (data.version !== FILE_VERSION) {
             throw new Error(`Failed to load project: ${data.version} is not supported`);
         }
