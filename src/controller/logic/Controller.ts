@@ -1,17 +1,17 @@
-import {Color, Vector3} from "three";
-import {ColorKeyFrame} from "../../repository/entity/ColorKeyFrame";
-import type {IController} from "../interface/IController";
-import type {IProject} from "../interface/IProject";
-import type {ISettings} from "../interface/ISettings";
-import type {ITimeController} from "../interface/ITimeController";
-import {OFCEvent} from "../interface/OFCEvent";
-import {PositionKeyFrame} from "../../repository/entity/PositionKeyFrame";
-import {TimeController} from "./TimeController";
-import {Drone} from "./Drone";
-import {checkCollisions} from "./CollisionHandler";
-import {Project} from "./Project";
-import {IProjectRepository} from "../../repository/IProjectRepository";
-import {IDrone} from "../../repository/entity/IDrone";
+import { Color, Vector3 } from "three";
+import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
+import type { IController } from "../interface/IController";
+import type { IProject } from "../interface/IProject";
+import type { ISettings } from "../interface/ISettings";
+import type { ITimeController } from "../interface/ITimeController";
+import { OFCEvent } from "../interface/OFCEvent";
+import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
+import { TimeController } from "./TimeController";
+import { Drone } from "./Drone";
+import { checkCollisions } from "./CollisionHandler";
+import { Project } from "./Project";
+import { IProjectRepository } from "../../repository/IProjectRepository";
+import { IDrone } from "../../repository/entity/IDrone";
 
 export class Controller implements IController {
     private settings: ISettings
@@ -25,7 +25,7 @@ export class Controller implements IController {
     private collisionEvent: OFCEvent<Map<number, Map<number, number>>> = new OFCEvent();
     private droneSelectEvent: OFCEvent<number[]> = new OFCEvent();
     private collisionState: Map<number, Map<number, number>> = new Map();
-    constructor( settings: ISettings, repository: IProjectRepository) {
+    constructor(settings: ISettings, repository: IProjectRepository) {
         this.settings = settings;
         this.project = new Project(repository, this);
         this.repository = repository;
@@ -50,7 +50,7 @@ export class Controller implements IController {
         this.collisionState = new Map();
         const drones = this.repository.getAllDrones();
         for (const drone of drones) {
-            const result = checkCollisions(drone, drones, this.settings.getDroneDistance());
+            const result = checkCollisions(drone, drones, this.settings.getCollisionDistance());
             this.collisionState.set(drone.getId(), result);
         }
         this.droneSelectEvent.notify(this.selectedDrones);
@@ -166,7 +166,7 @@ export class Controller implements IController {
     }
 
     private _checkCollisions(drone: IDrone): void {
-        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getDroneDistance());
+        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getCollisionDistance());
         this._mergeCollisions(drone.getId(), collisions);
     }
 

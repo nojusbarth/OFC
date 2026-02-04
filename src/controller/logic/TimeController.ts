@@ -41,7 +41,7 @@ export class TimeController implements ITimeController {
         if (!this.animationRunning) {
             return;
         }
-        requestAnimationFrame((timestamp) =>  {
+        requestAnimationFrame((timestamp) => {
             const delta = (timestamp - this.lastTimestamp) / 1000 * this.speed;
             this.lastTimestamp = timestamp;
             this.setTime(this.time + delta);
@@ -76,6 +76,10 @@ export class TimeController implements ITimeController {
         }
         this.animationRunning = false;
         this.animationRunningEvent.notify(false);
+    }
+
+    getAnimationRunning(): boolean {
+        return this.animationRunning;
     }
 
     getAnimationRunningEvent(): OFCEvent<boolean> {

@@ -1,3 +1,17 @@
+/**
+ * Repräsentiert einen Zeitpunkt für die Hintergrundgestaltung der Simulation.
+ */
 export enum DayTime {
-    NOON, SUNSET, NIGHT
+    /**
+     * Repräsentiert eine Mittagszeit-Umgebung
+     */
+    NOON,
+    /**,
+     * Repräsentiert eine Sonnenuntergang-Umgebung
+     */
+    SUNSET,
+    /**
+     * Repräsentiert eine Nacht-Umgebung
+     */
+    NIGHT
 }

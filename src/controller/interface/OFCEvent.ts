@@ -1,3 +1,4 @@
+// Kommentare von KI verfasst
 /**
  * Beobachter-Funktionstyp für die Event-Handhabung.
  * @template T - Der Typ des Wertes, der an den Beobachter übergeben wird
@@ -11,7 +12,7 @@ export type OFCObserver<T> = (value: T) => void;
  */
 export class OFCEvent<T> {
     private observers: OFCObserver<T>[] = [];
-    
+
     /**
      * Registriert einen Beobachter, um über Ereignisse benachrichtigt zu werden.
      * @param handler - Die zu registrierende Beobachter-Funktion
