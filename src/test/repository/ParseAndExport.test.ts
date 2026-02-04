@@ -9,7 +9,7 @@ import {ColorKeyFrame} from "../../repository/entity/ColorKeyFrame";
 it('should parse json string', () => {
     const data = JSON.stringify(testDataFile).toString()
     const repository = new ProjectRepository()
-    repository.load(data)
+    repository.load(data, () => {} )
 
     // Settings
     expect(repository.getMaxTime()).toBe(1000);
@@ -44,4 +44,31 @@ it('should parse json string', () => {
 
     // Test export
     expect(repository.exportConfig()).toBe(data)
+});
+
+it ('should be able to parse exported data', () => {
+    const startRepo = new ProjectRepository();
+    startRepo.setMaxTime(5000);
+    startRepo.setCollisionRadius(2);
+    startRepo.setDayTime(DayTime.SUNSET);
+
+    let drone1 = new Drone(
+        0,
+        [new PositionKeyFrame(new Vector3(0,0,0), 0)],
+        [new ColorKeyFrame(new Color(1,0,0), 0)],
+    )
+    startRepo.addDrone(drone1);
+
+    const exportedData = startRepo.exportConfig();
+    const newRepo = new ProjectRepository();
+    newRepo.load(exportedData, () => {});
+
+    expect(newRepo.getMaxTime()).toBe(5000);
+    expect(newRepo.getCollisionRadius()).toBe(2);
+    expect(newRepo.getDayTime()).toBe(DayTime.SUNSET);
+    expect(newRepo.getAllDrones().length).toBe(1);
+    expect(newRepo.getDroneById(0)!.getPositionKeyFrames().length).toBe(1);
+    expect(newRepo.getDroneById(0)!.getPositionKeyFrames()[0].getPos().equals(new Vector3(0,0,0))).toBe(true);
+    expect(newRepo.getDroneById(0)!.getColorKeyFrames().length).toBe(1);
+    expect(newRepo.getDroneById(0)!.getColorKeyFrames()[0].getColor().equals(new Color(1,0,0))).toBe(true);
 });

@@ -1,6 +1,9 @@
 import {ActionType} from "./ActionType";
 import {IAction} from "./IAction";
 
+/**
+ * Implementiert die Action-Klasse
+ */
 export class Action implements IAction {
     private readonly data: any
     private readonly time: number
