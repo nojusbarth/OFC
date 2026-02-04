@@ -110,48 +110,48 @@ describe("Controller Event Emission Tests", () => {
             const handler = jest.fn();
             controller.getDronesEvent().register(handler);
 
-            controller.addDrone();
+            const id = controller.addDrone();
 
-            expect(handler).toHaveBeenCalledWith([0]);
+            expect(handler).toHaveBeenCalledWith([id]);
         });
 
         it("should emit dronesEvent with updated drone list when multiple drones are added", () => {
             const handler = jest.fn();
             controller.getDronesEvent().register(handler);
 
-            controller.addDrone();
-            controller.addDrone();
-            controller.addDrone();
+            const drone0 = controller.addDrone();
+            const drone1 = controller.addDrone();
+            const drone2 = controller.addDrone();
 
-            expect(handler).toHaveBeenNthCalledWith(1, [0]);
-            expect(handler).toHaveBeenNthCalledWith(2, [0, 1]);
-            expect(handler).toHaveBeenNthCalledWith(3, [0, 1, 2]);
+            expect(handler).toHaveBeenNthCalledWith(1, [drone0]);
+            expect(handler).toHaveBeenNthCalledWith(2, [drone0, drone1]);
+            expect(handler).toHaveBeenNthCalledWith(3, [drone0, drone1, drone2]);
         });
 
         it("should emit dronesEvent when a drone is removed", () => {
-            const droneId = controller.addDrone();
-            controller.addDrone();
+            const drone1 = controller.addDrone();
+            const drone2 = controller.addDrone();
             const handler = jest.fn();
 
             controller.getDronesEvent().register(handler);
-            controller.removeDrone(droneId);
+            controller.removeDrone(drone1);
 
-            expect(handler).toHaveBeenCalledWith([1]);
+            expect(handler).toHaveBeenCalledWith([drone2]);
         });
 
         it("should emit dronesEvent with correct list after multiple additions and removals", () => {
-            controller.addDrone(); // 0
-            controller.addDrone(); // 1
+            const drone0 = controller.addDrone(); // 0
+            const drone1 = controller.addDrone(); // 1
             const drone2 = controller.addDrone(); // 2
-            controller.addDrone(); // 3
+            const drone3 = controller.addDrone(); // 3
             const handler = jest.fn();
 
             controller.getDronesEvent().register(handler);
             controller.removeDrone(drone2);
-            controller.removeDrone(0);
+            controller.removeDrone(drone0);
 
-            expect(handler).toHaveBeenNthCalledWith(1, [0, 1, 3]);
-            expect(handler).toHaveBeenNthCalledWith(2, [1, 3]);
+            expect(handler).toHaveBeenNthCalledWith(1, [drone0, drone1, drone3]);
+            expect(handler).toHaveBeenNthCalledWith(2, [drone1, drone3]);
         });
     });
 

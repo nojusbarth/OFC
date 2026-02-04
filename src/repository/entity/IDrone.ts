@@ -1,8 +1,6 @@
-// TODO: REPLACE WITH REAL
-
-import { Color, Vector3 } from "three";
-import { PositionKeyFrame } from "./PositionKeyFrame";
-import { ColorKeyFrame } from "./ColorKeyFrame";
+import {Color, Vector3} from "three";
+import {PositionKeyFrame} from "./PositionKeyFrame";
+import {ColorKeyFrame} from "./ColorKeyFrame";
 
 export interface IDrone {
     getId(): number;

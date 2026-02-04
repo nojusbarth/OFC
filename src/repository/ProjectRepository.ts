@@ -1,8 +1,8 @@
 import {IProjectRepository} from "./IProjectRepository";
 import {IDrone} from "./entity/IDrone";
 import {DayTime} from "./entity/DayTime";
-import {ProjectConfig, WaypointAtTime} from "./ProjectConfig";
-import {FILE_VERSION} from "./RepositoryConstants";
+import {mapToJsonDrones, parseJsonToDrones, ProjectConfig, WaypointAtTime} from "./ProjectConfig";
+import {FILE_VERSION, LAST_PROJECT_DATA_KEY} from "./RepositoryConstants";
 
 export class ProjectRepository implements IProjectRepository {
     private drones: Array<IDrone> = []
@@ -10,27 +10,51 @@ export class ProjectRepository implements IProjectRepository {
     private dayTime: DayTime = DayTime.NOON
     private endTime: number = 0 // TODO: ÄNDERUNG: NAME CHANGE
 
-    constructor(file: File|null = null) { // TODO: ÄNDERUNG: ADD CONSTRUCTOR
-        if (!file) {
+    load(input: File|string|null) { // TODO: ÄNDERUNG: ADD FUNCTION
+        if (input == null) {
             return; // neues Projekt
         }
-        let reader = new FileReader();
-        reader.onloadend = (e: ProgressEvent<FileReader>) => {
-            const content = e.target?.result;
-            if (content != null) {
-                let data: ProjectConfig = JSON.parse(content as string)
-                if (data.version !== FILE_VERSION) {
-                    throw new Error(`Failed to load project: ${data.version} is not supported`);
+        if (input instanceof File) {
+            let reader = new FileReader();
+            reader.onloadend = (e: ProgressEvent<FileReader>) => {
+                const content = e.target?.result;
+                if (!content) {
+                    this.parseJson(content as string)
+                } else {
+                    throw new Error(`Failed to load project: ${e}`);
                 }
-                // TODO: Dronen setzten
-                this.collisionRadius = data.settings.collisionRadius
-                this.dayTime = data.settings.dayTime
-                this.endTime = data.settings.endTime
-            } else {
-                throw new Error(`Failed to load project: ${e}`);
             }
+            reader.readAsText(input);
+        } else {
+            this.parseJson(input);
         }
-        reader.readAsText(file);
+    }
+
+    loadLastProject(): boolean {
+        const data = localStorage.getItem(LAST_PROJECT_DATA_KEY)
+        if (data == null) {
+            return false
+        }
+        this.load(data)
+        return true
+    }
+
+    private parseJson(content: string) {
+        let data: ProjectConfig = JSON.parse(content)
+        if (data.version !== FILE_VERSION) {
+            throw new Error(`Failed to load project: ${data.version} is not supported`);
+        }
+        this.drones = parseJsonToDrones(data.drones)
+        this.collisionRadius = data.settings.collisionRadius
+        this.dayTime = data.settings.dayTime
+        this.endTime = data.settings.endTime
+    }
+
+    getNextDroneId(): number {
+        let max: number = 0
+        this.drones.forEach((drone) => { if(drone.getId() > max) max = drone.getId() });
+        return max+1
+
     }
 
     addDrone(drone: IDrone): void {
@@ -49,8 +73,8 @@ export class ProjectRepository implements IProjectRepository {
         return this.dayTime;
     }
 
-    getDroneById(id: number): IDrone {
-        return this.drones.find(d => d.getId() === id )!;
+    getDroneById(id: number): IDrone|undefined {
+        return this.drones.find(d => d.getId() === id );
     }
 
     getMaxTime(): number {
@@ -80,9 +104,7 @@ export class ProjectRepository implements IProjectRepository {
 
     export(): string {
         const format: WaypointAtTime = {
-            drones: [
-                // TODO: Dronen mappen
-            ]
+            drones: mapToJsonDrones(this.drones)
         }
         return JSON.stringify(format, null, 2);
     }
@@ -92,15 +114,16 @@ export class ProjectRepository implements IProjectRepository {
             version: FILE_VERSION,
             settings : {
                 endTime: this.endTime,
+                dayTime: this.dayTime,
                 collisionRadius: this.collisionRadius,
-                dayTime: this.dayTime
             },
-            drones: [
-                // TODO: Dronen mappen
-            ]
+            drones: mapToJsonDrones(this.drones)
         }
 
-        return JSON.stringify(config, null, 2)
+        return JSON.stringify(config, null, 0)
+    }
 
+    saveToLocalStorage(): void {
+        localStorage.setItem(LAST_PROJECT_DATA_KEY, this.exportConfig());
     }
 }

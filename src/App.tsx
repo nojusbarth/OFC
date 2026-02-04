@@ -124,7 +124,7 @@ function App() {
 
   // initSimulation liefert die Simulation-Fassade und die Scene-Komponente
   const { simulation, Scene } = useMemo(() => initSimulation(controller), [controller]);
-  
+
   let inhalt: React.ReactNode;
   if (showStartpage) {
     inhalt = <StartpageComponent />;
