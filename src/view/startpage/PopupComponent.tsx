@@ -5,6 +5,10 @@ interface PopupComponentProps {
 }
 
 export default function PopupComponent({message, messageType}: PopupComponentProps) {
-  //TODO
-  return <div>Popup Component</div>;
+  return (
+  <div className="alert alert-primary" role="alert">
+    <b>{messageType}</b><br></br>
+    {message}
+  </div>
+  );
 }

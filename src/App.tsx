@@ -18,7 +18,7 @@ import { KeyboardShortcuts } from './view/KeyboardShortcuts';
 
 function App() {
   // State Hooks
-  const [showStartpage, setShowStartpage] = useState<boolean>(false); //TODO true
+  const [showStartpage, setShowStartpage] = useState<boolean>(true); //TODO true
 
   // create controller with some test data
   const controller = useMemo(() => {

@@ -4,7 +4,7 @@
 
 ### Startpage
 
-- **StartpageComponent**: _file_ gespeichert als State
+- **StartpageComponent**: _file_, _message_, _messageType_ gespeichert als State
 
 ### Editor
 
