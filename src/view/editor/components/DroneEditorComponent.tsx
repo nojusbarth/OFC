@@ -39,7 +39,7 @@ export default function DroneEditorComponent({
         setColor(new Color(controller.getColor(newSelectedDrones[0])));
       }
 
-      setSelectedDrones(new Array<number>(...newSelectedDrones)); //TODO Im Controller anders ausgeben?
+      setSelectedDrones(newSelectedDrones);
       updateKeyframes();
     };
 
