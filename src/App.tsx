@@ -10,6 +10,7 @@ import StartpageComponent from './view/startpage/StartpageComponent';
 import { Canvas } from '@react-three/fiber';
 import { DayTime } from './repository/entity/DayTime';
 import { runnerShow } from './shows/runner';
+import { rocketShow } from './shows/rocket';
 
 
 function App() {
@@ -22,7 +23,7 @@ function App() {
     const settings = new Settings(repository);
     let ctrl = new Controller(settings, repository);
 
-    runnerShow(ctrl);
+    rocketShow(ctrl);
     console.log("App: Controller mit Testdaten initialisiert");
     console.log(ctrl.getDrones().length);
     return ctrl;
