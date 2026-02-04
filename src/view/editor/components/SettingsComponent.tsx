@@ -22,8 +22,8 @@ export default function SettingsComponent({
 
   // State Hooks
   const [dayTime, setDayTime] = useState<DayTime>(settings.getDayTime());
-  const [collisionRadius, setCollisionRadius] = useState<number>(
-    settings.getDroneDistance(),
+  const [collisionDistance, setCollisionDistance] = useState<number>(
+    settings.getCollisionDistance(),
   );
   const [endTime, setEndTime] = useState<number>(settings.getEndTime());
 
@@ -33,12 +33,12 @@ export default function SettingsComponent({
     settings.setDayTime(newDayTime);
   };
 
-  const onChangeCollisionRadius = (newRadius: number) => {
-    if (isNaN(newRadius) || newRadius < 0) {
-      setCollisionRadius(0);
+  const onChangeCollisionDistance = (newDistance: number) => {
+    if (isNaN(newDistance) || newDistance < 0) {
+      setCollisionDistance(0);
       return;
     }
-    setCollisionRadius(newRadius);
+    setCollisionDistance(newDistance);
   };
 
   const onChangeEndTime = (newEndTime: number) => {
@@ -52,7 +52,7 @@ export default function SettingsComponent({
   const onSaveSettings = () => {
     settings.setDayTime(dayTime);
     settings.setEndTime(endTime);
-    settings.setDroneDistance(collisionRadius);
+    settings.setCollisionDistance(collisionDistance);
   };
 
   return (
@@ -110,11 +110,11 @@ export default function SettingsComponent({
             <input
               type="number"
               className="form-control"
-              value={collisionRadius}
+              value={collisionDistance}
               min="0.1"
               step="0.1"
               onChange={(e) => {
-                onChangeCollisionRadius(parseFloat(e.target.value));
+                onChangeCollisionDistance(parseFloat(e.target.value));
               }}
             />
             <span className="text-muted">Meter</span>
