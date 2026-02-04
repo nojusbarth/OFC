@@ -39,7 +39,7 @@ export default function DroneEditorComponent({
         setColor(new Color(controller.getColor(newSelectedDrones[0])));
       }
 
-      setSelectedDrones([...newSelectedDrones]); //TODO Im Controller anders ausgeben?
+      setSelectedDrones(new Array<number>(...newSelectedDrones)); //TODO Im Controller anders ausgeben?
       updateKeyframes();
     };
 
@@ -73,8 +73,13 @@ export default function DroneEditorComponent({
       colorKeyframes.push(...controller.getColorKeyFrames(droneId));
     });
 
-    setPositionKeyframes(positionKeyframes);
-    setColorKeyframes(colorKeyframes);
+    setPositionKeyframes(new Array<PositionKeyFrame>(...positionKeyframes));
+    setColorKeyframes(new Array<ColorKeyFrame>(...colorKeyframes));
+
+    //TODO
+    console.log("Updated Keyframes:");
+    console.log("Position Keyframes:", positionKeyframes);
+    console.log("Color Keyframes:", colorKeyframes);
   }
 
   // Click handlers
@@ -106,8 +111,10 @@ export default function DroneEditorComponent({
   };
 
   return (
-    <Card className="d-flex flex-column h-100 w-100 rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0">
-      {/* Heading */}
+    <Card
+      className="d-flex flex-column h-100 w-100 
+    rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0"
+    >
       <Card.Header className="bg-light border-bottom">
         <span className="fw-bold">Aktionen</span>
       </Card.Header>
@@ -196,55 +203,162 @@ export default function DroneEditorComponent({
           </Card>
         </div>
 
-        {/* Color Section */}
-        <div className="mb-4">
-          <h6 className="fw-bold text-uppercase text-xs mb-3">Farbe Setzen</h6>
+        {selectedDrones.length > 0 && (
+          <>
+            {/* Color Section */}
+            <div className="mb-4">
+              <h6 className="fw-bold text-uppercase text-xs mb-3">
+                Farbe Setzen
+              </h6>
 
-          <Form.Group className="mb-3">
-            <Form.Label className="small">LED-Farbe wählen</Form.Label>
-            <input
-              type="color"
-              value={`#${color.getHexString()}`}
-              onChange={(e) => handleColorChange(e.target.value)}
-              style={{
-                cursor: "pointer",
-                height: "40px",
-                width: "100%",
-              }}
-            />
-          </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label className="small">LED-Farbe wählen</Form.Label>
+                <input
+                  type="color"
+                  value={`#${color.getHexString()}`}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  style={{
+                    cursor: "pointer",
+                    height: "40px",
+                    width: "100%",
+                  }}
+                />
+              </Form.Group>
 
-          <button
-            className="btn btn-info w-100 mb-2 text-white"
-            onClick={handleAddColorKeyframe}
-            disabled={selectedDrones.length === 0}
-          >
-            <i className="bi bi-pencil me-2" />
-            Keyframe hinzufügen
-          </button>
-        </div>
-
-        {/* Keyframe Manager */}
-        <div className="border-top pt-3">
-          <button
-            className="btn btn-link text-decoration-none text-dark fw-bold p-0 w-100 text-start"
-            onClick={() => setShowKeyframes(!showKeyframes)}
-          >
-            <i className={`bi bi-pencil-square me-2`} />
-            KEYFRAME MANAGER
-            <i
-              className={`bi bi-chevron-${
-                showKeyframes ? "up" : "down"
-              } float-end`}
-            />
-          </button>
-
-          {showKeyframes && ( //TODO Funktionalität implementieren
-            <div className="mt-3 ps-3 border-start border-secondary">
-              <p className="text-muted small mb-2">Keine Keyframes vorhanden</p>
+              <button
+                className="btn btn-info w-100 mb-2 text-white"
+                onClick={handleAddColorKeyframe}
+                disabled={selectedDrones.length === 0}
+              >
+                <i className="bi bi-pencil me-2" />
+                Keyframe hinzufügen
+              </button>
             </div>
-          )}
-        </div>
+
+            {/* Keyframe Manager */}
+            <div className="border-top pt-3">
+              <button
+                className="btn btn-link text-decoration-none text-dark fw-bold p-0 w-100 text-start"
+                onClick={() => setShowKeyframes(!showKeyframes)}
+              >
+                <i className={`bi bi-pencil-square me-2`} />
+                KEYFRAME MANAGER
+                <i
+                  className={`bi bi-chevron-${
+                    showKeyframes ? "up" : "down"
+                  } float-end`}
+                />
+              </button>
+
+              {/* Keyframe List */}
+              {showKeyframes && (
+                <div className="mt-3">
+                  {/* Position Keyframes */}
+                  {positionKeyframes.length > 0 && (
+                    <div className="mb-3">
+                      <div className="text-muted small mb-2">
+                        Position Keyframes
+                      </div>
+                      {positionKeyframes.map((keyframe, index) => (
+                        <Card key={`pos-${index}`} className="mb-2">
+                          <Card.Body className="p-2 d-flex align-items-center justify-content-between">
+                            <div className="flex-grow-1">
+                              <div className="small text-info fw-bold">
+                                {keyframe.getTime().toFixed(1)}s
+                              </div>
+                              <div className="small text-muted">
+                                Position • [{keyframe.getPos().x.toFixed(1)},{" "}
+                                {keyframe.getPos().y.toFixed(1)},{" "}
+                                {keyframe.getPos().z.toFixed(1)}]
+                              </div>
+                            </div>
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                selectedDrones.forEach((droneId) => {
+                                  controller.removePositionKeyFrame(
+                                    droneId,
+                                    keyframe,
+                                  );
+                                });
+                              }}
+                              title="Löschen"
+                            >
+                              <i className="bi bi-trash" />
+                            </button>
+                          </Card.Body>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Color Keyframes */}
+                  {colorKeyframes.length > 0 && (
+                    <div className="mb-3">
+                      <div className="text-muted small mb-2">
+                        Color Keyframes
+                      </div>
+                      {colorKeyframes.map((keyframe, index) => (
+                        <Card key={`col-${index}`} className="mb-2">
+                          <Card.Body className="p-2 d-flex align-items-center justify-content-between">
+                            <div className="flex-grow-1 d-flex align-items-center gap-2">
+                              <div
+                                style={{
+                                  width: "20px",
+                                  height: "20px",
+                                  borderRadius: "4px",
+                                  backgroundColor: `#${keyframe.getColor().getHexString()}`,
+                                  border: "1px solid #ddd",
+                                }}
+                              />
+                              <div>
+                                <div className="small text-info fw-bold">
+                                  {keyframe.getTime().toFixed(1)}s
+                                </div>
+                                <div className="small text-muted">
+                                  Farbe • [{keyframe.getColor().r.toFixed(2)},{" "}
+                                  {keyframe.getColor().g.toFixed(2)},{" "}
+                                  {keyframe.getColor().b.toFixed(2)}] • #
+                                  {keyframe
+                                    .getColor()
+                                    .getHexString()
+                                    .toUpperCase()}
+                                  ff
+                                </div>
+                              </div>
+                            </div>
+                            <button
+                              className="btn btn-sm btn-outline-danger"
+                              onClick={() => {
+                                selectedDrones.forEach((droneId) => {
+                                  controller.removeColorKeyFrame(
+                                    droneId,
+                                    keyframe,
+                                  );
+                                });
+                              }}
+                              title="Löschen"
+                            >
+                              <i className="bi bi-trash" />
+                            </button>
+                          </Card.Body>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* No Keyframes */}
+                  {positionKeyframes.length === 0 &&
+                    colorKeyframes.length === 0 && (
+                      <p className="text-muted small mb-2 mt-3">
+                        Keine Keyframes vorhanden
+                      </p>
+                    )}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </Card.Body>
     </Card>
   );
