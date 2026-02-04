@@ -40,16 +40,16 @@ export class Settings implements ISettings {
         return this.dayTimeChangedEvent;
     }
 
-    setDroneDistance(distance: number): void {
-        if (this.getDroneDistance() !== distance) {
+    setCollisionDistance(distance: number): void {
+        if (this.getCollisionDistance() !== distance) {
             this.repository.setCollisionRadius(distance);
             this.droneDistanceChangedEvent.notify(distance);
         }
     }
-    getDroneDistance(): number {
+    getCollisionDistance(): number {
         return this.repository.getCollisionRadius();
     }
-    getDroneDistanceChangedEvent(): OFCEvent<number> {
+    getCollisionDistanceChangedEvent(): OFCEvent<number> {
         return this.droneDistanceChangedEvent;
     }
 }

@@ -62,11 +62,12 @@ function App() {
   } else {
     inhalt = (
       <>
-      <EditorComponent
-        viewport={<Canvas><Scene /></Canvas>}
-        controller={controller}
-        toggleStartpage={() => setShowStartpage(true)}
-      />
+        <EditorComponent
+          viewport={<Canvas><Scene /></Canvas>}
+          controller={controller}
+          toggleStartpage={() => setShowStartpage(true)}
+        />
+        <KeyboardShortcuts controller={controller} />
       </>
     );
   }
