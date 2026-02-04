@@ -8,7 +8,7 @@ export class Settings implements ISettings {
 
     private endTimeChangedEvent: OFCEvent<number> = new OFCEvent();
     private dayTimeChangedEvent: OFCEvent<DayTime> = new OFCEvent();
-    private droneDistanceChangedEvent: OFCEvent<number> = new OFCEvent();
+    private collisionDistanceChangedEvent: OFCEvent<number> = new OFCEvent();
 
     constructor(repository: IProjectRepository) {
         this.repository = repository;
@@ -43,13 +43,13 @@ export class Settings implements ISettings {
     setCollisionDistance(distance: number): void {
         if (this.getCollisionDistance() !== distance) {
             this.repository.setCollisionRadius(distance);
-            this.droneDistanceChangedEvent.notify(distance);
+            this.collisionDistanceChangedEvent.notify(distance);
         }
     }
     getCollisionDistance(): number {
         return this.repository.getCollisionRadius();
     }
     getCollisionDistanceChangedEvent(): OFCEvent<number> {
-        return this.droneDistanceChangedEvent;
+        return this.collisionDistanceChangedEvent;
     }
 }

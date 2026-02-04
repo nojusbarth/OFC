@@ -145,8 +145,8 @@ describe("Subcontroller Event Emission Tests", () => {
         });
     });
 
-    describe("Settings - getDroneDistanceChangedEvent()", () => {
-        it("should emit droneDistanceChangedEvent when setDroneDistance is called with different value", () => {
+    describe("Settings - getCollisionDistanceChangedEvent()", () => {
+        it("should emit collisionDistanceChangedEvent when setCollisionDistance is called with different value", () => {
             const handler = jest.fn();
             settings.getCollisionDistanceChangedEvent().register(handler);
 
@@ -155,7 +155,7 @@ describe("Subcontroller Event Emission Tests", () => {
             expect(handler).toHaveBeenCalledWith(10);
         });
 
-        it("should emit droneDistanceChangedEvent with correct value for multiple calls", () => {
+        it("should emit collisionDistanceChangedEvent with correct value for multiple calls", () => {
             const handler = jest.fn();
             settings.getCollisionDistanceChangedEvent().register(handler);
 
@@ -169,7 +169,7 @@ describe("Subcontroller Event Emission Tests", () => {
             expect(handler).toHaveBeenCalledTimes(3);
         });
 
-        it("should not emit droneDistanceChangedEvent when setting same value twice", () => {
+        it("should not emit collisionDistanceChangedEvent when setting same value twice", () => {
             const handler = jest.fn();
             settings.getCollisionDistanceChangedEvent().register(handler);
 
@@ -180,7 +180,7 @@ describe("Subcontroller Event Emission Tests", () => {
             expect(handler).toHaveBeenCalledWith(15);
         });
 
-        it("should allow multiple handlers on droneDistanceChangedEvent", () => {
+        it("should allow multiple handlers on collisionDistanceChangedEvent", () => {
             const handler1 = jest.fn();
             const handler2 = jest.fn();
 
@@ -193,7 +193,7 @@ describe("Subcontroller Event Emission Tests", () => {
             expect(handler2).toHaveBeenCalledWith(8);
         });
 
-        it("should allow removing handler from droneDistanceChangedEvent", () => {
+        it("should allow removing handler from collisionDistanceChangedEvent", () => {
             const handler1 = jest.fn();
             const handler2 = jest.fn();
 
