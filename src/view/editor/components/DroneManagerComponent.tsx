@@ -20,14 +20,12 @@ export default function DroneManagerComponent({
     controller.getSelectedDrones(),
   );
   const [collidingDrones, setCollidingDrones] = useState<Array<number>>([]);
-  const [colors, setColors] = useState<Map<number, Color>>(getColors());
 
   // Register Event Handlers
   useEffect(() => {
     // Define Functions
-    const onDronesChanged = () => {
-      setAllDrones(controller.getDrones());
-      setColors(getColors());
+    const onDronesChanged = (drones: Array<number>) => {
+      setAllDrones(drones);
     };
 
     const onCollision = (droneIds: Map<number, Map<number, number>>) => {
@@ -50,16 +48,6 @@ export default function DroneManagerComponent({
       controller.getDroneSelectEvent().remove(onDroneSelected);
     };
   }, [controller]);
-
-  // Helper functions
-  function getColors() {
-    const colorMap = new Map<number, Color>();
-    controller.getDrones().forEach((droneId) => {
-      const color = controller.getColor(droneId);
-      colorMap.set(droneId, color);
-    });
-    return colorMap;
-  }
 
   // Click handlers
   const onAddDrone = () => {
@@ -101,7 +89,7 @@ export default function DroneManagerComponent({
           {allDrones.map((droneId) => {
             const isSelected = selectedDrones.includes(droneId);
             const isColliding = collidingDrones.includes(droneId);
-            const color = colors.get(droneId);
+            const color = controller.getColor(droneId);
 
             return (
               <>

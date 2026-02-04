@@ -43,22 +43,18 @@ export default function DroneEditorComponent({
       updateKeyframes();
     };
 
-    const onDroneKeyframeChange = (droneId: number) => {
+    const onDroneChange = (droneId: number) => {
       updateKeyframes();
     };
 
     // Register Events
     controller.getDroneSelectEvent().register(onSelectionChange);
-    for (const droneId of selectedDrones) {
-      controller.getDroneChangedEvent().register(onDroneKeyframeChange);
-    }
+    controller.getDroneChangedEvent().register(onDroneChange);
 
     return () => {
       // Remove Events
       controller.getDroneSelectEvent().remove(onSelectionChange);
-      for (const droneId of selectedDrones) {
-        controller.getDroneChangedEvent().remove(onDroneKeyframeChange);
-      }
+      controller.getDroneChangedEvent().remove(onDroneChange);
     };
   }, [selectedDrones, controller]);
 
@@ -68,18 +64,13 @@ export default function DroneEditorComponent({
       new Array<PositionKeyFrame>();
     const colorKeyframes: Array<ColorKeyFrame> = new Array<ColorKeyFrame>();
 
-    controller.getDrones().forEach((droneId) => {
+    controller.getSelectedDrones().forEach((droneId) => {
       positionKeyframes.push(...controller.getPositionKeyFrames(droneId));
       colorKeyframes.push(...controller.getColorKeyFrames(droneId));
     });
 
-    setPositionKeyframes(new Array<PositionKeyFrame>(...positionKeyframes));
-    setColorKeyframes(new Array<ColorKeyFrame>(...colorKeyframes));
-
-    //TODO
-    console.log("Updated Keyframes:");
-    console.log("Position Keyframes:", positionKeyframes);
-    console.log("Color Keyframes:", colorKeyframes);
+    setPositionKeyframes(positionKeyframes);
+    setColorKeyframes(colorKeyframes);
   }
 
   // Click handlers
@@ -94,19 +85,14 @@ export default function DroneEditorComponent({
   };
 
   const handleAddPositionKeyframe = () => {
-    const time: number = controller.getTimeController().getTime();
     selectedDrones.forEach((droneId) => {
-      controller.addPositionKeyFrame(
-        droneId,
-        new PositionKeyFrame(position, time),
-      );
+      controller.addPositionKeyFrameNow(droneId, position);
     });
   };
 
   const handleAddColorKeyframe = () => {
-    const time: number = controller.getTimeController().getTime();
     selectedDrones.forEach((droneId) => {
-      controller.addColorKeyFrame(droneId, new ColorKeyFrame(color, time));
+      controller.addColorKeyFrameNow(droneId, color);
     });
   };
 
