@@ -13,7 +13,7 @@ interface DroneEditorComponentProps {
 export default function DroneEditorComponent({
   controller,
 }: DroneEditorComponentProps) {
-  // State Hooks
+  /* ---------- State Hooks ---------- */
   const [selectedDrones, setSelectedDrones] = useState<Array<number>>(
     controller.getSelectedDrones(),
   );
@@ -27,12 +27,9 @@ export default function DroneEditorComponent({
   );
   const [showKeyframes, setShowKeyframes] = useState<boolean>(false);
 
-  // Register Event Handlers
+  /* ---------- Register Events ---------- */
   useEffect(() => {
-    // Define Functions
-    const onSelectionChange = () => {
-      const newSelectedDrones = controller.getSelectedDrones();
-
+    const onSelectionChange = (newSelectedDrones: Array<number>) => {
       // Update Color and Position if no drones were previously selected
       if (selectedDrones.length == 0 && newSelectedDrones.length != 0) {
         setPosition(controller.getPosition(newSelectedDrones[0]));
@@ -43,22 +40,20 @@ export default function DroneEditorComponent({
       updateKeyframes();
     };
 
-    const onDroneChange = (droneId: number) => {
+    const onDroneAttributeChanged = (droneId: number) => {
       updateKeyframes();
     };
 
-    // Register Events
     controller.getDroneSelectEvent().register(onSelectionChange);
-    controller.getDroneChangedEvent().register(onDroneChange);
+    controller.getDroneChangedEvent().register(onDroneAttributeChanged);
 
     return () => {
-      // Remove Events
       controller.getDroneSelectEvent().remove(onSelectionChange);
-      controller.getDroneChangedEvent().remove(onDroneChange);
+      controller.getDroneChangedEvent().remove(onDroneAttributeChanged);
     };
   }, [selectedDrones, controller]);
 
-  // Helper functions
+  /* ---------- Helper Functions ---------- */
   function updateKeyframes() {
     const positionKeyframes: Array<PositionKeyFrame> =
       new Array<PositionKeyFrame>();
@@ -73,7 +68,7 @@ export default function DroneEditorComponent({
     setColorKeyframes(colorKeyframes);
   }
 
-  // Click handlers
+  /* ---------- Click Handlers ---------- */
   const handlePositionChange = (axis: "x" | "y" | "z", value: number) => {
     const newPosition = position.clone();
     newPosition[axis] = value;

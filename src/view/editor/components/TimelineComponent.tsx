@@ -14,11 +14,11 @@ interface TimelineComponentProps {
 export default function TimelineComponent({
   controller,
 }: TimelineComponentProps) {
-  // Used Controllers
+  /* ---------- Used Controllers ---------- */
   const settings: ISettings = controller.getSettings();
   const timeController: ITimeController = controller.getTimeController();
 
-  // State Hooks
+  /* ---------- State Hooks ---------- */
   const [time, setTime] = useState<number>(timeController.getTime());
   const [endTime, setEndTime] = useState<number>(settings.getEndTime());
   const [animationSpeed, setAnimationSpeed] = useState<number>(
@@ -26,9 +26,8 @@ export default function TimelineComponent({
   );
   const [playing, setPlaying] = useState<boolean>(false);
 
-  // Register Event Handlers
+  /* ---------- Register Events ---------- */
   useEffect(() => {
-    // Define Functions
     const onPlayingChanged = (isPlaying: boolean) => {
       setPlaying(isPlaying);
     };
@@ -41,19 +40,18 @@ export default function TimelineComponent({
       setEndTime(newEndTime);
     };
 
-    // Register Events
     timeController.getAnimationRunningEvent().register(onPlayingChanged);
     timeController.getTimeChangedEvent().register(onTimeChanged);
     settings.getEndTimeChangedEvent().register(onEndTimeChanged);
 
     return () => {
-      // Remove Events
       timeController.getAnimationRunningEvent().remove(onPlayingChanged);
       timeController.getTimeChangedEvent().remove(onTimeChanged);
       settings.getEndTimeChangedEvent().remove(onEndTimeChanged);
     };
   }, [timeController]);
 
+  /* ---------- Click Handlers ---------- */
   const handlePlayPause = () => {
     if (playing) {
       timeController.stopAnimation();
@@ -75,7 +73,6 @@ export default function TimelineComponent({
   };
 
   const handleSliderChange = (newTime: number) => {
-    setTime(newTime);
     timeController.setTime(newTime);
   };
 

@@ -1,11 +1,8 @@
 import React, { useState } from "react";
 import { ISettings } from "../../../controller/interface/ISettings";
-import { ITimeController } from "../../../controller/interface/ITimeController";
 import { DayTime } from "../../../repository/entity/DayTime";
 import { IController } from "../../../controller/interface/IController";
 import { Card } from "react-bootstrap";
-import { validateHeaderName } from "http";
-import { on } from "events";
 
 interface SettingsComponentProps {
   controller: IController;
@@ -16,18 +13,17 @@ export default function SettingsComponent({
   controller,
   toggleStartpage,
 }: SettingsComponentProps) {
-  // Used Controllers
+  /* ---------- Used Controllers ---------- */
   const settings: ISettings = controller.getSettings();
-  const timeController: ITimeController = controller.getTimeController();
 
-  // State Hooks
+  /* ---------- State Hooks ---------- */
   const [dayTime, setDayTime] = useState<DayTime>(settings.getDayTime());
   const [collisionDistance, setCollisionDistance] = useState<number>(
     settings.getCollisionDistance(),
   );
   const [endTime, setEndTime] = useState<number>(settings.getEndTime());
 
-  // Click Handlers
+  /* ---------- Click Handlers ---------- */
   const onChangeDayTime = (newDayTime: DayTime) => {
     setDayTime(newDayTime);
     settings.setDayTime(newDayTime);

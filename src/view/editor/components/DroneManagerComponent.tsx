@@ -12,7 +12,7 @@ interface DroneManagerComponentProps {
 export default function DroneManagerComponent({
   controller,
 }: DroneManagerComponentProps) {
-  // State Hooks
+  /* ---------- State Hooks ---------- */
   const [allDrones, setAllDrones] = useState<Array<number>>(
     controller.getDrones(),
   );
@@ -21,9 +21,8 @@ export default function DroneManagerComponent({
   );
   const [collidingDrones, setCollidingDrones] = useState<Array<number>>([]);
 
-  // Register Event Handlers
+  /* ---------- Register Events ---------- */
   useEffect(() => {
-    // Define Functions
     const onDronesChanged = (drones: Array<number>) => {
       setAllDrones(drones);
     };
@@ -36,20 +35,18 @@ export default function DroneManagerComponent({
       setSelectedDrones(selectedDroneIds);
     };
 
-    // Register Events
     controller.getDronesEvent().register(onDronesChanged);
     controller.getCollisionEvent().register(onCollision);
     controller.getDroneSelectEvent().register(onDroneSelected);
 
     return () => {
-      // Remove Events
       controller.getDronesEvent().remove(onDronesChanged);
       controller.getCollisionEvent().remove(onCollision);
       controller.getDroneSelectEvent().remove(onDroneSelected);
     };
   }, [controller]);
 
-  // Click handlers
+  /* ---------- Click Handlers ---------- */
   const onAddDrone = () => {
     controller.addDrone();
     setAllDrones(controller.getDrones());
