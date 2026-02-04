@@ -1,9 +1,11 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
 import { DayTime } from "../../../repository/entity/DayTime";
 import { IController } from "../../../controller/interface/IController";
 import { Card } from "react-bootstrap";
+import { validateHeaderName } from "http";
+import { on } from "events";
 
 interface SettingsComponentProps {
   controller: IController;
@@ -25,174 +27,246 @@ export default function SettingsComponent({
   );
   const [endTime, setEndTime] = useState<number>(settings.getEndTime());
 
+  // Click Handlers
+  const onChangeDayTime = (newDayTime: DayTime) => {
+    setDayTime(newDayTime);
+    settings.setDayTime(newDayTime);
+  };
+
+  const onChangeCollisionRadius = (newRadius: number) => {
+    if (isNaN(newRadius) || newRadius < 0) {
+      setCollisionRadius(0);
+      return;
+    }
+    setCollisionRadius(newRadius);
+  };
+
+  const onChangeEndTime = (newEndTime: number) => {
+    if (isNaN(newEndTime) || newEndTime < 0) {
+      setEndTime(0);
+      return;
+    }
+    setEndTime(newEndTime);
+  };
+
+  const onSaveSettings = () => {
+    settings.setDayTime(dayTime);
+    settings.setEndTime(endTime);
+    settings.setDroneDistance(collisionRadius);
+  };
+
   return (
     <Card
       className="d-flex flex-column h-100 w-100
       rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0"
     >
-      <Card.Header className="bg-light border-bottom">
+      <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
         <span className="fw-bold">Einstellungen</span>
+        <button
+          className="btn btn-primary btn-sm d-flex gap-2"
+          onClick={onSaveSettings}
+        >
+          <i className="bi bi-floppy" />
+          Speichern
+        </button>
       </Card.Header>
 
       {/* Content */}
-      <Card.Body className="p-3 flex-grow-1 overflow-y-auto">
-        {/* Projekt Section */}
-        <div className="mb-4">
-          <h6 className="text-primary mb-3">
-            <i className="bi bi-gear me-2"></i>
-            Projekt
-          </h6>
+      <Card.Body className="d-flex flex-column flex-grow-1 overflow-y-auto gap-3">
+        <GroupComponent title={"Projekt"} iconClass={"bi-globe"}>
+          <AttributeComponent
+            title={"Tageszeit"}
+            description={"Beleuchtung im 3D-Viewport"}
+            iconClass={"bi-sun"}
+          >
+            <DayTimeButtonComponent
+              currentDayTime={dayTime}
+              buttonDayTime={DayTime.NOON}
+              iconClass={"bi-sun"}
+              text={"Tag"}
+              onChangeDayTime={onChangeDayTime}
+            />
+            <DayTimeButtonComponent
+              currentDayTime={dayTime}
+              buttonDayTime={DayTime.SUNSET}
+              iconClass={"bi-sunset"}
+              text={"Dämmerung"}
+              onChangeDayTime={onChangeDayTime}
+            />
+            <DayTimeButtonComponent
+              currentDayTime={dayTime}
+              buttonDayTime={DayTime.NIGHT}
+              iconClass={"bi-moon-stars"}
+              text={"Nacht"}
+              onChangeDayTime={onChangeDayTime}
+            />
+          </AttributeComponent>
 
-          {/* Tageszeit */}
-          <Card className="mb-3">
-            <Card.Body>
-              <div className="d-flex align-items-start gap-2 mb-2">
-                <i className="bi bi-sun text-primary"></i>
-                <div className="flex-grow-1">
-                  <div className="fw-bold">Tageszeit</div>
-                  <small className="text-muted">
-                    Beleuchtung im 3D-Viewport
-                  </small>
-                </div>
-              </div>
-              <div className="d-flex gap-2 mt-3">
-                <button
-                  className={`btn flex-fill ${dayTime === DayTime.SUNSET ? "btn-info" : "btn-outline-secondary"}`}
-                  onClick={() => {
-                    setDayTime(DayTime.SUNSET);
-                    settings.setDayTime(DayTime.SUNSET);
-                  }}
-                >
-                  <i className="bi bi-sun me-1"></i>
-                  Tag
-                </button>
-                <button
-                  className={`btn flex-fill ${dayTime === DayTime.NOON ? "btn-info" : "btn-outline-secondary"}`}
-                  onClick={() => {
-                    setDayTime(DayTime.NOON);
-                    settings.setDayTime(DayTime.NOON);
-                  }}
-                >
-                  <i className="bi bi-sunset me-1"></i>
-                  Dämmerung
-                </button>
-                <button
-                  className={`btn flex-fill ${dayTime === DayTime.NIGHT ? "btn-info" : "btn-outline-secondary"}`}
-                  onClick={() => {
-                    setDayTime(DayTime.NIGHT);
-                    settings.setDayTime(DayTime.NIGHT);
-                  }}
-                >
-                  <i className="bi bi-moon-stars me-1"></i>
-                  Nacht
-                </button>
-              </div>
-            </Card.Body>
-          </Card>
+          <AttributeComponent
+            title={"Sicherheitsabstand"}
+            description={"Mindestabstand zwischen Drohnen"}
+            iconClass={"bi-shield-check"}
+          >
+            <input
+              type="number"
+              className="form-control"
+              value={collisionRadius}
+              min="0.1"
+              step="0.1"
+              onChange={(e) => {
+                onChangeCollisionRadius(parseFloat(e.target.value));
+              }}
+            />
+            <span className="text-muted">Meter</span>
+          </AttributeComponent>
 
-          {/* Sicherheitsabstand */}
-          <Card className="mb-3">
-            <Card.Body>
-              <div className="d-flex align-items-start gap-2 mb-2">
-                <i className="bi bi-shield-check text-primary"></i>
-                <div className="flex-grow-1">
-                  <div className="fw-bold">Sicherheitsabstand</div>
-                  <small className="text-muted">
-                    Mindestabstand zwischen Drohnen
-                  </small>
-                </div>
-              </div>
-              <div className="d-flex align-items-center gap-2 mt-3">
-                <input
-                  type="number"
-                  className="form-control"
-                  value={collisionRadius}
-                  min="0.1"
-                  step="0.1"
-                  onChange={(e) => {
-                    const value = parseFloat(e.target.value);
-                    setCollisionRadius(value);
-                    settings.setDroneDistance(value);
-                  }}
-                />
-                <span className="text-muted">Meter</span>
-              </div>
-            </Card.Body>
-          </Card>
+          <AttributeComponent
+            title={"Endzeit"}
+            description={"Gesamtdauer der Animation"}
+            iconClass={"bi-clock"}
+          >
+            <input
+              type="number"
+              className="form-control"
+              value={endTime}
+              min="1"
+              step="1"
+              onChange={(e) => {
+                onChangeEndTime(parseInt(e.target.value));
+              }}
+            />
+            <span className="text-muted">Sekunden</span>
+          </AttributeComponent>
+        </GroupComponent>
 
-          {/* Endzeit */}
-          <Card>
-            <Card.Body>
-              <div className="d-flex align-items-start gap-2 mb-2">
-                <i className="bi bi-clock text-primary"></i>
-                <div className="flex-grow-1">
-                  <div className="fw-bold">Endzeit</div>
-                  <small className="text-muted">
-                    Gesamtdauer der Animation
-                  </small>
-                </div>
-              </div>
-              <div className="d-flex align-items-center gap-2 mt-3">
-                <input
-                  type="number"
-                  className="form-control"
-                  value={endTime}
-                  min="1"
-                  step="1"
-                  onChange={(e) => {
-                    const value = parseInt(e.target.value);
-                    setEndTime(value);
-                    settings.setEndTime(value);
-                  }}
-                />
-                <span className="text-muted">Sekunden</span>
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
-
-        {/* Export Section */}
-        <div className="mb-4">
-          <h6 className="text-primary mb-3">
-            <i className="bi bi-download me-2"></i>
-            Export
-          </h6>
-
-          {/* Video Export */}
-          <Card className="mb-3">
-            <Card.Body className="d-flex align-items-start gap-3">
-              <i className="bi bi-camera-video text-primary fs-4"></i>
-              <div className="flex-grow-1">
-                <div className="fw-bold mb-1">Als Video exportieren</div>
-                <small className="text-muted">
-                  Rendert die Show als MP4-Video
-                </small>
-                <button className="btn btn-outline-primary w-100 mt-2">
-                  <i className="bi bi-camera-video me-2"></i>
-                  Video exportieren
-                </button>
-              </div>
-            </Card.Body>
-          </Card>
-
-          {/* Waypoint Export */}
-          <Card>
-            <Card.Body className="d-flex align-items-start gap-3">
-              <i className="bi bi-file-earmark-text text-primary fs-4"></i>
-              <div className="flex-grow-1">
-                <div className="fw-bold mb-1">Waypoint-Daten exportieren</div>
-                <small className="text-muted">
-                  Exportiert Pfade im Waypoint-at-Time Format
-                </small>
-                <button className="btn btn-outline-primary w-100 mt-2">
-                  <i className="bi bi-file-earmark-arrow-down me-2"></i>
-                  Waypoints exportieren
-                </button>
-              </div>
-            </Card.Body>
-          </Card>
-        </div>
+        <GroupComponent title={"Export"} iconClass={"bi-download"}>
+          <AttributeComponent
+            title={"Speichern"}
+            description={"Speichere das aktuelle Projekt"}
+            iconClass={"bi-save"}
+          >
+            <button
+              className="btn btn-outline-success"
+              onClick={() => {
+                controller.getProject().saveProject();
+              }}
+            >
+              <i className="bi bi-save me-2"></i>
+              Speichern
+            </button>
+          </AttributeComponent>
+          <AttributeComponent
+            title={"Startseite anzeigen"}
+            description={"Zurück zur Startseite wechseln"}
+            iconClass={"bi-house-door"}
+          >
+            <button
+              className="btn btn-outline-secondary"
+              onClick={toggleStartpage}
+            >
+              <i className="bi bi-house-door me-2"></i>
+              Zur Startseite
+            </button>
+          </AttributeComponent>
+          <AttributeComponent
+            title={"Video-Export"}
+            description={"Exportiere die Show als MP4-Video"}
+            iconClass={"bi-camera-video"}
+          >
+            <button
+              className="btn btn-outline-primary w-100 mt-2" /*TODO: Export Function*/
+            >
+              <i className="bi bi-camera-video me-2"></i>
+              Video exportieren
+            </button>
+          </AttributeComponent>
+          <AttributeComponent
+            title={"Waypoint-Export"}
+            description={"Exportiere als Waypoint-at-Time Format"}
+            iconClass={"bi-file-earmark-text"}
+          >
+            <button
+              className="btn btn-outline-primary w-100 mt-2" /*TODO: Export Function*/
+            >
+              <i className="bi bi-file-earmark-arrow-down me-2"></i>
+              Waypoints exportieren
+            </button>
+          </AttributeComponent>
+        </GroupComponent>
       </Card.Body>
     </Card>
+  );
+}
+
+function GroupComponent({
+  title,
+  iconClass,
+  children,
+}: {
+  title: string;
+  iconClass: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <h5 className="d-flex align-items-center gap-2 mb-3 text-primary">
+        <i className={`bi ${iconClass}`}></i>
+        <span className="fw-bold">{title}</span>
+      </h5>
+      <div className="d-flex flex-column gap-3">{children}</div>
+    </div>
+  );
+}
+
+function AttributeComponent({
+  title,
+  description,
+  iconClass,
+  children,
+}: {
+  title: string;
+  description: string;
+  iconClass: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <Card>
+      <Card.Body>
+        <div className="d-flex align-items-start gap-2">
+          <i className={`bi ${iconClass} fw-bold`}></i>
+          <div>
+            <div className="fw-bold">{title}</div>
+            <small className="text-muted">{description}</small>
+          </div>
+        </div>
+        <div className="d-flex align-items-center gap-2 mt-3">{children}</div>
+      </Card.Body>
+    </Card>
+  );
+}
+
+function DayTimeButtonComponent({
+  currentDayTime,
+  buttonDayTime,
+  iconClass,
+  text,
+  onChangeDayTime,
+}: {
+  currentDayTime: DayTime;
+  buttonDayTime: DayTime;
+  iconClass: string;
+  text: string;
+  onChangeDayTime: (newDayTime: DayTime) => void;
+}) {
+  return (
+    <button
+      className={`btn ${currentDayTime === buttonDayTime ? "btn-info" : "btn-outline-secondary"} d-flex flex-column flex-fill`}
+      onClick={() => {
+        onChangeDayTime(buttonDayTime);
+      }}
+    >
+      <i className={`bi ${iconClass}`} />
+      {text}
+    </button>
   );
 }

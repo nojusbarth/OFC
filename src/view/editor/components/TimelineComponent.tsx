@@ -37,14 +37,20 @@ export default function TimelineComponent({
       setTime(newTime);
     };
 
+    const onEndTimeChanged = (newEndTime: number) => {
+      setEndTime(newEndTime);
+    };
+
     // Register Events
     timeController.getAnimationRunningEvent().register(onPlayingChanged);
     timeController.getTimeChangedEvent().register(onTimeChanged);
+    settings.getEndTimeChangedEvent().register(onEndTimeChanged);
 
     return () => {
       // Remove Events
       timeController.getAnimationRunningEvent().remove(onPlayingChanged);
       timeController.getTimeChangedEvent().remove(onTimeChanged);
+      settings.getEndTimeChangedEvent().remove(onEndTimeChanged);
     };
   }, [timeController]);
 

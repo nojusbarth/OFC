@@ -115,8 +115,22 @@ export default function DroneEditorComponent({
       className="d-flex flex-column h-100 w-100 
     rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0"
     >
-      <Card.Header className="bg-light border-bottom">
+      <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
         <span className="fw-bold">Aktionen</span>
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-primary btn-sm d-flex gap-2"
+            onClick={() => {}} //TODO Implementieren
+          >
+            <i className="bi bi-caret-left" />
+          </button>
+          <button
+            className="btn btn-primary btn-sm d-flex gap-2"
+            onClick={() => {}} //TODO Implementieren
+          >
+            <i className="bi bi-caret-right" />
+          </button>
+        </div>
       </Card.Header>
 
       {/* Content */}
