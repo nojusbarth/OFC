@@ -1,14 +1,14 @@
-import { Container, Row, Col } from "react-bootstrap";
 import DroneManagerComponent from "./components/DroneManagerComponent";
 import DroneEditorComponent from "./components/DroneEditorComponent";
 import TimelineComponent from "./components/TimelineComponent";
 import SettingsComponent from "./components/SettingsComponent";
-import { IController } from "../../controller/interface/IController";
-import { JSX } from "react";
+import { JSX, useState } from "react";
+import SettingsButtonComponent from "./components/SettingsButtonComponent";
+import { IUndoableController } from "../../controller/interface/IUndoableController";
+import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
 
 interface EditorComponentProps {
-  // Props
-  controller: IController;
+  controller: IUndoableController;
   toggleStartpage: () => void;
   viewport: JSX.Element;
 }
@@ -18,19 +18,28 @@ export default function EditorComponent({
   toggleStartpage,
   viewport,
 }: EditorComponentProps) {
-  /* Layout Constants */
-  // Breite des DroneEditors und SettingsComponents
-  const droneEditorWidth = "400px";
-  const droneManagerHeight = "250px";
+  // State Hooks
+  const [showSettings, setShowSettings] = useState<boolean>(false);
+
+  const toggleSettingsMenu = () => {
+    setShowSettings(!showSettings);
+  };
 
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: `1fr ${droneEditorWidth}`,
-        gridTemplateRows: `auto 1fr ${droneManagerHeight}`,
-        gridTemplateAreas: `
-          "timeline settings"
+        gridTemplateColumns: `1fr ${DRONE_EDITOR_WIDTH}`,
+        gridTemplateRows: `auto 1fr ${DRONE_MANAGER_HEIGHT}`,
+        // Wechsel zwischen Settings und Editor
+        gridTemplateAreas: showSettings
+          ? `
+          "timeline settingsbutton"
+          "viewport settings"
+          "drones   settings"
+        `
+          : `
+          "timeline settingsbutton"
           "viewport editor"
           "drones   editor"
         `,
@@ -41,40 +50,41 @@ export default function EditorComponent({
     >
       {/* Timeline */}
       <div style={{ gridArea: "timeline", overflow: "hidden" }}>
-        <TimelineComponent
-          settings={controller.getSettings()}
-          timeController={controller.getTimeController()}
-        />
+        <TimelineComponent controller={controller} />
       </div>
 
-      {/* Settings */}
-      <div style={{ gridArea: "settings", overflow: "hidden" }}>
-        <SettingsComponent
-          settings={controller.getSettings()}
-          timeController={controller.getTimeController()}
-          toggleStartpage={toggleStartpage}
+      {/* SettingsButton */}
+      <div style={{ gridArea: "settingsbutton", overflow: "hidden" }}>
+        <SettingsButtonComponent
+          showSettings={showSettings}
+          toggleSettingsMenu={toggleSettingsMenu}
         />
       </div>
 
       {/* Viewport */}
-      <div
-        style={{
-          gridArea: "viewport",
-          overflow: "hidden",
-        }}
-      >
-        {viewport}
-      </div>
+      <div style={{ gridArea: "viewport", overflow: "hidden" }}>{viewport}</div>
 
       {/* Drone Manager */}
       <div style={{ gridArea: "drones", overflow: "hidden" }}>
         <DroneManagerComponent controller={controller} />
       </div>
 
+      {/* Settings */}
+      {showSettings && (
+        <div style={{ gridArea: "settings", overflow: "hidden" }} onKeyDown={e => e.stopPropagation()}>
+          <SettingsComponent
+            controller={controller}
+            toggleStartpage={toggleStartpage}
+          />
+        </div>
+      )}
+
       {/* Drone Editor */}
-      <div style={{ gridArea: "editor", overflow: "auto" }}>
-        <DroneEditorComponent controller={controller} />
-      </div>
+      {!showSettings && (
+        <div style={{ gridArea: "editor", overflow: "auto" }} onKeyDown={e => e.stopPropagation()}>
+          <DroneEditorComponent controller={controller} />
+        </div>
+      )}
     </div>
   );
 }
