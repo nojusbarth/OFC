@@ -16,6 +16,7 @@ import { UndoRepository } from "./repository/UndoRepository";
 import { KeyboardShortcuts } from "./view/KeyboardShortcuts";
 import { rocketShow } from "./shows/rocket";
 import { runnerShow } from "./shows/runner";
+import { helloKitShow } from "./shows/hello_kit";
 
 function App() {
     // State Hooks
@@ -32,7 +33,8 @@ function App() {
             new UndoRepository(),
         );
 
-        //rocketShow(ctrl2);
+        //helloKitShow(ctrl2);
+        rocketShow(ctrl2);
         //runnerShow(ctrl2);
 
         // Reset time to 0
