@@ -59,6 +59,7 @@ export default function SettingsComponent({
       <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
         <span className="fw-bold">Einstellungen</span>
         <button
+          title="Änderungen Speichern"
           className="btn btn-primary btn-sm d-flex gap-2"
           onClick={onSaveSettings}
         >

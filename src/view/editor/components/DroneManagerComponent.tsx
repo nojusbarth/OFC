@@ -4,6 +4,8 @@ import { IController } from "../../../controller/interface/IController";
 import { Card } from "react-bootstrap";
 
 import "./DroneManagerComponent.css";
+import { time } from "console";
+import { ITimeController } from "../../../controller/interface/ITimeController";
 
 interface DroneManagerComponentProps {
   controller: IController;
@@ -12,6 +14,9 @@ interface DroneManagerComponentProps {
 export default function DroneManagerComponent({
   controller,
 }: DroneManagerComponentProps) {
+  /* ---------- Used Controllers ---------- */
+  const timerController: ITimeController = controller.getTimeController();
+
   /* ---------- State Hooks ---------- */
   const [allDrones, setAllDrones] = useState<Array<number>>(
     controller.getDrones(),
@@ -20,11 +25,15 @@ export default function DroneManagerComponent({
     controller.getSelectedDrones(),
   );
   const [collidingDrones, setCollidingDrones] = useState<Array<number>>([]);
+  const [colors, setColors] = useState<Map<number, Color>>(
+    new Map(allDrones.map((id) => [id, controller.getColor(id)])),
+  );
 
   /* ---------- Register Events ---------- */
   useEffect(() => {
     const onDronesChanged = (drones: Array<number>) => {
       setAllDrones(drones);
+      updateColors();
     };
 
     const onCollision = (droneIds: Map<number, Map<number, number>>) => {
@@ -35,16 +44,31 @@ export default function DroneManagerComponent({
       setSelectedDrones(selectedDroneIds);
     };
 
+    const onTimeChanged = (newTime: number) => {
+      updateColors();
+    };
+
     controller.getDronesEvent().register(onDronesChanged);
     controller.getCollisionEvent().register(onCollision);
     controller.getDroneSelectEvent().register(onDroneSelected);
+    timerController.getTimeChangedEvent().register(onTimeChanged);
 
     return () => {
       controller.getDronesEvent().remove(onDronesChanged);
       controller.getCollisionEvent().remove(onCollision);
       controller.getDroneSelectEvent().remove(onDroneSelected);
+      timerController.getTimeChangedEvent().remove(onTimeChanged);
     };
   }, [controller]);
+
+  /* ---------- Helper Functions ---------- */
+
+  const updateColors = () => {
+    const newColors = new Map(
+      allDrones.map((id) => [id, controller.getColor(id)]),
+    );
+    setColors(newColors);
+  };
 
   /* ---------- Click Handlers ---------- */
   const onAddDrone = () => {
@@ -80,13 +104,13 @@ export default function DroneManagerComponent({
         </button>
       </Card.Header>
 
-      <Card.Body className="p-3 overflow-y-auto">
+      <Card.Body className="d-flex flex-column overflow-y-auto p-3">
         {/* Drone List */}
         <div className="row row-cols-auto justify-content-start g-4">
           {allDrones.map((droneId) => {
             const isSelected = selectedDrones.includes(droneId);
             const isColliding = collidingDrones.includes(droneId);
-            const color = controller.getColor(droneId);
+            const color = colors.get(droneId);
 
             return (
               <>
