@@ -21,7 +21,7 @@ it("Controller - remove drone invalid id", () => {
 
 it("Controller - test collision detection on add", () => {
     const [controller, repository] = makeBasicController();
-    controller.getSettings().setCollisionDistance(5);
+    controller.getSettings().setCollisionRadius(5);
 
     const drone1Id = controller.addDrone();
     const drone2Id = controller.addDrone();

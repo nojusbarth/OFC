@@ -12,6 +12,7 @@
 - **SettingsComponent**: _droneDistance_ geändert zu _collisionRadius_
 - **EditorComponent**: simulation-view szene im Interface hinzugefügt
 
+
 ### Simulation View
 
 ## Controller
@@ -26,9 +27,9 @@
 
 ### ISettings
 
-- **setDroneDistance**: umbenannt zu `setCollisionDistance()`
-- **getDroneDistance**: umbenannt zu `getCollisionDistance()`
-- **getDroneDistanceChangedEvent**: umbenannt zu `getCollisionDistanceChangedEvent()`
+- **setDroneDistance**: umbenannt zu `setCollisionRadius()`
+- **getDroneDistance**: umbenannt zu `getCollisionRadius()`
+- **getDroneDistanceChangedEvent**: umbenannt zu `getCollisionRadiusChangedEvent()`
 
 ### ITimeController
 

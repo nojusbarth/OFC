@@ -145,23 +145,23 @@ describe("Subcontroller Event Emission Tests", () => {
         });
     });
 
-    describe("Settings - getCollisionDistanceChangedEvent()", () => {
-        it("should emit collisionDistanceChangedEvent when setCollisionDistance is called with different value", () => {
+    describe("Settings - getCollisionRadiusChangedEvent()", () => {
+        it("should emit collisionRadiusChangedEvent when setCollisionRadius is called with different value", () => {
             const handler = jest.fn();
-            settings.getCollisionDistanceChangedEvent().register(handler);
+            settings.getCollisionRadiusChangedEvent().register(handler);
 
-            settings.setCollisionDistance(10);
+            settings.setCollisionRadius(10);
 
             expect(handler).toHaveBeenCalledWith(10);
         });
 
-        it("should emit collisionDistanceChangedEvent with correct value for multiple calls", () => {
+        it("should emit collisionRadiusChangedEvent with correct value for multiple calls", () => {
             const handler = jest.fn();
-            settings.getCollisionDistanceChangedEvent().register(handler);
+            settings.getCollisionRadiusChangedEvent().register(handler);
 
-            settings.setCollisionDistance(5);
-            settings.setCollisionDistance(10);
-            settings.setCollisionDistance(20);
+            settings.setCollisionRadius(5);
+            settings.setCollisionRadius(10);
+            settings.setCollisionRadius(20);
 
             expect(handler).toHaveBeenNthCalledWith(1, 5);
             expect(handler).toHaveBeenNthCalledWith(2, 10);
@@ -169,39 +169,39 @@ describe("Subcontroller Event Emission Tests", () => {
             expect(handler).toHaveBeenCalledTimes(3);
         });
 
-        it("should not emit collisionDistanceChangedEvent when setting same value twice", () => {
+        it("should not emit collisionRadiusChangedEvent when setting same value twice", () => {
             const handler = jest.fn();
-            settings.getCollisionDistanceChangedEvent().register(handler);
+            settings.getCollisionRadiusChangedEvent().register(handler);
 
-            settings.setCollisionDistance(15);
-            settings.setCollisionDistance(15);
+            settings.setCollisionRadius(15);
+            settings.setCollisionRadius(15);
 
             expect(handler).toHaveBeenCalledTimes(1);
             expect(handler).toHaveBeenCalledWith(15);
         });
 
-        it("should allow multiple handlers on collisionDistanceChangedEvent", () => {
+        it("should allow multiple handlers on collisionRadiusChangedEvent", () => {
             const handler1 = jest.fn();
             const handler2 = jest.fn();
 
-            settings.getCollisionDistanceChangedEvent().register(handler1);
-            settings.getCollisionDistanceChangedEvent().register(handler2);
+            settings.getCollisionRadiusChangedEvent().register(handler1);
+            settings.getCollisionRadiusChangedEvent().register(handler2);
 
-            settings.setCollisionDistance(8);
+            settings.setCollisionRadius(8);
 
             expect(handler1).toHaveBeenCalledWith(8);
             expect(handler2).toHaveBeenCalledWith(8);
         });
 
-        it("should allow removing handler from collisionDistanceChangedEvent", () => {
+        it("should allow removing handler from collisionRadiusChangedEvent", () => {
             const handler1 = jest.fn();
             const handler2 = jest.fn();
 
-            settings.getCollisionDistanceChangedEvent().register(handler1);
-            settings.getCollisionDistanceChangedEvent().register(handler2);
-            settings.getCollisionDistanceChangedEvent().remove(handler1);
+            settings.getCollisionRadiusChangedEvent().register(handler1);
+            settings.getCollisionRadiusChangedEvent().register(handler2);
+            settings.getCollisionRadiusChangedEvent().remove(handler1);
 
-            settings.setCollisionDistance(12);
+            settings.setCollisionRadius(12);
 
             expect(handler1).not.toHaveBeenCalled();
             expect(handler2).toHaveBeenCalledWith(12);
@@ -216,11 +216,11 @@ describe("Subcontroller Event Emission Tests", () => {
 
             settings.getEndTimeChangedEvent().register(endTimeHandler);
             settings.getDayTimeChangedEvent().register(dayTimeHandler);
-            settings.getCollisionDistanceChangedEvent().register(distanceHandler);
+            settings.getCollisionRadiusChangedEvent().register(distanceHandler);
 
             settings.setEndTime(50);
             settings.setDayTime(DayTime.SUNSET);
-            settings.setCollisionDistance(7);
+            settings.setCollisionRadius(7);
 
             expect(endTimeHandler).toHaveBeenCalledWith(50);
             expect(dayTimeHandler).toHaveBeenCalledWith(DayTime.SUNSET);
