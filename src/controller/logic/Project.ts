@@ -22,13 +22,13 @@ export class Project implements IProject {
 
     exportWayPointData(): void {
         const data = this.repository.export();
-        saveAs(data, 'waypoint-export.json');
+        saveAs(new Blob([data], { type: 'application/json' }), 'waypoint-export.json');
     }
 
     saveProject(): void {
         this.repository.saveToLocalStorage();
         const data = this.repository.exportConfig();
-        saveAs(data, 'project.json');
+        saveAs(new Blob([data], { type: 'application/json' }), 'project.json');
     }
 
     newProject(): void {
