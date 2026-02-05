@@ -6,7 +6,7 @@ import {ColorKeyFrame} from "./entity/ColorKeyFrame";
 import {PositionKeyFrame} from "./entity/PositionKeyFrame";
 
 /**
- * Definiert die JSON-Datei für die ProjectConfig.
+ * Definiert die JSON-Struktur für die ProjectConfig.
  */
 export interface ProjectConfig {
     version: string;
@@ -21,7 +21,7 @@ interface Settings {
 }
 
 /**
- * Definiert die JSON-Datei für das Waypoint-at-time-Format
+ * Definiert die JSON-Struktur für das Waypoint-at-time-Format
  */
 export interface WaypointAtTime {
     drones: JsonDrone[]
@@ -42,6 +42,10 @@ interface ColorKeyframe {
     color: [number, number, number];
 }
 
+/**
+ * Mapped die übergebenen Drohnen in `JsonDrone` für Exporte.
+ * @param drones Alle `IDrone`, die in `JsonDrone` umgewandelt werden sollen.
+ */
 export function mapToJsonDrones(drones: Array<IDrone>): Array<JsonDrone> {
     return drones.map((drone: IDrone) => {
             return {
@@ -62,6 +66,10 @@ export function mapToJsonDrones(drones: Array<IDrone>): Array<JsonDrone> {
     );
 }
 
+/**
+ * Mapped die übergebenen `JsonDrone` in `Drone` aus einer JSON-Datei.
+ * @param drones Alle `JsonDrone`, die umgewandelt werden sollen.
+ */
 export function parseJsonToDrones(drones: Array<JsonDrone>): Array<IDrone> {
     return drones.map((drone, index, _) => {
         const waypoints: Array<PositionKeyFrame> = drone.waypoints.map((keyframe) => {
