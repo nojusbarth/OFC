@@ -8,83 +8,89 @@ import { IUndoableController } from "../../controller/interface/IUndoableControl
 import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
 
 interface EditorComponentProps {
-  controller: IUndoableController;
-  toggleStartpage: () => void;
-  viewport: JSX.Element;
+    controller: IUndoableController;
+    toggleStartpage: () => void;
+    viewport: JSX.Element;
 }
 
 export default function EditorComponent({
-  controller,
-  toggleStartpage,
-  viewport,
+    controller,
+    toggleStartpage,
+    viewport,
 }: EditorComponentProps) {
-  // State Hooks
-  const [showSettings, setShowSettings] = useState<boolean>(false);
+    // State Hooks
+    const [showSettings, setShowSettings] = useState<boolean>(false);
 
-  const toggleSettingsMenu = () => {
-    setShowSettings(!showSettings);
-  };
+    const toggleSettingsMenu = () => {
+        setShowSettings(!showSettings);
+    };
 
-  return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: `1fr ${DRONE_EDITOR_WIDTH}`,
-        gridTemplateRows: `auto 1fr ${DRONE_MANAGER_HEIGHT}`,
-        // Wechsel zwischen Settings und Editor
-        gridTemplateAreas: showSettings
-          ? `
-          "timeline settingsbutton"
-          "viewport settings"
-          "drones   settings"
-        `
-          : `
-          "timeline settingsbutton"
-          "viewport editor"
-          "drones   editor"
-        `,
-        height: "100vh",
-        width: "100vw",
-        overflow: "hidden",
-      }}
-    >
-      {/* Timeline */}
-      <div style={{ gridArea: "timeline", overflow: "hidden" }}>
-        <TimelineComponent controller={controller} />
-      </div>
+    return (
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: `1fr ${DRONE_EDITOR_WIDTH}`,
+                gridTemplateRows: `auto 1fr ${DRONE_MANAGER_HEIGHT}`,
+                // Wechsel zwischen Settings und Editor
+                gridTemplateAreas: showSettings
+                    ? `
+                    "timeline settingsbutton"
+                    "viewport settings"
+                    "drones   settings"`
+                    : `
+                    "timeline settingsbutton"
+                    "viewport editor"
+                    "drones   editor"`,
+                height: "100vh",
+                width: "100vw",
+                overflow: "hidden",
+            }}
+        >
+            {/* Timeline */}
+            <div style={{ gridArea: "timeline", overflow: "hidden" }}>
+                <TimelineComponent controller={controller} />
+            </div>
 
-      {/* SettingsButton */}
-      <div style={{ gridArea: "settingsbutton", overflow: "hidden" }}>
-        <SettingsButtonComponent
-          showSettings={showSettings}
-          toggleSettingsMenu={toggleSettingsMenu}
-        />
-      </div>
+            {/* SettingsButton */}
+            <div style={{ gridArea: "settingsbutton", overflow: "hidden" }}>
+                <SettingsButtonComponent
+                    showSettings={showSettings}
+                    toggleSettingsMenu={toggleSettingsMenu}
+                />
+            </div>
 
-      {/* Viewport */}
-      <div style={{ gridArea: "viewport", overflow: "hidden" }}>{viewport}</div>
+            {/* Viewport */}
+            <div style={{ gridArea: "viewport", overflow: "hidden" }}>
+                {viewport}
+            </div>
 
-      {/* Drone Manager */}
-      <div style={{ gridArea: "drones", overflow: "hidden" }}>
-        <DroneManagerComponent controller={controller} />
-      </div>
+            {/* Drone Manager */}
+            <div style={{ gridArea: "drones", overflow: "hidden" }}>
+                <DroneManagerComponent controller={controller} />
+            </div>
 
-      {/* Settings */}
-      {showSettings && (
-        <div style={{ gridArea: "settings", overflow: "hidden" }} onKeyDown={e => e.stopPropagation()}>
-          <SettingsComponent
-            controller={controller}
-            toggleStartpage={toggleStartpage}
-          />
+            {/* Settings */}
+            {showSettings && (
+                <div
+                    style={{ gridArea: "settings", overflow: "hidden" }}
+                    onKeyDown={(e) => e.stopPropagation()}
+                >
+                    <SettingsComponent
+                        controller={controller}
+                        toggleStartpage={toggleStartpage}
+                    />
+                </div>
+            )}
+
+            {/* Drone Editor */}
+            {!showSettings && (
+                <div
+                    style={{ gridArea: "editor", overflow: "auto" }}
+                    onKeyDown={(e) => e.stopPropagation()}
+                >
+                    <DroneEditorComponent controller={controller} />
+                </div>
+            )}
         </div>
-      )}
-
-      {/* Drone Editor */}
-      {!showSettings && (
-        <div style={{ gridArea: "editor", overflow: "auto" }} onKeyDown={e => e.stopPropagation()}>
-          <DroneEditorComponent controller={controller} />
-        </div>
-      )}
-    </div>
-  );
+    );
 }
