@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
-
 import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
-
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { SPEED_VALUES } from "../config";
-import { IController } from "../../../controller/interface/IController";
 
 interface TimelineComponentProps {
-  controller: IController;
+  controller: IUndoableController;
 }
 
 export default function TimelineComponent({

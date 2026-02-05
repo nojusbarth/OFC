@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { ISettings } from "../../../controller/interface/ISettings";
 import { DayTime } from "../../../repository/entity/DayTime";
-import { IController } from "../../../controller/interface/IController";
 import { Card } from "react-bootstrap";
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
 
 interface SettingsComponentProps {
-  controller: IController;
+  controller: IUndoableController;
   toggleStartpage: () => void;
 }
 

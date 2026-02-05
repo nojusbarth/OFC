@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
 import { Color } from "three";
-import { IController } from "../../../controller/interface/IController";
 import { Card } from "react-bootstrap";
+import { ITimeController } from "../../../controller/interface/ITimeController";
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
 
 import "./DroneManagerComponent.css";
-import { time } from "console";
-import { ITimeController } from "../../../controller/interface/ITimeController";
 
 interface DroneManagerComponentProps {
-  controller: IController;
+  controller: IUndoableController;
 }
 
 export default function DroneManagerComponent({

@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { Color } from "three";
-import { IController } from "../../../controller/interface/IController";
 import { ColorKeyFrame } from "../../../repository/entity/ColorKeyFrame";
 import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
-import { Card, Form, Button } from "react-bootstrap";
+import { Card, Form } from "react-bootstrap";
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
 
 interface DroneEditorComponentProps {
-  controller: IController;
+  controller: IUndoableController;
 }
 
 export default function DroneEditorComponent({
@@ -102,14 +102,18 @@ export default function DroneEditorComponent({
           <button
             title="Rückgängig"
             className="btn btn-primary btn-sm d-flex gap-2"
-            onClick={() => {}} //TODO Implementieren
+            onClick={() => {
+              controller.undo();
+            }}
           >
             <i className="bi bi-caret-left" />
           </button>
           <button
             title="Wiederherstellen"
             className="btn btn-primary btn-sm d-flex gap-2"
-            onClick={() => {}} //TODO Implementieren
+            onClick={() => {
+              controller.redo();
+            }}
           >
             <i className="bi bi-caret-right" />
           </button>

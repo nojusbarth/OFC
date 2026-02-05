@@ -1,17 +1,14 @@
-import { Container, Row, Col } from "react-bootstrap";
 import DroneManagerComponent from "./components/DroneManagerComponent";
 import DroneEditorComponent from "./components/DroneEditorComponent";
 import TimelineComponent from "./components/TimelineComponent";
 import SettingsComponent from "./components/SettingsComponent";
-import { IController } from "../../controller/interface/IController";
 import { JSX, useState } from "react";
-import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
 import SettingsButtonComponent from "./components/SettingsButtonComponent";
-import { Settings } from "../../controller/logic/Settings";
-import { TimeController } from "../../controller/logic/TimeController";
+import { IUndoableController } from "../../controller/interface/IUndoableController";
+import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
 
 interface EditorComponentProps {
-  controller: IController;
+  controller: IUndoableController;
   toggleStartpage: () => void;
   viewport: JSX.Element;
 }
