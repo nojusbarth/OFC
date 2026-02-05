@@ -64,7 +64,7 @@ export default function DroneManagerComponent({
 
   const updateColors = () => {
     const newColors = new Map(
-      allDrones.map((id) => [id, controller.getColor(id)]),
+      controller.getDrones().map((id) => [id, controller.getColor(id)]),
     );
     setColors(newColors);
   };
