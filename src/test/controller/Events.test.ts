@@ -3,7 +3,7 @@ import { IController } from "../../controller/interface/IController";
 import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
 import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
 import { makeBasicController } from "./testHelper";
-
+// Tests von KI generiert
 describe("Controller Event Emission Tests", () => {
     let controller: IController;
 
@@ -265,7 +265,7 @@ describe("Controller Event Emission Tests", () => {
         });
 
         it("should emit collisionEvent when collision is detected", () => {
-            controller.getSettings().setDroneDistance(5);
+            controller.getSettings().setCollisionDistance(5);
             const droneId1 = controller.addDrone();
             const droneId2 = controller.addDrone();
             const handler = jest.fn();
@@ -284,7 +284,7 @@ describe("Controller Event Emission Tests", () => {
         });
 
         it("should emit collisionEvent when collision is resolved", () => {
-            controller.getSettings().setDroneDistance(5);
+            controller.getSettings().setCollisionDistance(5);
             const droneId1 = controller.addDrone();
             const droneId2 = controller.addDrone();
             controller.addPositionKeyFrame(
@@ -342,7 +342,7 @@ describe("Controller Event Emission Tests", () => {
         });
 
         it("should emit droneChanged and collision events when modifying a drone", () => {
-            controller.getSettings().setDroneDistance(5);
+            controller.getSettings().setCollisionDistance(5);
             const droneId1 = controller.addDrone();
             const droneId2 = controller.addDrone();
             controller.addPositionKeyFrame(

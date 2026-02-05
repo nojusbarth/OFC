@@ -6,4 +6,8 @@ export interface ISimulationView {
   setSimulationTime(time: DayTime): void;
   selectDrones(ids: number[]): void;
   notifyCollisionChange(newCollision: Array<number>): void;
+
+  setCanvasForRecording(canvas: HTMLCanvasElement): void;
+  startRecording(): void;
+  stopRecording(): void;
 }

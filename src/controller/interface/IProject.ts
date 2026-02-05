@@ -1,6 +1,6 @@
 import { Result } from "../../repository/Result"
 import { OFCEvent } from "./OFCEvent"
-
+// Kommentare von KI verfasst
 /**
  * Schnittstelle für Projektverwaltungsvorgänge.
  * Verwaltet Projektpersistierung und Import-/Export-Funktionalität.
@@ -10,12 +10,12 @@ export interface IProject {
      * Exportiert die aktuelle Animation als Videodatei.
      */
     exportVideo(): void
-    
+
     /**
      * Exportiert Wegpunktdaten für alle Drohnen.
      */
     exportWayPointData(): void
-    
+
     /**
      * Speichert den aktuellen Projektzustand.
      */
@@ -25,7 +25,7 @@ export interface IProject {
      * Erstellt ein neues, leeres Projekt.
      */
     newProject(): void
-    
+
     /**
      * Lädt ein Projekt aus serialisierten Daten.
      * @param data - Serialisierter Projektdaten-String
