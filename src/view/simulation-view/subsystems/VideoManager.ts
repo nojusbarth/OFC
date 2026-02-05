@@ -33,7 +33,7 @@ export class VideoManager {
 
       this.chunks = [];
       this.recorder = new MediaRecorder(stream, {
-        mimeType: "video/webm; codecs=vp9",
+        mimeType: "video/webm;",
         videoBitsPerSecond: 20_000_000,
       });
 
@@ -89,7 +89,6 @@ export class VideoManager {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   }
-
 
   private cleanup(): void {
     this.recorder = null;

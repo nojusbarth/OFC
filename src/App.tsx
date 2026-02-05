@@ -11,6 +11,8 @@ import { Canvas } from '@react-three/fiber';
 import { DayTime } from './repository/entity/DayTime';
 import { runnerShow } from './shows/runner';
 import { rocketShow } from './shows/rocket';
+import { UndoRepository } from './repository/UndoRepository';
+import { UndoableController } from './controller/logic/UndoableController';
 
 
 function App() {
@@ -21,7 +23,7 @@ function App() {
   const controller = useMemo(() => {
     const repository = new ProjectRepository();
     const settings = new Settings(repository);
-    let ctrl = new Controller(settings, repository);
+    let ctrl = new UndoableController(new Controller(settings, repository), new UndoRepository(), new UndoRepository());
 
     rocketShow(ctrl);
     console.log("App: Controller mit Testdaten initialisiert");

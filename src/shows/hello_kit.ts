@@ -14,7 +14,6 @@ export function helloKitShow(ctrl: IController) {
   const YELLOW = new Color(1.0, 0.9, 0.2);
 
   ctrl.getSettings().setEndTime(30);
-  ctrl.getSettings().setDroneDistance(2);
 
   // === AUTO-GENERATED DRONE SHOW ===
   // X-Y Plane, centered, with global offsets

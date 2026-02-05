@@ -5,7 +5,6 @@ import { ColorKeyFrame } from "../repository/entity/ColorKeyFrame";
 
 export function rocketShow(ctrl: IController) {
   ctrl.getSettings().setEndTime(60);
-  ctrl.getSettings().setDroneDistance(0);
 
   const rocketNum = 578;
   const starNum = 50;

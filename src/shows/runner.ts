@@ -5,7 +5,6 @@ import { ColorKeyFrame } from "../repository/entity/ColorKeyFrame";
 
 export function runnerShow(ctrl: IController) {
   ctrl.getSettings().setEndTime(120);
-  ctrl.getSettings().setDroneDistance(0);
 
   const maxNumDrones = 400;
   const droneHidePosition = new Vector3(0, 40, -20);

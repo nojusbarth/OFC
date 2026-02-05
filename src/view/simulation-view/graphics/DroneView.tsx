@@ -64,7 +64,7 @@ export const DroneView: React.FC<Props> = ({ frame }) => {
 }
 
 /* ============================
-   ZebraRing: animierter Line mit 2 Farben
+   ZebraRing: animierte Line mit 2 Farben
    ============================ */
 function ZebraRing({
   radius,
