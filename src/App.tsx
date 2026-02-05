@@ -13,7 +13,7 @@ import { runnerShow } from './shows/runner';
 import { rocketShow } from './shows/rocket';
 import { UndoRepository } from './repository/UndoRepository';
 import { UndoableController } from './controller/logic/UndoableController';
-
+import { KeyboardShortcuts } from './view/KeyboardShortcuts';
 
 function App() {
   // State Hooks
