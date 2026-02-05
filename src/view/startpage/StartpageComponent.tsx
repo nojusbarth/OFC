@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {IController} from "../../controller/interface/IController";
 import PopupComponent from "./PopupComponent";
+import { Result } from "../../repository/Result";
 
 interface StartpageComponentProps {
   // Props
@@ -22,13 +23,14 @@ export default function StartpageComponent({controller, toggleStartpage}: Startp
   }
 
   const onOpenProject = () => {
-    try {
-      controller.getProject().loadProject(file);
-      toggleStartpage();
-    } catch (e) {
-      setMessage((e as Error).message);
-      setShowPopup(true);
-    }
+    controller.getProject().loadProject(file!, (result: Result<null>) => {
+      if (result.isSuccess()) {
+        toggleStartpage();
+      } else {
+        setMessage(result.getError()?.message || "Unbekannter Fehler beim Laden der Datei.");
+        setShowPopup(true);
+      }
+    });
   }
 
   const onFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

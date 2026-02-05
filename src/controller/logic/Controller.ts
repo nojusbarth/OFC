@@ -53,7 +53,7 @@ export class Controller implements IController {
             const result = checkCollisions(drone, drones, this.settings.getCollisionDistance());
             this.collisionState.set(drone.getId(), result);
         }
-        this.droneSelectEvent.notify(this.selectedDrones);
+        // this.droneSelectEvent.notify(this.selectedDrones);
     }
 
     addDrone(): number {
