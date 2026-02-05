@@ -21,7 +21,7 @@ export const sceneBounds = {
 
 /* ---------------- OrbitControls ---------------- */
 export const controlsConfig = {
-  maxPolarAngle: Math.PI / 2,
+  maxPolarAngle: Math.PI,
   minPolarAngle: Math.PI / 6,
   minDistance: 5,
   maxDistance: 50,
