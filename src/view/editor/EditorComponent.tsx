@@ -71,7 +71,7 @@ export default function EditorComponent({
 
       {/* Settings */}
       {showSettings && (
-        <div style={{ gridArea: "settings", overflow: "hidden" }}>
+        <div style={{ gridArea: "settings", overflow: "hidden" }} onKeyDown={e => e.stopPropagation()}>
           <SettingsComponent
             controller={controller}
             toggleStartpage={toggleStartpage}
@@ -81,7 +81,7 @@ export default function EditorComponent({
 
       {/* Drone Editor */}
       {!showSettings && (
-        <div style={{ gridArea: "editor", overflow: "auto" }}>
+        <div style={{ gridArea: "editor", overflow: "auto" }} onKeyDown={e => e.stopPropagation()}>
           <DroneEditorComponent controller={controller} />
         </div>
       )}
