@@ -27,7 +27,7 @@ export const SceneRenderer: React.FC<{
   droneStore: DroneStateStore;
   pathStore: PathStateStore;
   lightStore: LightStateStore;
-  onReady?: () => void;
+  onReady?: (gl: THREE.WebGLRenderer) => void;
 }> = ({ droneStore, pathStore, lightStore, onReady }) => {
   const [droneFrame, setDroneFrame] = useState(defaultDroneFrame);
   const [pathFrame, setPathFrame] = useState(defaultPathFrame);
@@ -37,14 +37,22 @@ export const SceneRenderer: React.FC<{
   const controlsRef = useRef<any>(null);
   const envMapCacheRef = useRef<Record<string, THREE.Texture>>({});
 
-
-  /* ---------------- Store Binding ---------------- */
+  /* ---------------- Canvas Setup für Recording & Store Binding ---------------- */
   useEffect(() => {
+    // Enable drawing buffer for canvas recording
+    const context = gl.getContext() as WebGLRenderingContext;
+    if (context) {
+      (context as any).preserveDrawingBuffer = true;
+    }
+
+    // Bind stores
     droneStore.bindState(setDroneFrame);
     pathStore.bindState(setPathFrame);
     lightStore.bindState(setLightFrame);
-    onReady?.();
-  }, [droneStore, pathStore, lightStore, onReady]);
+
+    // Notify ready with gl renderer
+    onReady?.(gl);
+  }, [gl, onReady, droneStore, pathStore, lightStore]);
 
   /* ---------------- Kamera & Controls ---------------- */
   useFrame(() => {

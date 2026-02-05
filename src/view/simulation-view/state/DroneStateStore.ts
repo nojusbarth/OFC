@@ -33,6 +33,7 @@ export class DroneStateStore {
       const draft: DroneFrame = {
         dronePositions: new Map(prev.dronePositions),
         droneColors: new Map(prev.droneColors),
+        outlineColors: new Map(prev.outlineColors),
       };
 
       mutator(draft);

@@ -7,6 +7,7 @@ import { TimeManager } from "./subsystems/TimeManager";
 import { PathFrame } from "./state/PathFrame";
 import { SelectionManager } from "./subsystems/SelectionManager";
 import { CollisionManager } from "./subsystems/CollisionManager";
+import { VideoManager } from "./subsystems/VideoManager";
 import { LightFrame } from "./state/LightFrame";
 import { ISimulationView } from "./ISimulationView";
 import { IController } from "../../controller/interface/IController";
@@ -23,10 +24,11 @@ export class SimulationView implements ISimulationView {
   private timeManager: TimeManager;
   private selectionManager: SelectionManager;
   private collisionManager: CollisionManager;
+  private videoManager: VideoManager;
 
   /**
    * Initialisiert die SimulationView mit den erforderlichen State Stores
-   * und erstellt die Subsysteme (TimeManager, SelectionManager, CollisionManager).
+   * und erstellt die Subsysteme (TimeManager, SelectionManager, CollisionManager, VideoManager).
    *
    * @param drone - Der DroneStateStore für die Verwaltung von Dronen-Positionen und -Farben
    * @param path - Der PathStateStore für die Verwaltung von Pfad-Daten
@@ -47,6 +49,7 @@ export class SimulationView implements ISimulationView {
     this.timeManager = new TimeManager();
     this.selectionManager = new SelectionManager();
     this.collisionManager = new CollisionManager();
+    this.videoManager = new VideoManager(60);
   }
 
   /**
@@ -87,6 +90,7 @@ export class SimulationView implements ISimulationView {
     this.droneStore?.update((draft) => {
       draft.droneColors = currentDroneFrame.droneColors;
       draft.dronePositions = currentDroneFrame.dronePositions;
+      draft.outlineColors = currentDroneFrame.outlineColors;
     });
 
     this.pathStore?.update((draft) => {
@@ -177,6 +181,7 @@ export class SimulationView implements ISimulationView {
 
     let dronePositions: Map<number, Vector3> = new Map();
     let droneColors: Map<number, Color> = new Map();
+    let outlineColors: Map<number, [string, string] | null> = new Map();
 
     droneIds.forEach((drone) => {
       let position: Vector3 = this.controller.getPositionAt(drone, time);
@@ -190,6 +195,7 @@ export class SimulationView implements ISimulationView {
     return {
       dronePositions: dronePositions,
       droneColors: droneColors,
+      outlineColors: outlineColors,
     };
   }
 
@@ -223,5 +229,34 @@ export class SimulationView implements ISimulationView {
       pathPositions: pathPositions,
       pathColors: pathColors,
     };
+  }
+
+  /**
+   * Setzt die Canvas-Referenz für die Video-Aufzeichnung.
+   * Wird von der SimulationScene aufgerufen.
+   *
+   * @param canvas - Das HTMLCanvasElement der Three.js-Szene
+   * @public
+   */
+  public setCanvasForRecording(canvas: HTMLCanvasElement): void {
+    this.videoManager.setCanvas(canvas);
+  }
+
+  /**
+   * Startet die Aufzeichnung der Szene als Video.
+   *
+   * @public
+   */
+  public startRecording(): void {
+    this.videoManager.start();
+  }
+
+  /**
+   * Stoppt die Aufzeichnung und speichert das Video.
+   *
+   * @public
+   */
+  public stopRecording(): void {
+    this.videoManager.stop();
   }
 }

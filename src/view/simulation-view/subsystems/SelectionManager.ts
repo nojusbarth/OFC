@@ -52,7 +52,7 @@ export class SelectionManager {
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.selectedIds.forEach((id) => {
-      currentDroneFrame.droneColors.set(id, new Color(1, 1, 1));
+      currentDroneFrame.outlineColors.set(id, ["#ffffff", "#000000"]);
     });
 
     return currentDroneFrame;
