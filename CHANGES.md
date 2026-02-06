@@ -4,6 +4,8 @@
 
 ### Startpage
 
+- **StartpageComponent**: _file_, _message_ gespeichert als State
+
 ### Editor
 
 - **Generell**: Den Komponenten wird zur übersicht und erweiterbarkeit der gesamte Controller übergeben
