@@ -6,128 +6,160 @@ import { IUndoableController } from "../../../controller/interface/IUndoableCont
 import { SPEED_VALUES } from "../config";
 
 interface TimelineComponentProps {
-  controller: IUndoableController;
+    controller: IUndoableController;
+    recording: boolean;
+    setRecording: (recording: boolean) => void;
 }
 
 export default function TimelineComponent({
-  controller,
+    controller,
+    recording,
+    setRecording,
 }: TimelineComponentProps) {
-  /* ---------- Used Controllers ---------- */
-  const settings: ISettings = controller.getSettings();
-  const timeController: ITimeController = controller.getTimeController();
+    /* ---------- Used Controllers ---------- */
+    const settings: ISettings = controller.getSettings();
+    const timeController: ITimeController = controller.getTimeController();
 
-  /* ---------- State Hooks ---------- */
-  const [time, setTime] = useState<number>(timeController.getTime());
-  const [endTime, setEndTime] = useState<number>(settings.getEndTime());
-  const [animationSpeed, setAnimationSpeed] = useState<number>(
-    timeController.getAnimationSpeed(),
-  );
-  const [playing, setPlaying] = useState<boolean>(false);
+    /* ---------- State Hooks ---------- */
+    const [time, setTime] = useState<number>(timeController.getTime());
+    const [endTime, setEndTime] = useState<number>(settings.getEndTime());
+    const [animationSpeed, setAnimationSpeed] = useState<number>(
+        timeController.getAnimationSpeed(),
+    );
+    const [playing, setPlaying] = useState<boolean>(false);
 
-  /* ---------- Register Events ---------- */
-  useEffect(() => {
-    const onPlayingChanged = (isPlaying: boolean) => {
-      setPlaying(isPlaying);
+    /* ---------- Register Events ---------- */
+    useEffect(() => {
+        const onPlayingChanged = (isPlaying: boolean) => {
+            setPlaying(isPlaying);
+        };
+
+        const onTimeChanged = (newTime: number) => {
+            setTime(newTime);
+        };
+
+        const onEndTimeChanged = (newEndTime: number) => {
+            setEndTime(newEndTime);
+        };
+
+        timeController.getAnimationRunningEvent().register(onPlayingChanged);
+        timeController.getTimeChangedEvent().register(onTimeChanged);
+        settings.getEndTimeChangedEvent().register(onEndTimeChanged);
+
+        return () => {
+            timeController.getAnimationRunningEvent().remove(onPlayingChanged);
+            timeController.getTimeChangedEvent().remove(onTimeChanged);
+            settings.getEndTimeChangedEvent().remove(onEndTimeChanged);
+        };
+    }, [timeController]);
+
+    /* ---------- Click Handlers ---------- */
+    const handleRecordClick = () => {
+        setRecording(!recording);
     };
 
-    const onTimeChanged = (newTime: number) => {
-      setTime(newTime);
+    const handlePlayPauseClick = () => {
+        if (playing) {
+            timeController.stopAnimation();
+        } else {
+            timeController.startAnimation();
+        }
+        setPlaying(!playing);
     };
 
-    const onEndTimeChanged = (newEndTime: number) => {
-      setEndTime(newEndTime);
+    const handleSpeedChangeClick = () => {
+        const currentIndex = SPEED_VALUES.indexOf(animationSpeed);
+        const nextIndex = (currentIndex + 1) % SPEED_VALUES.length;
+        const newSpeed = SPEED_VALUES[nextIndex];
+
+        timeController.setAnimationSpeed(newSpeed);
+        setAnimationSpeed(newSpeed);
     };
 
-    timeController.getAnimationRunningEvent().register(onPlayingChanged);
-    timeController.getTimeChangedEvent().register(onTimeChanged);
-    settings.getEndTimeChangedEvent().register(onEndTimeChanged);
-
-    return () => {
-      timeController.getAnimationRunningEvent().remove(onPlayingChanged);
-      timeController.getTimeChangedEvent().remove(onTimeChanged);
-      settings.getEndTimeChangedEvent().remove(onEndTimeChanged);
+    const handleSliderChange = (newTime: number) => {
+        timeController.setTime(newTime);
     };
-  }, [timeController]);
 
-  /* ---------- Click Handlers ---------- */
-  const handlePlayPause = () => {
-    if (playing) {
-      timeController.stopAnimation();
-    } else {
-      timeController.startAnimation();
-    }
-    setPlaying(!playing);
-  };
+    return (
+        <Card className="rounded-0 border-2 border-secondary border-start-0 border-top-0 border-end-0 d-flex flex-row align-items-center gap-4 p-3">
+            {/* Record Button */}
+            <button
+                className="btn btn-link p-0 text-danger"
+                onClick={handleRecordClick}
+            >
+                <i
+                    title={recording ? "Aufnahme stoppen" : "Aufnahme starten"}
+                    className={
+                        `bi ${recording ? "bi-stop-fill" : "bi-record-fill"}` +
+                        " fs-2"
+                    }
+                />
+            </button>
 
-  const handleSpeedChange = () => {
-    const currentIndex = SPEED_VALUES.indexOf(animationSpeed);
-    const nextIndex = (currentIndex + 1) % SPEED_VALUES.length;
-    changeSpeed(SPEED_VALUES[nextIndex]);
-  };
+            {/* Play Button */}
+            <button className="btn btn-link p-0" onClick={handlePlayPauseClick}>
+                <i
+                    title={
+                        playing ? "Animation pausieren" : "Animation abspielen"
+                    }
+                    className={
+                        `bi ${playing ? "bi-pause-fill" : "bi-play-fill"}` +
+                        " fs-2"
+                    }
+                    style={{ color: "black" }}
+                />
+            </button>
 
-  const changeSpeed = (number: number) => {
-    timeController.setAnimationSpeed(number);
-    setAnimationSpeed(number);
-  };
+            {/* Speed */}
+            <div className="d-flex align-items-center gap-3">
+                {/* Speed Button */}
+                <button
+                    className="btn btn-link p-0"
+                    onClick={handleSpeedChangeClick}
+                >
+                    <i
+                        title="Geschwindigkeit ändern"
+                        className="bi bi-speedometer2 fs-3"
+                        style={{ color: "black" }}
+                    />
+                </button>
+                {/* Speed Text */}
+                <span
+                    className="fw-bold text-start"
+                    style={{ minWidth: "45px" }}
+                >
+                    {animationSpeed}x
+                </span>
+            </div>
 
-  const handleSliderChange = (newTime: number) => {
-    timeController.setTime(newTime);
-  };
+            {/* Time */}
+            <div className="d-flex align-items-center gap-3 flex-grow-1">
+                {/* Time Display */}
+                <span className="text-nowrap">
+                    {formatTime(time)} / {formatTime(endTime)}
+                </span>
 
-  return (
-    <Card className="rounded-0 border-2 border-secondary border-start-0 border-top-0 border-end-0 d-flex flex-row align-items-center gap-4 p-3">
-      {/* Play Button */}
-      <button className="btn btn-link p-0" onClick={handlePlayPause}>
-        <i
-          className={
-            `bi ${playing ? "bi-pause-fill" : "bi-play-fill"}` + " fs-2"
-          }
-          style={{ color: "black" }}
-          title="Play/Pause"
-        />
-      </button>
-
-      {/* Speed */}
-      <div className="d-flex align-items-center gap-3">
-        {/* Speed Button */}
-        <button className="btn btn-link p-0" onClick={handleSpeedChange}>
-          <i
-            className="bi bi-speedometer2 fs-3"
-            style={{ color: "black" }}
-            title="Change Speed"
-          />
-        </button>
-        {/* Speed Text */}
-        <span className="fw-bold text-start" style={{ minWidth: "45px" }}>
-          {animationSpeed}x
-        </span>
-      </div>
-
-      {/* Time */}
-      <div className="d-flex align-items-center gap-3 flex-grow-1">
-        {/* Time Display */}
-        <span className="text-nowrap">
-          {formatTime(time)} / {formatTime(endTime)}
-        </span>
-
-        {/* Slider */}
-        <input
-          type="range"
-          className="form-range flex-grow-1"
-          min={0}
-          max={endTime * 60}
-          step={1}
-          value={time * 60}
-          onChange={(e) => handleSliderChange(Number(e.target.value) / 60)}
-          disabled={playing}
-        />
-      </div>
-    </Card>
-  );
+                {/* Slider */}
+                <input
+                    title="Zeit ändern"
+                    type="range"
+                    className="form-range flex-grow-1"
+                    min={0}
+                    max={endTime * 100}
+                    step={1}
+                    value={time * 100}
+                    onChange={(e) =>
+                        handleSliderChange(Number(e.target.value) / 100)
+                    }
+                    disabled={playing}
+                />
+            </div>
+        </Card>
+    );
 }
 
 function formatTime(seconds: number): string {
-  const mins = Math.floor(seconds / 60);
-  const secs = Math.floor(seconds % 60);
-  return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }
