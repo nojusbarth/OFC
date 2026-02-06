@@ -3,6 +3,9 @@ import type {PositionKeyFrame} from "../../repository/entity/PositionKeyFrame";
 import type {ColorKeyFrame} from "../../repository/entity/ColorKeyFrame";
 import {IDrone} from "../../repository/entity/IDrone";
 
+/**
+ * Implementiert IDrone
+ */
 export class Drone implements IDrone {
     id: number
     positionKeyFrames: PositionKeyFrame[] = [];

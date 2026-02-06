@@ -6,10 +6,6 @@ import { OFCEvent } from "./OFCEvent"
  * Verwaltet Projektpersistierung und Import-/Export-Funktionalität.
  */
 export interface IProject {
-    /**
-     * Exportiert die aktuelle Animation als Videodatei.
-     */
-    exportVideo(): void
 
     /**
      * Exportiert Wegpunktdaten für alle Drohnen.
@@ -49,4 +45,26 @@ export interface IProject {
      * @returns Das Projekt geladen Ereignis
      */
     getProjectLoadedEvent(): OFCEvent<void>;
+
+        /**
+     * Startet die Aufzeichnung der Animation.
+     */
+    startRecording(): void
+
+    /**
+     * Stoppt die Aufzeichnung der Animation.
+     */
+    stopRecording(): void
+
+    /**
+     * Prüft, ob die Animation aktuell aufgezeichnet wird.
+     * @returns true, wenn die Animation aufgezeichnet wird, sonst false
+     */
+    getRecordingRunning(): boolean
+    
+    /**
+     * Ruft den Event-Emitter für Aufzeichnungszustand-Änderungen ab.
+     * @returns Event-Emitter für Aufzeichnungszustand (true = aufzeichnen, false = nicht aufzeichnen)
+     */
+    getRecordingRunningEvent(): OFCEvent<boolean>
 }

@@ -1,11 +1,12 @@
 import { useEffect } from "react";
 import { IUndoableController } from "../controller/interface/IUndoableController";
 
-export function KeyboardShortcuts({
-    controller,
-}: {
-    controller: IUndoableController;
-}) {
+/**
+ * Verwaltet Tastaturkürzel für den gegebenen Controller.
+ * @param controller der Controller auf dem die Aktionen ausgeführt werden sollen.
+ * @returns 
+ */
+export function KeyboardShortcuts({controller}: {controller: IUndoableController}) {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.ctrlKey && event.key === "s") {
