@@ -1,12 +1,16 @@
-import { Color } from "three";
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
 
+/**
+ * Diese Klasse verwaltet das Rendern der Auswahl von Drohnen und Pfaden in der Simulation.
+ */
 export class SelectionManager {
   private selectedIds: number[];
+  private readonly colorRing = ["#000000", "#ffffff"];
+  private readonly colorPath = "#00ff00";
 
   /**
-   * Initialisiert den SelectionManager mit einer leeren Auswahl.
+   * Initialisiert den SelectionManager.
    */
   public constructor() {
     this.selectedIds = [];
@@ -14,12 +18,10 @@ export class SelectionManager {
 
   /**
    * Wendet die Auswahländerungen auf die Pfade an.
-   * Nur ausgewählte Pfade werden zum currentPathFrame hinzugefügt.
    *
    * @param currentPathFrame - Der aktuelle PathFrame, der aktualisiert wird
    * @param allPaths - Der PathFrame mit allen verfügbaren Pfaden
    * @returns Der aktualisierte PathFrame nur mit ausgewählten Pfaden
-   * @public
    */
   public applyPathChanges(
     currentPathFrame: PathFrame,
@@ -28,15 +30,12 @@ export class SelectionManager {
     this.selectedIds.forEach((id) => {
       const positions = allPaths.pathPositions.get(id);
       if (!positions) {
-        console.log(`KeyFrame ${id} not found`);
+        console.error(`KeyFrame ${id} not found`);
         return;
       }
 
       currentPathFrame.pathPositions.set(id, positions);
-      currentPathFrame.pathColors.set(
-        id,
-        allPaths.pathColors.get(id) ?? "green",
-      );
+      currentPathFrame.pathColors.set(id, this.colorPath);
     });
 
     return currentPathFrame;
@@ -44,22 +43,23 @@ export class SelectionManager {
 
   /**
    * Wendet die Auswahländerungen auf die Drohnen an.
-   * Ausgewählte Drohnen werden weiß gefärbt.
    *
    * @param currentDroneFrame - Der aktuelle DroneFrame, der aktualisiert wird
-   * @returns Der aktualisierte DroneFrame mit weißen ausgewählten Drohnen
-   * @public
+   * @returns Der aktualisierte DroneFrame
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.selectedIds.forEach((id) => {
-      currentDroneFrame.outlineColors.set(id, ["#ffffff", "#000000"]);
+      currentDroneFrame.outlineColors.set(id, [
+        this.colorRing[0],
+        this.colorRing[1],
+      ]);
     });
 
     return currentDroneFrame;
   }
 
   /**
-   * Wählt eine Drohne aus, falls sie nicht bereits ausgewählt ist.
+   * Aktualisiert die Liste der Drohnen, die ausgwählt sind.
    *
    * @param id - Die ID der Drohne
    * @public

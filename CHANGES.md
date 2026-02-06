@@ -12,8 +12,9 @@
 - **SettingsComponent**: _droneDistance_ geändert zu _collisionRadius_
 - **EditorComponent**: simulation-view szene im Interface hinzugefügt
 
-
 ### Simulation View
+
+- **SelectionManager**: Funktionen selectId und unselectId zu selectDrones zusammengefasst.
 
 ## Controller
 
@@ -48,13 +49,16 @@
 - **Event\<T\>**: umbenannt zu `OFCEvent<T>` (Namenskonfilkt mit Bibliothek)
 
 ## Repository
+
 **Pakete**\
 Ein neues Paket `entity` wurde hinzugefügt, um projektübergreifenden Klassen unterzubringen.
 
 **IProjectRepository**:
+
 - `maxTime` geändert zu `endTime` (auch in den Funktionen)
 
-*Funktionen*
+_Funktionen_
+
 - `load(input: File|string|null, onFinished: (result: Result<boolean>) => void): void`: hinzugefügt, um das Repository laden zu können.
 - `loadLastProject(): Result<boolean>`: Lädt das letzte hinterlegte Projekt aus dem LocalStorage des Browsers.
 - `getNextDroneId(): number`: Hinzugefügt, um dem Controller die nächste Drohnen-Id rückmelden zu können.
@@ -62,6 +66,7 @@ Ein neues Paket `entity` wurde hinzugefügt, um projektübergreifenden Klassen u
 - `saveToLocalStorage(): void`: Hinzugefügt, um ein Projekt in den LocalStorage des Browsers zu speichern.
 
 **RepositoryConstants**:
+
 - `FILE_VERSION`: Hinzugefügt, um die aktuelle Dateienversion global festzulegen.
 - `LAST_PROJECT_DATA_KEY`: Hinzugefügt, um den Schlüssel für den LocalStorage des letzten Projekts global bereitzustellen.
 
@@ -69,9 +74,10 @@ Ein neues Paket `entity` wurde hinzugefügt, um projektübergreifenden Klassen u
 Neue Klasse hinzugefügt, um einen Rückgabewert mit einer Aussage zu verknüpfen.
 
 **ProjectConfig**:\
-Neues Interface für den JSON-Parser der die Projekt Konfiguration definiert. 
+Neues Interface für den JSON-Parser der die Projekt Konfiguration definiert.
 
-*Funktionen*:
+_Funktionen_:
+
 - `mapToJsonDrones(drones: Array<IDrone>): Array<JsonDrone>`: Wandelt die Drohnen in JSON-Drohnen um.
 - `parseJsonToDrones(drones: Array<JsonDrone>): Array<IDrone>`: Wandelt JSON-Drohnen in Drohnen um.
 
