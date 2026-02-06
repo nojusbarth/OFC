@@ -32,7 +32,14 @@ export class Controller implements IController {
         this.project = new Project(repository);
         this.repository = repository;
         this.timeController = new TimeController(settings);
-        this.project.getProjectLoadedEvent().register(() => this.reset());
+        this.project.getProjectLoadedEvent().register(() => {
+            this.selectedDrones = [];
+            this.recalculateCollisions();
+        });
+        this.settings.getCollisionRadiusChangedEvent().register(() => {
+            this.recalculateCollisions();
+            this.collisionEvent.notify(new Map(this.collisionState));
+        });
     }
 
     getSettings(): ISettings {
@@ -47,8 +54,7 @@ export class Controller implements IController {
         return this.project;
     }
 
-    private reset(): void {
-        this.selectedDrones = [];
+    private recalculateCollisions(): void {
         this.collisionState = new Map();
         const drones = this.repository.getAllDrones();
         for (const drone of drones) {
