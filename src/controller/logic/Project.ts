@@ -38,7 +38,7 @@ export class Project implements IProject {
     loadProject(file: File, onCompleted: (result: Result<null>) => void): void {
         this.repository.load(file, (result) => {
             this.onLoad();
-            onCompleted(result);
+            onCompleted(new Result(null, result.getError()));
         });
     }
 
