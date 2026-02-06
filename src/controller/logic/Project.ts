@@ -1,10 +1,10 @@
-import type { IProject } from "../interface/IProject";
-import { IController } from "../interface/IController";
-import { IProjectRepository } from "../../repository/IProjectRepository";
-import { saveAs } from 'file-saver';
-import { LAST_PROJECT_DATA_KEY } from "../../repository/RepositoryConstants";
-import { OFCEvent } from "../interface/OFCEvent";
-import { Result } from "../../repository/Result";
+import type {IProject} from "../interface/IProject";
+import {IController} from "../interface/IController";
+import {IProjectRepository} from "../../repository/IProjectRepository";
+import {saveAs} from 'file-saver';
+import {LAST_PROJECT_DATA_KEY} from "../../repository/RepositoryConstants";
+import {OFCEvent} from "../interface/OFCEvent";
+import {Result} from "../../repository/Result";
 
 export class Project implements IProject {
     private repository: IProjectRepository;
@@ -36,7 +36,7 @@ export class Project implements IProject {
         this.onLoad();
     }
 
-    loadProject(file: File, onCompleted: (result: Result<null>) => void): void {
+    loadProject(file: File, onCompleted: (result: Result<boolean>) => void): void {
         this.repository.load(file, (result) => {
             this.onLoad();
             onCompleted(result);
@@ -45,7 +45,7 @@ export class Project implements IProject {
 
     loadLastProject(): Result<boolean> {
         const result = this.repository.loadLastProject();
-        if (result.isSuccess()) {
+        if (result.isSuccess() && result.getResult()) {
             this.onLoad();
         }
         return result;
