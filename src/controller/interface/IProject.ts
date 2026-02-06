@@ -1,5 +1,6 @@
-import { Result } from "../../repository/Result"
-import { OFCEvent } from "./OFCEvent"
+import {Result} from "../../repository/Result"
+import {OFCEvent} from "./OFCEvent"
+
 // Kommentare von KI verfasst
 /**
  * Schnittstelle für Projektverwaltungsvorgänge.
@@ -27,11 +28,12 @@ export interface IProject {
     newProject(): void
 
     /**
-     * Lädt ein Projekt aus serialisierten Daten.
-     * @param data - Serialisierter Projektdaten-String
-     * @throws wenn die Daten ungültig sind
+     * Lädt ein Projekt aus einer Datei.
+     * @param file - Die Datei, die geladen werden soll.
+     * @param onCompleted - Wird ausgeführt, sobald das Projekt geladen wurde und zeigt das Ergebnis als `Result`.
+     *
      */
-    loadProject(file: File, onCompleted: (result: Result<null>) => void): void
+    loadProject(file: File, onCompleted: (result: Result<boolean>) => void): void
 
     /**
      * Lädt das zuletzt gespeicherte Projekt aus dem lokalen Speicher.
