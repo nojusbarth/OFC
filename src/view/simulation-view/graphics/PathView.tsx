@@ -11,6 +11,11 @@ type Props = {
   frame: PathFrame;
 };
 
+/**
+ * JSX Komponente, die die Pfade der Drohnen in der Szene rendert.
+ * @param frame PathFrame, der die Positionen und Farben der Pfade enthält 
+ * @returns JSX-Elemente für die Pfade in der Szene
+ */
 export const PathView: React.FC<Props> = ({ frame }) => {
   return (
     <>
@@ -30,6 +35,7 @@ export const PathView: React.FC<Props> = ({ frame }) => {
     </>
   )
 }
+
 
 function AnimatedPath({ points, color }: { points: THREE.Vector3[]; color: string }) {
   const ref = useRef<any>(null)

@@ -1,6 +1,9 @@
 import { LightFrame } from "./LightFrame";
 import React from "react";
 
+/**
+ * Kapselt den State der Lichtquelle in der Simulation und bietet Methoden zum Aktualisieren dieses States.
+ */
 export class LightStateStore {
   private setFrame: React.Dispatch<React.SetStateAction<LightFrame>> | null =
     null;
@@ -10,7 +13,6 @@ export class LightStateStore {
    * Dies ist notwendig, um den React State zu aktualisieren.
    *
    * @param setFrame - Der React State-Setter für den LightFrame
-   * @public
    */
   bindState(setFrame: React.Dispatch<React.SetStateAction<LightFrame>>) {
     this.setFrame = setFrame;
@@ -18,16 +20,13 @@ export class LightStateStore {
 
   /**
    * Aktualisiert den LightFrame durch eine Mutator-Funktion.
-   * Der LightFrame wird zuvor geklont, um Immutability zu gewährleisten.
-   * Die Position wird durch Vector3.clone() kopiert.
    *
    * @param mutator - Funktion, die den Draft des LightFrames verändert
-   * @throws Error, wenn der Store nicht an React State gebunden ist
-   * @public
    */
   update(mutator: (draft: LightFrame) => void) {
     if (!this.setFrame) {
-      throw new Error("LightStateStore not bound to React state");
+      console.error("LightStateStore nicht an React State gebunden");
+      return;
     }
 
     this.setFrame((prev) => {
@@ -40,6 +39,8 @@ export class LightStateStore {
 
       mutator(draft);
 
+      //um teures neurendern der Umgebungstextur zu vermeiden, wird geprüft, ob sich die relevanten Werte tatsächlich geändert haben.
+      //wenn nicht, wird der vorherige Frame zurückgegeben, um unnötige Re-Renders zu vermeiden.
       const isSame =
         draft.intensity === prev.intensity &&
         draft.color === prev.color &&

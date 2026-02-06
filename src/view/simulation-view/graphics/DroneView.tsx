@@ -7,7 +7,6 @@ import { useRef, useMemo, useState } from 'react'
 import * as THREE from 'three'
 import { Line } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
-import { RGBA_ASTC_5x4_Format } from "three";
 
 
 type Props = {
@@ -15,19 +14,24 @@ type Props = {
 };
 
 
-
+/**
+ * JSX Komponente, die die Drohnen in der Szene rendert.
+ * @param frame DroneFrame, der die Positionen, Farben und optionalen Outline-Farben der Drohnen enthält 
+ * @returns JSX-Elemente für die Drohnen in der Szene
+ */
 export const DroneView: React.FC<Props> = ({ frame }) => {
   const droneEntries = Array.from(frame.dronePositions.entries())
 
   return (
     <>
       {droneEntries.map(([droneId, position]) => {
-        const color = frame.droneColors.get(droneId) ?? 'white'
+        const color = frame.droneColors.get(droneId) ?? '#ffffff'
         const dim = droneConfig.dimensions
         const radius = dim[0]
         const outlineColors = frame.outlineColors.get(droneId) ?? null
         const showOutline = outlineColors !== null
 
+        //Abschnitt ist KI GENERIERT
         return (
           <group
             key={droneId}
@@ -46,14 +50,13 @@ export const DroneView: React.FC<Props> = ({ frame }) => {
               </>
             )}
 
-            {/* 🟢 Drone */}
+            {/* Drone */}
             <mesh>
               <sphereGeometry args={[radius, dim[1], dim[2]]} />
               <meshStandardMaterial
                 color={color}
-                emissive={new THREE.Color(color).multiplyScalar(0.6)}
+                emissive={color}
                 emissiveIntensity={droneConfig.emissiveIntensity}
-     
               />
             </mesh>
           </group>
@@ -63,13 +66,11 @@ export const DroneView: React.FC<Props> = ({ frame }) => {
   )
 }
 
-/* ============================
-   ZebraRing: animierte Line mit 2 Farben
-   ============================ */
+//Abschnitt ist KI GENERIERT
 function ZebraRing({
   radius,
-  colorA = "#00ffff",
-  colorB = "#ff00ff",
+  colorA,
+  colorB,
 }: {
   radius: number
   colorA?: string
