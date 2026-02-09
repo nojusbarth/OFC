@@ -4,6 +4,7 @@ import { DayTime } from "../../../repository/entity/DayTime";
 import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { IProject } from "../../../controller/interface/IProject";
+import { toolTipps } from "../config";
 
 /**
  * Erstellt eine Settings Komponente auf der der Nutzer alle Einstellungen über das Projekt vornehmen kann
@@ -65,7 +66,7 @@ export default function SettingsComponent({
             <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
                 <span className="fw-bold">Einstellungen</span>
                 <button
-                    title="Änderungen Speichern"
+                    title= {toolTipps.PROJECT_SAVE}
                     className="btn btn-primary btn-sm d-flex gap-2"
                     onClick={onSaveSettings}
                 >
@@ -167,6 +168,7 @@ export default function SettingsComponent({
                     >
                         <button
                             className="btn btn-outline-primary w-100 mt-2"
+                            title={toolTipps.PROJECT_WAYPOINT_EXPORT}
                             onClick={() => {
                                 project.exportWayPointData();
                             }}

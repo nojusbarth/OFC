@@ -3,7 +3,7 @@ import { Card } from "react-bootstrap";
 import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
-import { SPEED_VALUES } from "../config";
+import { SPEED_VALUES, toolTipps } from "../config";
 import { IProject } from "../../../controller/interface/IProject";
 
 /**
@@ -108,7 +108,7 @@ export default function TimelineComponent({
                 onClick={handleRecordingClick}
             >
                 <i
-                    title={recording ? "Aufnahme stoppen" : "Aufnahme starten"}
+                    title={recording ? toolTipps.RECORD_STOP : toolTipps.RECORD_START}
                     className={
                         `bi ${recording ? "bi-stop-fill" : "bi-record-fill"}` +
                         " fs-2"
@@ -120,7 +120,7 @@ export default function TimelineComponent({
             <button className="btn btn-link p-0" onClick={handlePlayPauseClick}>
                 <i
                     title={
-                        playing ? "Animation pausieren" : "Animation abspielen"
+                        playing ? toolTipps.ANIMATION_STOP : toolTipps.ANIMATION_START
                     }
                     className={
                         `bi ${playing ? "bi-pause-fill" : "bi-play-fill"}` +
@@ -161,7 +161,7 @@ export default function TimelineComponent({
 
                 {/* Slider */}
                 <input
-                    title="Zeit ändern"
+                    title={toolTipps.TIME_SET}
                     type="range"
                     className="form-range flex-grow-1"
                     min={0}
