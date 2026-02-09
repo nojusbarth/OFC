@@ -6,18 +6,17 @@ import {LAST_PROJECT_DATA_KEY} from "../../repository/RepositoryConstants";
 import {OFCEvent} from "../interface/OFCEvent";
 import {Result} from "../../repository/Result";
 
+/**
+ * Implementiert IProject
+ */
 export class Project implements IProject {
     private repository: IProjectRepository;
-    private controller: IController;
     private projectLoadedEvent: OFCEvent<void> = new OFCEvent<void>();
+    private recording: boolean = false;
+    private recordingRunningEvent: OFCEvent<boolean> = new OFCEvent<boolean>();
 
-    constructor(repository: IProjectRepository, controller: IController) {
+    constructor(repository: IProjectRepository) {
         this.repository = repository;
-        this.controller = controller;
-    }
-
-    exportVideo(): void {
-        throw new Error("Method not implemented.");
     }
 
     exportWayPointData(): void {
@@ -61,5 +60,23 @@ export class Project implements IProject {
 
     getProjectLoadedEvent(): OFCEvent<void> {
         return this.projectLoadedEvent;
+    }
+
+    startRecording(): void {
+        this.recording = true;
+        this.recordingRunningEvent.notify(true);
+    }
+
+    stopRecording(): void {
+        this.recording = false;
+        this.recordingRunningEvent.notify(false);
+    }
+
+    getRecordingRunning(): boolean {
+        return this.recording;
+    }
+
+    getRecordingRunningEvent(): OFCEvent<boolean> {
+        return this.recordingRunningEvent;
     }
 }
