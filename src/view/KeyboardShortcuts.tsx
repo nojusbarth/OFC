@@ -23,7 +23,7 @@ export function KeyboardShortcuts({controller}: {controller: IUndoableController
                 }
                 return;
             }
-            if (event.ctrlKey && event.key === "n") {
+            if (event.ctrlKey && event.shiftKey && event.key === "n") {
                 event.preventDefault();
                 controller.addDrone();
                 return;
