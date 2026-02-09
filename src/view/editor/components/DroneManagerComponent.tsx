@@ -122,12 +122,13 @@ export default function DroneManagerComponent({
                                         onClick={() =>
                                             onDroneSelectionChange(droneId)
                                         }
-                                        className={` text-center ${
-                                            isSelected
-                                                ? "border-primary border-2 bg-primary bg-opacity-10"
-                                                : "border-secondary"
-                                        } 
-                      ${isColliding ? "border-danger" : ""}`}
+                                        className={` text-center 
+                                            ${
+                                                isSelected
+                                                    ? "border-primary border-2 bg-primary bg-opacity-10"
+                                                    : "border-secondary"
+                                            } 
+                                            ${isColliding ? "border-danger" : ""}`}
                                         style={{
                                             cursor: "pointer",
                                             width: "100px",
