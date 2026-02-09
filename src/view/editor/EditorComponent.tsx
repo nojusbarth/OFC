@@ -20,7 +20,7 @@ export default function EditorComponent({
 }: EditorComponentProps) {
     // State Hooks
     const [showSettings, setShowSettings] = useState<boolean>(false);
-    const [recording, setRecording] = useState<boolean>(true);
+    const [recording, setRecording] = useState<boolean>(false);
 
     const toggleSettingsMenu = () => {
         setShowSettings(!showSettings);

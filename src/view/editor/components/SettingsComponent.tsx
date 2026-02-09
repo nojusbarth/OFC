@@ -4,6 +4,7 @@ import { DayTime } from "../../../repository/entity/DayTime";
 import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
+import { IProject } from "../../../controller/interface/IProject";
 
 interface SettingsComponentProps {
     controller: IUndoableController;
@@ -16,6 +17,7 @@ export default function SettingsComponent({
 }: SettingsComponentProps) {
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
+    const project: IProject = controller.getProject();
 
     /* ---------- State Hooks ---------- */
     const [dayTime, setDayTime] = useState<DayTime>(settings.getDayTime());
@@ -148,11 +150,26 @@ export default function SettingsComponent({
                         <button
                             className="btn btn-outline-success"
                             onClick={() => {
-                                controller.getProject().saveProject();
+                                project.saveProject();
                             }}
                         >
                             <i className="bi bi-save me-2"></i>
                             Speichern
+                        </button>
+                    </AttributeComponent>
+                    <AttributeComponent
+                        title={"Waypoint-Export"}
+                        description={"Exportiere als Waypoint-at-Time Format"}
+                        iconClass={"bi-file-earmark-text"}
+                    >
+                        <button
+                            className="btn btn-outline-primary w-100 mt-2"
+                            onClick={() => {
+                                project.exportWayPointData();
+                            }}
+                        >
+                            <i className="bi bi-file-earmark-arrow-down me-2"></i>
+                            Waypoints exportieren
                         </button>
                     </AttributeComponent>
                     <AttributeComponent
@@ -166,30 +183,6 @@ export default function SettingsComponent({
                         >
                             <i className="bi bi-house-door me-2"></i>
                             Zur Startseite
-                        </button>
-                    </AttributeComponent>
-                    <AttributeComponent
-                        title={"Video-Export"}
-                        description={"Exportiere die Show als MP4-Video"}
-                        iconClass={"bi-camera-video"}
-                    >
-                        <button
-                            className="btn btn-outline-primary w-100 mt-2" /*TODO: Export Function*/
-                        >
-                            <i className="bi bi-camera-video me-2"></i>
-                            Video exportieren
-                        </button>
-                    </AttributeComponent>
-                    <AttributeComponent
-                        title={"Waypoint-Export"}
-                        description={"Exportiere als Waypoint-at-Time Format"}
-                        iconClass={"bi-file-earmark-text"}
-                    >
-                        <button
-                            className="btn btn-outline-primary w-100 mt-2" /*TODO: Export Function*/
-                        >
-                            <i className="bi bi-file-earmark-arrow-down me-2"></i>
-                            Waypoints exportieren
                         </button>
                     </AttributeComponent>
                 </GroupComponent>
