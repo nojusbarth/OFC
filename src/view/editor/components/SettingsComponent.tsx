@@ -3,19 +3,22 @@ import { ISettings } from "../../../controller/interface/ISettings";
 import { DayTime } from "../../../repository/entity/DayTime";
 import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
-import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 import { IProject } from "../../../controller/interface/IProject";
 import { toolTipps } from "../config";
 
-interface SettingsComponentProps {
-    controller: IUndoableController;
-    toggleStartpage: () => void;
-}
-
+/**
+ * Erstellt eine Settings Komponente auf der der Nutzer alle Einstellungen über das Projekt vornehmen kann
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param toggleStartpage Callback zum Wechsel auf die Startseite
+ * @returns JSX-Element der Einstellungs Komponente
+ */
 export default function SettingsComponent({
     controller,
     toggleStartpage,
-}: SettingsComponentProps) {
+}: {
+    controller: IUndoableController;
+    toggleStartpage: () => void;
+}) {
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
     const project: IProject = controller.getProject();

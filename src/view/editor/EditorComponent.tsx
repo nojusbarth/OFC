@@ -26,6 +26,11 @@ export default function EditorComponent({
         setShowSettings(!showSettings);
     };
 
+    const toggleRecording = () => {
+        controller.getProject().exportVideo();
+        setRecording(!recording);
+    };
+
     return (
         <div
             style={{
@@ -52,7 +57,7 @@ export default function EditorComponent({
                 <TimelineComponent
                     controller={controller}
                     recording={recording}
-                    setRecording={setRecording}
+                    toggleRecording={toggleRecording}
                 />
             </div>
 
