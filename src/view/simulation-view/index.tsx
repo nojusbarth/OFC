@@ -51,6 +51,16 @@ export function initSimulation(controller : IController) {
     simulation.setSimulationTime(daytime);
   });
 
+  controller.getProject().getRecordingRunningEvent().register((recording) => {
+    console.log("Recording running event ", recording);  
+
+    if (recording) {
+      simulation.startRecording();
+    } else {
+      simulation.stopRecording();
+    }
+  });
+
 
 
   const droneStore = new DroneStateStore();
