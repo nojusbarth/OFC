@@ -5,6 +5,7 @@ import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { IProject } from "../../../controller/interface/IProject";
 import { toolTipps } from "../config";
+import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 
 /**
  * Erstellt eine Settings Komponente auf der der Nutzer alle Einstellungen über das Projekt vornehmen kann
@@ -29,6 +30,7 @@ export default function SettingsComponent({
         settings.getCollisionRadius(),
     );
     const [endTime, setEndTime] = useState<number>(settings.getEndTime());
+    const [isSunCalculatorOpen, setIsSunCalculatorOpen] = useState<boolean>(false);
 
     /* ---------- Click Handlers ---------- */
     const onChangeDayTime = (newDayTime: DayTime) => {
@@ -66,7 +68,7 @@ export default function SettingsComponent({
             <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
                 <span className="fw-bold">Einstellungen</span>
                 <button
-                    title= {toolTipps.PROJECT_SAVE}
+                    title={toolTipps.PROJECT_SAVE}
                     className="btn btn-primary btn-sm d-flex gap-2"
                     onClick={onSaveSettings}
                 >
@@ -76,34 +78,47 @@ export default function SettingsComponent({
             </Card.Header>
 
             {/* Content */}
-            <Card.Body className="d-flex flex-column flex-grow-1 overflow-y-auto gap-3">
+            <DayTimeCalculatorModal show={isSunCalculatorOpen} onHide={() => setIsSunCalculatorOpen(false)} onResult={onChangeDayTime} />
+            <Card.Body className="d-flex flex-column flex-grow-1 overflow-y-auto gap-4">
+
                 <GroupComponent title={"Projekt"} iconClass={"bi-globe"}>
                     <AttributeComponent
                         title={"Tageszeit"}
                         description={"Beleuchtung im 3D-Viewport"}
                         iconClass={"bi-sun"}
                     >
-                        <DayTimeButtonComponent
-                            currentDayTime={dayTime}
-                            buttonDayTime={DayTime.NOON}
-                            iconClass={"bi-sun"}
-                            text={"Tag"}
-                            onChangeDayTime={onChangeDayTime}
-                        />
-                        <DayTimeButtonComponent
-                            currentDayTime={dayTime}
-                            buttonDayTime={DayTime.SUNSET}
-                            iconClass={"bi-sunset"}
-                            text={"Dämmerung"}
-                            onChangeDayTime={onChangeDayTime}
-                        />
-                        <DayTimeButtonComponent
-                            currentDayTime={dayTime}
-                            buttonDayTime={DayTime.NIGHT}
-                            iconClass={"bi-moon-stars"}
-                            text={"Nacht"}
-                            onChangeDayTime={onChangeDayTime}
-                        />
+                        <div className="d-flex flex-wrap gap-2 w-100">
+                            <DayTimeButtonComponent
+                                currentDayTime={dayTime}
+                                buttonDayTime={DayTime.NOON}
+                                iconClass={"bi-sun"}
+                                text={"Tag"}
+                                onChangeDayTime={onChangeDayTime}
+                            />
+                            <DayTimeButtonComponent
+                                currentDayTime={dayTime}
+                                buttonDayTime={DayTime.SUNSET}
+                                iconClass={"bi-sunset"}
+                                text={"Dämmerung"}
+                                onChangeDayTime={onChangeDayTime}
+                            />
+                            <DayTimeButtonComponent
+                                currentDayTime={dayTime}
+                                buttonDayTime={DayTime.NIGHT}
+                                iconClass={"bi-moon-stars"}
+                                text={"Nacht"}
+                                onChangeDayTime={onChangeDayTime}
+                            />
+
+                            <button
+                                className={`btn btn-outline-primary d-flex flex-column w-100`}
+                                onClick={() => { setIsSunCalculatorOpen(true); }}>
+
+                                <i className={`bi bi-calculator-fill mb-1`} />
+                                Berechnen
+                            </button>
+                        </div>
+
                     </AttributeComponent>
 
                     <AttributeComponent

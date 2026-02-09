@@ -1,6 +1,6 @@
-import React, {useState} from "react";
-import {Form, Modal, Spinner} from "react-bootstrap";
-import {DayTime} from "../../../repository/entity/DayTime";
+import React, { useState } from "react";
+import { Form, Modal, Spinner } from "react-bootstrap";
+import { DayTime } from "../../../repository/entity/DayTime";
 import SunCalc from 'suncalc';
 
 interface DayTimeCalculatorModalProps {
@@ -47,7 +47,9 @@ export const DayTimeCalculatorModal: React.FC<DayTimeCalculatorModalProps> = ({ 
         setIsLoading(true);
         setErrorMsg(null);
 
-        const coords = await getCoords(cityInput);
+        const city = cityInput ? cityInput : "Karlsruhe";
+
+        const coords = await getCoords(city);
 
         if (!coords) {
             setErrorMsg(`Der Ort "${cityInput}" wurde nicht gefunden.`);
