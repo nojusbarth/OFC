@@ -5,17 +5,22 @@ import { ITimeController } from "../../../controller/interface/ITimeController";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { SPEED_VALUES } from "../config";
 
-interface TimelineComponentProps {
-    controller: IUndoableController;
-    recording: boolean;
-    setRecording: (recording: boolean) => void;
-}
-
+/**
+ * Erstellt eine Timeline Komponente auf der der Nutzer alle Änderungen an der Zeit und ähnlichem vornehmen kann.
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param recording Gibt an, ob eine Aufnahme läuft
+ * @param toggleRecording Eine Funktion mit der der Aufnahmezustand gewechselt werden kann
+ * @returns JSX-Element der Timeline Komponente
+ */
 export default function TimelineComponent({
     controller,
     recording,
-    setRecording,
-}: TimelineComponentProps) {
+    toggleRecording,
+}: {
+    controller: IUndoableController;
+    recording: boolean;
+    toggleRecording: () => void;
+}) {
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
     const timeController: ITimeController = controller.getTimeController();
@@ -54,10 +59,6 @@ export default function TimelineComponent({
     }, [timeController]);
 
     /* ---------- Click Handlers ---------- */
-    const handleRecordClick = () => {
-        setRecording(!recording);
-    };
-
     const handlePlayPauseClick = () => {
         if (playing) {
             timeController.stopAnimation();
@@ -85,7 +86,7 @@ export default function TimelineComponent({
             {/* Record Button */}
             <button
                 className="btn btn-link p-0 text-danger"
-                onClick={handleRecordClick}
+                onClick={toggleRecording}
             >
                 <i
                     title={recording ? "Aufnahme stoppen" : "Aufnahme starten"}
