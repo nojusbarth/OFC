@@ -5,6 +5,7 @@ import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 import { IProject } from "../../../controller/interface/IProject";
+import { toolTipps } from "../config";
 
 interface SettingsComponentProps {
     controller: IUndoableController;
@@ -62,7 +63,7 @@ export default function SettingsComponent({
             <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
                 <span className="fw-bold">Einstellungen</span>
                 <button
-                    title="Änderungen Speichern"
+                    title= {toolTipps.PROJECT_SAVE}
                     className="btn btn-primary btn-sm d-flex gap-2"
                     onClick={onSaveSettings}
                 >

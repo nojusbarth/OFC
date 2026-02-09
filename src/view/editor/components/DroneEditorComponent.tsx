@@ -5,6 +5,7 @@ import { ColorKeyFrame } from "../../../repository/entity/ColorKeyFrame";
 import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
 import { Card, Form } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import { toolTipps } from "../config";
 
 interface DroneEditorComponentProps {
     controller: IUndoableController;
@@ -135,7 +136,7 @@ export default function DroneEditorComponent({
                 <span className="fw-bold">Aktionen</span>
                 <div className="d-flex gap-2">
                     <button
-                        title="Rückgängig"
+                        title={toolTipps.PROJECT_UNDO}
                         className="btn btn-primary btn-sm d-flex gap-2"
                         onClick={() => {
                             controller.undo();
@@ -144,7 +145,7 @@ export default function DroneEditorComponent({
                         <i className="bi bi-caret-left" />
                     </button>
                     <button
-                        title="Wiederherstellen"
+                        title={toolTipps.PROJECT_REDO}
                         className="btn btn-primary btn-sm d-flex gap-2"
                         onClick={() => {
                             controller.redo();

@@ -5,6 +5,7 @@ import { ITimeController } from "../../../controller/interface/ITimeController";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 
 import "./DroneManagerComponent.css";
+import { toolTipps } from "../config";
 
 interface DroneManagerComponentProps {
     controller: IUndoableController;
@@ -96,6 +97,7 @@ export default function DroneManagerComponent({
                 <span className="fw-bold">Drohnen ({allDrones.length})</span>
                 <button
                     className="btn btn-primary btn-sm d-flex gap-2"
+                    title={toolTipps.DRONE_ADD}
                     onClick={onAddDrone}
                 >
                     <i className="bi bi-plus" />
