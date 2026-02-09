@@ -18,7 +18,7 @@ import { KeyboardShortcuts } from './view/KeyboardShortcuts';
 
 function App() {
   // State Hooks
-  const [showStartpage, setShowStartpage] = useState<boolean>(false); //TODO true
+  const [showStartpage, setShowStartpage] = useState<boolean>(true); //TODO true
 
   // create controller with some test data
   const controller = useMemo(() => {
@@ -28,7 +28,7 @@ function App() {
 
     // Configure settings
     ctrl.getSettings().setEndTime(30);
-    ctrl.getSettings().setCollisionDistance(2);
+    ctrl.getSettings().setCollisionRadius(2);
 
     // Add drones with position keyframes
     const drone1 = ctrl.addDrone();
@@ -131,7 +131,10 @@ function App() {
 
   let inhalt: React.ReactNode;
   if (showStartpage) {
-    inhalt = <StartpageComponent />;
+    inhalt = <StartpageComponent
+        controller={controller}
+        toggleStartpage={() => setShowStartpage(false)}
+    />;
   } else {
     inhalt = (
       <>

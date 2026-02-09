@@ -50,10 +50,10 @@ export class Controller implements IController {
         this.collisionState = new Map();
         const drones = this.repository.getAllDrones();
         for (const drone of drones) {
-            const result = checkCollisions(drone, drones, this.settings.getCollisionDistance());
+            const result = checkCollisions(drone, drones, this.settings.getCollisionRadius());
             this.collisionState.set(drone.getId(), result);
         }
-        this.droneSelectEvent.notify(this.selectedDrones);
+        // this.droneSelectEvent.notify(this.selectedDrones);
     }
 
     addDrone(): number {
@@ -166,7 +166,7 @@ export class Controller implements IController {
     }
 
     private _checkCollisions(drone: IDrone): void {
-        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getCollisionDistance());
+        const collisions = checkCollisions(drone, this.repository.getAllDrones(), this.settings.getCollisionRadius());
         this._mergeCollisions(drone.getId(), collisions);
     }
 

@@ -9,6 +9,7 @@ import { PathFrame } from "./state/PathFrame";
 
 /* ---------------- Kamera & Bounds ---------------- */
 export const cameraStartPosition = new Vector3(10, 10, 10);
+export const cameraFOV = 60;
 
 export const sceneBounds = {
   minX: -50,
@@ -16,12 +17,12 @@ export const sceneBounds = {
   minZ: -50,
   maxZ: 50,
   minY: 1,
-  maxY: 20,
+  maxY: 50,
 };
 
 /* ---------------- OrbitControls ---------------- */
 export const controlsConfig = {
-  maxPolarAngle: Math.PI / 2,
+  maxPolarAngle: Math.PI,
   minPolarAngle: Math.PI / 6,
   minDistance: 5,
   maxDistance: 50,
@@ -32,16 +33,9 @@ export const planeConfig = {
   size: 100,
   color: "#228B22", // Fallback, falls Textur fehlt
   texturePath: "/assets/floor/cobble_clean.jpg",
-  textureRepeat: [50, 50], // Wiederholungen
+  textureRepeat: [50, 50],
   roughness: 1, // 0 = glänzend, 1 = matt
   metalness: 0, // 0 = nicht metallisch, 1 = metallisch
-};
-
-/* ---------------- Himmel ---------------- */
-export const skyConfig = {
-  distance: 450000,
-  inclination: 0.49,
-  azimuth: 0.25,
 };
 
 /* ---------------- Tageslicht-Frames ---------------- */
@@ -53,19 +47,13 @@ export const sceneLightFrames: Record<string, LightFrame> = {
     position: new Vector3(0, -10, 5),
     skyTexturePath: "/assets/sky/night.hdr",
   },
-  MORNING: {
-    intensity: 0.6,
-    color: "#ffb347",
-    position: new Vector3(10, 5, 10),
-    skyTexturePath: "/assets/sky/morning.hdr",
-  },
   NOON: {
     intensity: 1.2,
     color: "#ffffff",
     position: new Vector3(0, 20, 0),
     skyTexturePath: "/assets/sky/noon.hdr",
   },
-  EVENING: {
+  SUNSET: {
     intensity: 0.5,
     color: "#ff7a18",
     position: new Vector3(-10, 4, -10),
@@ -76,9 +64,8 @@ export const sceneLightFrames: Record<string, LightFrame> = {
 // Für Animationen oder Tageszeitwechsel
 export const lightFrames = {
   night: sceneLightFrames.NIGHT,
-  morning: sceneLightFrames.MORNING,
   noon: sceneLightFrames.NOON,
-  evening: sceneLightFrames.EVENING,
+  sunset: sceneLightFrames.SUNSET,
 };
 
 /* ---------------- Standard Frames ---------------- */
@@ -87,6 +74,7 @@ export const defaultLightFrame: LightFrame = sceneLightFrames.NOON;
 export const defaultDroneFrame: DroneFrame = {
   dronePositions: new Map(),
   droneColors: new Map(),
+  outlineColors: new Map(),
 };
 
 export const defaultPathFrame: PathFrame = {
@@ -97,10 +85,24 @@ export const defaultPathFrame: PathFrame = {
 /* ---------------- Drohnen & Pfad Properties ---------------- */
 
 export const droneConfig = {
-  dimensions: [0.2, 16, 16],
-  emissiveIntensity: 5.0,
+  // SphereGeometry: [radius, widthSegments, heightSegments]
+  dimensions: [0.3, 16, 16],
+  emissiveIntensity: 5,
 };
 
 export const pathConfig = {
-  lineWidth: 2,
+  lineWidth: 4,
+  dashSize: 0.3,
+  gapSize: 0.2,
+  opacity: 0.9,
+  dashOffsetSpeed: 0.01,
+};
+
+export const zebraRingConfig = {
+  lineWidth: 3,
+  dashSize: 0.25,
+  gapSize: 0.25,
+  dashOffset: 0.25,
+  opacity: 0.9,
+  dashOffsetSpeed: 0.01,
 };

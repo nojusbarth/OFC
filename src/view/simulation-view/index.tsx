@@ -5,6 +5,7 @@ import { LightStateStore } from "./state/LightStateStore";
 import { SimulationView } from "./SimulationView";
 import { SceneRenderer } from "./graphics/SceneRenderer";
 import { IController } from "../../controller/interface/IController";
+import * as THREE from "three";
 
 
 /**
@@ -66,11 +67,14 @@ export function initSimulation(controller : IController) {
 
 
   const Scene: FC = () => (
-    < SceneRenderer
+    <SceneRenderer
       droneStore={droneStore}
       pathStore={pathStore}
       lightStore={lightStore}
-      onReady={() => simulation.notifyFrameChange()}
+      onReady={(gl: THREE.WebGLRenderer) => {
+        simulation.setCanvasForRecording(gl.domElement);
+        simulation.notifyFrameChange();
+      }}
     />
   );
 

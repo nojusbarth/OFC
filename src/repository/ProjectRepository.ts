@@ -12,9 +12,9 @@ export class ProjectRepository implements IProjectRepository {
     private drones: Array<IDrone> = []
     private collisionRadius: number = 0
     private dayTime: DayTime = DayTime.NOON
-    private endTime: number = 0 // TODO: ÄNDERUNG: NAME CHANGE
+    private endTime: number = 0
 
-    load(input: File|string|null, onFinished: (result: Result<null>) => void) { // TODO: ÄNDERUNG: ADD FUNCTION
+    load(input: File|string|null, onFinished: (result: Result<boolean>) => void) {
         if (input == null) {
             this.drones = []
             this.collisionRadius = 0
@@ -32,9 +32,9 @@ export class ProjectRepository implements IProjectRepository {
                     if (jsonResult.isSuccess() && config != null) {
                         this.setProjectConfig(config);
                     }
-                    onFinished(new Result(null, jsonResult.getError()))
+                    onFinished(new Result(jsonResult.isSuccess(), jsonResult.getError()))
                 } else {
-                    onFinished(new Result(null, new Error(`Failed to load project: ${e}`)));
+                    onFinished(new Result(false, new Error(`Failed to load project: ${e}`)));
                 }
             }
             reader.readAsText(input);
@@ -44,7 +44,7 @@ export class ProjectRepository implements IProjectRepository {
             if (jsonResult.isSuccess() && config != null) {
                 this.setProjectConfig(config);
             }
-            onFinished(new Result(null, jsonResult.getError()))
+            onFinished(new Result(jsonResult.isSuccess(), jsonResult.getError()))
         }
     }
 
@@ -142,7 +142,7 @@ export class ProjectRepository implements IProjectRepository {
         return JSON.stringify(format, null, 2);
     }
 
-    exportConfig(): string { // TODO: ÄNDERUNG: METHODE ADD
+    exportConfig(): string {
         const config: ProjectConfig = {
             version: FILE_VERSION,
             settings : {

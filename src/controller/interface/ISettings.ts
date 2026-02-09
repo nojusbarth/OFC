@@ -43,21 +43,21 @@ export interface ISettings {
     getDayTimeChangedEvent(): OFCEvent<DayTime>
 
     /**
-     * Setzt den Mindestabstand für die Kollisionserkennung.
-     * @param distance - Der Mindestabstand-Schwellenwert
+     * Setzt den Kollisionsradius für die Kollisionserkennung.
+     * @param radius - Der Kollisionsradius
      */
-    setCollisionDistance(distance: number): void
+    setCollisionRadius(radius: number): void
 
     /**
-     * Ruft den aktuellen Drohnen-Kollisionsabstand ab.
-     * @returns Der Mindestabstand für die Kollisionserkennung
+     * Ruft den aktuellen Drohnen-Kollisionsradius ab.
+     * @returns Der Kollisionsradius
      */
-    getCollisionDistance(): number
+    getCollisionRadius(): number
 
     /**
-     * Ruft den Event-Emitter für Drohnenabstand-Änderungen ab.
-     * @returns Event-Emitter für Schwellenwert-Updates
+     * Ruft den Event-Emitter für Kollisionsradius-Änderungen ab.
+     * @returns Event-Emitter für Radius-Updates
      */
-    getCollisionDistanceChangedEvent(): OFCEvent<number>
+    getCollisionRadiusChangedEvent(): OFCEvent<number>
 }
 

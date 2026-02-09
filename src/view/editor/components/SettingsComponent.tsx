@@ -3,6 +3,7 @@ import { ISettings } from "../../../controller/interface/ISettings";
 import { DayTime } from "../../../repository/entity/DayTime";
 import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 
 interface SettingsComponentProps {
     controller: IUndoableController;
@@ -18,8 +19,8 @@ export default function SettingsComponent({
 
     /* ---------- State Hooks ---------- */
     const [dayTime, setDayTime] = useState<DayTime>(settings.getDayTime());
-    const [collisionDistance, setCollisionDistance] = useState<number>(
-        settings.getCollisionDistance(),
+    const [collisionRadius, setCollisionRadius] = useState<number>(
+        settings.getCollisionRadius(),
     );
     const [endTime, setEndTime] = useState<number>(settings.getEndTime());
 
@@ -29,12 +30,12 @@ export default function SettingsComponent({
         settings.setDayTime(newDayTime);
     };
 
-    const onChangeCollisionDistance = (newDistance: number) => {
-        if (isNaN(newDistance) || newDistance < 0) {
-            setCollisionDistance(0);
+    const onChangeCollisionRadius = (newRadius: number) => {
+        if (isNaN(newRadius) || newRadius < 0) {
+            setCollisionRadius(0);
             return;
         }
-        setCollisionDistance(newDistance);
+        setCollisionRadius(newRadius);
     };
 
     const onChangeEndTime = (newEndTime: number) => {
@@ -48,7 +49,7 @@ export default function SettingsComponent({
     const onSaveSettings = () => {
         settings.setDayTime(dayTime);
         settings.setEndTime(endTime);
-        settings.setCollisionDistance(collisionDistance);
+        settings.setCollisionRadius(collisionRadius);
     };
 
     return (
@@ -107,11 +108,11 @@ export default function SettingsComponent({
                         <input
                             type="number"
                             className="form-control"
-                            value={collisionDistance}
+                            value={collisionRadius}
                             min="0.1"
                             step="0.1"
                             onChange={(e) => {
-                                onChangeCollisionDistance(
+                                onChangeCollisionRadius(
                                     parseFloat(e.target.value),
                                 );
                             }}

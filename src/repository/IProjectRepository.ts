@@ -15,10 +15,10 @@ export interface IProjectRepository {
      * - `null`: Setzt das Projekt komplett zurück (Neues Projekt).
      * - `File`: Liest eine Datei ein und parst den Inhalt.
      * - `string`: Ein JSON-String.
-     * @param onFinished gibt das Ergebnis als `Result<null>` zurück, sobald das Projekt geladen wurde oder ein Fehler auftritt.
+     * @param onFinished gibt das Ergebnis als `Result<boolean>` zurück, sobald das Projekt geladen wurde oder ein Fehler auftritt.
      * @throws Error Bei einem Fehler beim Einlesen der Eingabe.
      */
-    load(input: File|string|null, onFinished: (result: Result<null>) => void): void
+    load(input: File|string|null, onFinished: (result: Result<boolean>) => void): void
 
     /**
      * Versucht, das zuletzt bearbeitete Projekt aus dem LocalStorage des Browsers wiederherzustellen.
@@ -36,7 +36,7 @@ export interface IProjectRepository {
      * Sucht die aktuell höchste ID und addiert 1.
      * @returns Die nächste freie ID (Integer).
      */
-    getNextDroneId(): number // TODO: ADD NEW METHODE
+    getNextDroneId(): number
 
     /**
      * Gibt eine Liste aller Drohnen des Projekts zurück.

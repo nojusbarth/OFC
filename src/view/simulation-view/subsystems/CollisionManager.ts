@@ -1,12 +1,16 @@
-import { Color } from "three";
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
 
+/**
+ * Der CollisionManager ist verantwortlich für die Verwaltung des korrekten Renderns von Kollisionen zwischen Drohnen in der Simulation.
+ */
 export class CollisionManager {
   private currentCollision: Array<number>;
+  private readonly colorRing = ["#ff0000", "#880000"];
+  private readonly colorPath = "#ff0000";
 
   /**
-   * Initialisiert den CollisionManager mit keinen Kollisionen.
+   * Initialisiert den CollisionManager.
    */
   public constructor() {
     this.currentCollision = new Array();
@@ -14,12 +18,10 @@ export class CollisionManager {
 
   /**
    * Wendet die Kollisionsänderungen auf die Pfade an.
-   * Pfade von Drohnen in Kollision werden rot gefärbt.
    *
    * @param currentPathFrame - Der aktuelle PathFrame, der aktualisiert wird
    * @param allPaths - Der PathFrame mit allen verfügbaren Pfaden
-   * @returns Der aktualisierte PathFrame mit rot gefärbten Kollisionspfaden
-   * @public
+   * @returns Der aktualisierte PathFrame
    */
   public applyPathChanges(
     currentPathFrame: PathFrame,
@@ -28,11 +30,11 @@ export class CollisionManager {
     this.currentCollision.forEach((id: number) => {
       const positions = allPaths.pathPositions.get(id);
       if (!positions) {
-        console.log(`KeyFrame ${id} not found`);
+        console.error(`KeyFrame ${id} not found`);
         return;
       }
       currentPathFrame.pathPositions.set(id, positions);
-      currentPathFrame.pathColors.set(id, "red");
+      currentPathFrame.pathColors.set(id, this.colorPath);
     });
 
     return currentPathFrame;
@@ -40,15 +42,16 @@ export class CollisionManager {
 
   /**
    * Wendet die Kollisionsänderungen auf die Drohnen an.
-   * Drohnen in Kollision werden rot gefärbt.
    *
    * @param currentDroneFrame - Der aktuelle DroneFrame, der aktualisiert wird
-   * @returns Der aktualisierte DroneFrame mit rot gefärbten Kollisionsdrohnen
-   * @public
+   * @returns Der aktualisierte DroneFrame
    */
   public applyDroneChanges(currentDroneFrame: DroneFrame): DroneFrame {
     this.currentCollision.forEach((id: number) => {
-      currentDroneFrame.droneColors.set(id, new Color(1, 0, 0));
+      currentDroneFrame.outlineColors.set(id, [
+        this.colorRing[0],
+        this.colorRing[1],
+      ]);
     });
 
     return currentDroneFrame;
@@ -58,7 +61,6 @@ export class CollisionManager {
    * Aktualisiert die Liste der Drohnen, die sich in einer Kollision befinden.
    *
    * @param newCollision - Array mit den IDs aller Drohnen in Kollision
-   * @public
    */
   public notifyCollisionChange(newCollision: Array<number>) {
     this.currentCollision = newCollision;
