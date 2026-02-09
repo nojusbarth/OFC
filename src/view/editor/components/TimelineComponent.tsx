@@ -9,8 +9,6 @@ import { IProject } from "../../../controller/interface/IProject";
 /**
  * Erstellt eine Timeline Komponente auf der der Nutzer alle Änderungen an der Zeit und ähnlichem vornehmen kann.
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
- * @param recording Gibt an, ob eine Aufnahme läuft
- * @param toggleRecording Eine Funktion mit der der Aufnahmezustand gewechselt werden kann
  * @returns JSX-Element der Timeline Komponente
  */
 export default function TimelineComponent({

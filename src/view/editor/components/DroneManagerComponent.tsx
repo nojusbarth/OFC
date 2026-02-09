@@ -7,13 +7,17 @@ import { IUndoableController } from "../../../controller/interface/IUndoableCont
 import "./DroneManagerComponent.css";
 import { toolTipps } from "../config";
 
-interface DroneManagerComponentProps {
-    controller: IUndoableController;
-}
-
+/**
+ * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht 
+ * über die aktuellen Drohnen hat und diese manipulieren kann.
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @returns JSX-Element der Drone Manager Komponente
+ */
 export default function DroneManagerComponent({
     controller,
-}: DroneManagerComponentProps) {
+}: {
+    controller: IUndoableController;
+}) {
     /* ---------- Used Controllers ---------- */
     const timerController: ITimeController = controller.getTimeController();
 

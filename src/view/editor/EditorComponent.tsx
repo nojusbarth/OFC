@@ -7,17 +7,21 @@ import SettingsButtonComponent from "./components/SettingsButtonComponent";
 import { IUndoableController } from "../../controller/interface/IUndoableController";
 import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
 
-interface EditorComponentProps {
-    controller: IUndoableController;
-    toggleStartpage: () => void;
-    viewport: JSX.Element;
-}
-
+/**
+ * Erstellt die vollständige Editor Seite als Editor Komponente
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param toggleStartpage Funktion zum Wechsel der Startpage
+ * @returns JSX-Element der Editor Seite als Komponente
+ */
 export default function EditorComponent({
     controller,
     toggleStartpage,
     viewport,
-}: EditorComponentProps) {
+}: {
+    controller: IUndoableController;
+    toggleStartpage: () => void;
+    viewport: JSX.Element;
+}) {
     /* ---------- Used Controllers ---------- */
     const project = controller.getProject();
 

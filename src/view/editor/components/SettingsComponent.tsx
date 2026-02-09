@@ -9,8 +9,8 @@ import { toolTipps } from "../config";
 /**
  * Erstellt eine Settings Komponente auf der der Nutzer alle Einstellungen über das Projekt vornehmen kann
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
- * @param toggleStartpage Callback zum Wechsel auf die Startseite
- * @returns JSX-Element der Einstellungs Komponente
+ * @param toggleStartpage Funktion zum Wechsel der Startpage
+ * @returns JSX-Element der Settings Komponente
  */
 export default function SettingsComponent({
     controller,
