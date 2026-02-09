@@ -165,6 +165,7 @@ export default function SettingsComponent({
                     >
                         <button
                             className="btn btn-outline-primary w-100 mt-2"
+                            title={toolTipps.PROJECT_WAYPOINT_EXPORT}
                             onClick={() => {
                                 project.exportWayPointData();
                             }}

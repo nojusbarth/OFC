@@ -119,6 +119,7 @@ export default function DroneManagerComponent({
                                 <div
                                     key={droneId}
                                     className="col drone-manager drone-card"
+                                    title= {isSelected ? toolTipps.DRONE_UNSELECT : toolTipps.DRONE_SELECT}
                                 >
                                     <Card
                                         onClick={() =>
@@ -159,6 +160,8 @@ export default function DroneManagerComponent({
                                         {/* Remove Button */}
                                         <button
                                             className="drone-manager drone-card delete position-absolute top-0 end-0 m-0 p-0"
+                                            title={toolTipps.DRONE_DELETE}
+
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onRemoveDrone(droneId);

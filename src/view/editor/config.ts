@@ -10,8 +10,14 @@ export const toolTipps = {
   RECORD_STOP: "Aufnahme stoppen \n(Strg + R)",
   ANIMATION_START: "Animation starten \n(Leertaste)",
   ANIMATION_STOP: "Animation stoppen \n(Leertaste)",
-  PROJECT_SAVE: "Änderungen speichern \n(Strg + s)",
-  PROJECT_UNDO: "Änderung rückgängig machen \n(Strg + z)",
-  PROJECT_REDO: "Änderung wiederherstellen \n(Strg + Shift + z)",
-  DRONE_ADD: "Drohne hinzufügen \n(Strg + n)",
+  PROJECT_SAVE: "Änderungen speichern \n(Strg + S)",
+  PROJECT_UNDO: "Änderung rückgängig machen \n(Strg + Z)",
+  PROJECT_REDO: "Änderung wiederherstellen \n(Strg + Shift + Z)",
+  PROJECT_WAYPOINT_EXPORT: "Format exportieren \n(Strg + E)",
+  DRONE_ADD: "Drohne hinzufügen \n(Strg + N)",
+  DRONE_DELETE: "Drohne löschen \n(Del)",
+  DRONE_SELECT: "Alle Drohnen auswählen \n(Strg + A)",
+  DRONE_UNSELECT: "Alle Drohnen abwählen \n(Esc)",
+  TIME_SET:
+    "Zeit ändern\nLetzte Sekunde: (Links Pfeil)\nNächste Sekunde: (Rechts Pfeil)",
 };

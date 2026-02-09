@@ -141,7 +141,7 @@ export default function TimelineComponent({
 
                 {/* Slider */}
                 <input
-                    title="Zeit ändern"
+                    title={toolTipps.TIME_SET}
                     type="range"
                     className="form-range flex-grow-1"
                     min={0}
