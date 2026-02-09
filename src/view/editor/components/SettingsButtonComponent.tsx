@@ -3,6 +3,13 @@ interface SettingsButtonComponentProps {
     toggleSettingsMenu: () => void;
 }
 
+/**
+ * Erstellt eine einfache Settings Button Komponente auf der der Nutzer zwischen dem Settings Menü
+ * oder Drone Editor Menü swichen kann.
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param toggleSettingsMenu Funktion zum Wechsel des Settings Menüs
+ * @returns JSX-Element der Settings Button Komponente
+ */
 export default function SettingsButtonComponent({
     showSettings,
     toggleSettingsMenu,
