@@ -14,7 +14,7 @@ export const toolTipps = {
   PROJECT_UNDO: "Änderung rückgängig machen \n(Strg + Z)",
   PROJECT_REDO: "Änderung wiederherstellen \n(Strg + Shift + Z)",
   PROJECT_WAYPOINT_EXPORT: "Format exportieren \n(Strg + E)",
-  DRONE_ADD: "Drohne hinzufügen \n(Strg + N)",
+  DRONE_ADD: "Drohne hinzufügen \n(Strg + Shift + N)",
   DRONE_DELETE: "Drohne löschen \n(Del)",
   DRONE_SELECT: "Alle Drohnen auswählen \n(Strg + A)",
   DRONE_UNSELECT: "Alle Drohnen abwählen \n(Esc)",
