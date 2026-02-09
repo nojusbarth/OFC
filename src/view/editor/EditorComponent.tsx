@@ -2,7 +2,7 @@ import DroneManagerComponent from "./components/DroneManagerComponent";
 import DroneEditorComponent from "./components/DroneEditorComponent";
 import TimelineComponent from "./components/TimelineComponent";
 import SettingsComponent from "./components/SettingsComponent";
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import SettingsButtonComponent from "./components/SettingsButtonComponent";
 import { IUndoableController } from "../../controller/interface/IUndoableController";
 import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
@@ -18,17 +18,30 @@ export default function EditorComponent({
     toggleStartpage,
     viewport,
 }: EditorComponentProps) {
-    // State Hooks
-    const [showSettings, setShowSettings] = useState<boolean>(false);
-    const [recording, setRecording] = useState<boolean>(false);
+    /* ---------- Used Controllers ---------- */
+    const project = controller.getProject();
 
+    /* ---------- State Hooks ---------- */
+    const [showSettings, setShowSettings] = useState<boolean>(false);
+    const [recording, setRecording] = useState<boolean>(controller.getProject().getRecordingRunning());
+
+    /* ---------- Register Events ---------- */
+    useEffect(() => {
+
+        const handleRecordingRunningChange = (isRunning: boolean) => {
+            setRecording(isRunning);
+        };
+
+        project.getRecordingRunningEvent().register(handleRecordingRunningChange);
+
+        return () => {
+            project.getRecordingRunningEvent().remove(handleRecordingRunningChange);
+        };
+    }, [controller]);
+
+    /* ---------- Click Handlers ---------- */
     const toggleSettingsMenu = () => {
         setShowSettings(!showSettings);
-    };
-
-    const toggleRecording = () => {
-        controller.getProject().exportVideo();
-        setRecording(!recording);
     };
 
     return (
@@ -56,8 +69,6 @@ export default function EditorComponent({
             <div style={{ gridArea: "timeline", overflow: "hidden" }}>
                 <TimelineComponent
                     controller={controller}
-                    recording={recording}
-                    toggleRecording={toggleRecording}
                 />
             </div>
 
