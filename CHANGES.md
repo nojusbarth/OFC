@@ -40,7 +40,8 @@
 
 ### IProject
 
-- **loadProject**: Signatur geändert von `loadProject(data: string): boolean` zu `loadProject(file: File, onCompleted: (result: Result<null>) => void): void` - asynchrone Verarbeitung mit Callback
+- **exportVideo**: ersetzt durch `startRecording()`/`stopRecording()` sowie einen endpunkt zum abfragen ob eine Aufnahme läuft und ein Event für Aufnahmenzustandsänderungen.
+- **loadProject**: Signatur geändert von `loadProject(data: string): boolean` zu `loadProject(file: File, onCompleted: (result: Result<boolean>) => void): void` - asynchrone Verarbeitung mit Callback
 - **newProject**: Neue Methode zum Erstellen eines neuen, leeren Projekts hinzugefügt
 - **loadLastProject**: Neue Methode zum Laden des zuletzt gespeicherten Projekts aus dem lokalen Speicher hinzugefügt
 - **canLoadLastProject**: Neue Methode zum Prüfen, ob ein zuletzt gespeichertes Projekt vorhanden ist, hinzugefügt

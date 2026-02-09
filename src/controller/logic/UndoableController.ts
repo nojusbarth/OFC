@@ -12,6 +12,9 @@ import { ActionType } from "../../repository/entity/ActionType";
 import { Action } from "../../repository/entity/Action";
 import { IAction } from "../../repository/entity/IAction";
 
+/**
+ * Implementiert IUndoableController, ein Decorator für IController
+ */
 export class UndoableController implements IUndoableController {
     private controller: IController;
     private undoStack: IUndoRepository;

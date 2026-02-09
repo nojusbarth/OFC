@@ -2,6 +2,13 @@ import { Vector3 } from "three";
 import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
 import { IDrone } from "../../repository/entity/IDrone";
 
+/**
+ * Prüft Kollisionen einer Drohnen mit den anderen Drohnen.
+ * @param drone die Drohne für deren Pfad Kollisionen geprüft werden sollen.
+ * @param otherDrones die gesamt Menge der Drohnen
+ * @param collisionRadius der Radius einer Drohne (2 * collisionRadius ist der Mindestabstand um keine Kollision zu haben)
+ * @returns Eine Map der Drohnen Ids zur Zeit der Kollision mit der gegebenen Drohne. Es werden nur die Drohnen zurückgegeben, mit denen eine Kollision stattfindet.
+ */
 export function checkCollisions(drone: IDrone, otherDrones: IDrone[], collisionRadius: number): Map<number, number> {
     const collisionAtlas = new Map<number, number>();
     for (const otherDrone of otherDrones) {

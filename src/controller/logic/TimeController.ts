@@ -2,6 +2,9 @@ import { ISettings } from "../interface/ISettings";
 import type { ITimeController } from "../interface/ITimeController";
 import { OFCEvent } from "../interface/OFCEvent";
 
+/**
+ * Implementiert ITimeController
+ */
 export class TimeController implements ITimeController {
     settings: ISettings;
 
