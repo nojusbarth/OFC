@@ -4,6 +4,7 @@ import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { SPEED_VALUES, toolTipps } from "../config";
+import { IProject } from "../../../controller/interface/IProject";
 
 /**
  * Erstellt eine Timeline Komponente auf der der Nutzer alle Änderungen an der Zeit und ähnlichem vornehmen kann.
@@ -14,15 +15,12 @@ import { SPEED_VALUES, toolTipps } from "../config";
  */
 export default function TimelineComponent({
     controller,
-    recording,
-    toggleRecording,
 }: {
     controller: IUndoableController;
-    recording: boolean;
-    toggleRecording: () => void;
 }) {
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
+    const project: IProject = controller.getProject();
     const timeController: ITimeController = controller.getTimeController();
 
     /* ---------- State Hooks ---------- */
@@ -32,9 +30,20 @@ export default function TimelineComponent({
         timeController.getAnimationSpeed(),
     );
     const [playing, setPlaying] = useState<boolean>(false);
+    const [recording, setRecording] = useState<boolean>(
+        project.getRecordingRunning(),
+    );
 
     /* ---------- Register Events ---------- */
     useEffect(() => {
+        const onRecordingRunningChanged = (isRunning: boolean) => {
+            setRecording(isRunning);
+        };
+
+        const onAnimationSpeedChanged = (newSpeed: number) => {
+            setAnimationSpeed(newSpeed);
+        };
+
         const onPlayingChanged = (isPlaying: boolean) => {
             setPlaying(isPlaying);
         };
@@ -47,11 +56,15 @@ export default function TimelineComponent({
             setEndTime(newEndTime);
         };
 
+        project.getRecordingRunningEvent().register(onRecordingRunningChanged);
+        timeController.getAnimationSpeedChangedEvent().register(onAnimationSpeedChanged);
         timeController.getAnimationRunningEvent().register(onPlayingChanged);
         timeController.getTimeChangedEvent().register(onTimeChanged);
         settings.getEndTimeChangedEvent().register(onEndTimeChanged);
 
         return () => {
+            project.getRecordingRunningEvent().remove(onRecordingRunningChanged);
+            timeController.getAnimationSpeedChangedEvent().remove(onAnimationSpeedChanged);
             timeController.getAnimationRunningEvent().remove(onPlayingChanged);
             timeController.getTimeChangedEvent().remove(onTimeChanged);
             settings.getEndTimeChangedEvent().remove(onEndTimeChanged);
@@ -59,13 +72,20 @@ export default function TimelineComponent({
     }, [timeController]);
 
     /* ---------- Click Handlers ---------- */
+    const handleRecordingClick = () => {
+        if (project.getRecordingRunning()) {
+            project.stopRecording();
+        } else {
+            project.startRecording();
+        }
+    };
+
     const handlePlayPauseClick = () => {
-        if (playing) {
+        if (timeController.getAnimationRunning()) {
             timeController.stopAnimation();
         } else {
             timeController.startAnimation();
         }
-        setPlaying(!playing);
     };
 
     const handleSpeedChangeClick = () => {
@@ -74,7 +94,6 @@ export default function TimelineComponent({
         const newSpeed = SPEED_VALUES[nextIndex];
 
         timeController.setAnimationSpeed(newSpeed);
-        setAnimationSpeed(newSpeed);
     };
 
     const handleSliderChange = (newTime: number) => {
@@ -86,7 +105,7 @@ export default function TimelineComponent({
             {/* Record Button */}
             <button
                 className="btn btn-link p-0 text-danger"
-                onClick={toggleRecording}
+                onClick={handleRecordingClick}
             >
                 <i
                     title={recording ? toolTipps.RECORD_STOP : toolTipps.RECORD_START}
