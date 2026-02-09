@@ -3,15 +3,24 @@ import { Card } from "react-bootstrap";
 import { ISettings } from "../../../controller/interface/ISettings";
 import { ITimeController } from "../../../controller/interface/ITimeController";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
-import { SPEED_VALUES } from "../config";
+import { SPEED_VALUES, toolTipps } from "../config";
 
-interface TimelineComponentProps {
-    controller: IUndoableController;
-}
-
+/**
+ * Erstellt eine Timeline Komponente auf der der Nutzer alle Änderungen an der Zeit und ähnlichem vornehmen kann.
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param recording Gibt an, ob eine Aufnahme läuft
+ * @param toggleRecording Eine Funktion mit der der Aufnahmezustand gewechselt werden kann
+ * @returns JSX-Element der Timeline Komponente
+ */
 export default function TimelineComponent({
     controller,
-}: TimelineComponentProps) {
+    recording,
+    toggleRecording,
+}: {
+    controller: IUndoableController;
+    recording: boolean;
+    toggleRecording: () => void;
+}) {
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
     const timeController: ITimeController = controller.getTimeController();
@@ -50,7 +59,7 @@ export default function TimelineComponent({
     }, [timeController]);
 
     /* ---------- Click Handlers ---------- */
-    const handlePlayPause = () => {
+    const handlePlayPauseClick = () => {
         if (playing) {
             timeController.stopAnimation();
         } else {
@@ -59,15 +68,13 @@ export default function TimelineComponent({
         setPlaying(!playing);
     };
 
-    const handleSpeedChange = () => {
+    const handleSpeedChangeClick = () => {
         const currentIndex = SPEED_VALUES.indexOf(animationSpeed);
         const nextIndex = (currentIndex + 1) % SPEED_VALUES.length;
-        changeSpeed(SPEED_VALUES[nextIndex]);
-    };
+        const newSpeed = SPEED_VALUES[nextIndex];
 
-    const changeSpeed = (number: number) => {
-        timeController.setAnimationSpeed(number);
-        setAnimationSpeed(number);
+        timeController.setAnimationSpeed(newSpeed);
+        setAnimationSpeed(newSpeed);
     };
 
     const handleSliderChange = (newTime: number) => {
@@ -76,15 +83,31 @@ export default function TimelineComponent({
 
     return (
         <Card className="rounded-0 border-2 border-secondary border-start-0 border-top-0 border-end-0 d-flex flex-row align-items-center gap-4 p-3">
-            {/* Play Button */}
-            <button className="btn btn-link p-0" onClick={handlePlayPause}>
+            {/* Record Button */}
+            <button
+                className="btn btn-link p-0 text-danger"
+                onClick={toggleRecording}
+            >
                 <i
+                    title={recording ? toolTipps.RECORD_STOP : toolTipps.RECORD_START}
+                    className={
+                        `bi ${recording ? "bi-stop-fill" : "bi-record-fill"}` +
+                        " fs-2"
+                    }
+                />
+            </button>
+
+            {/* Play Button */}
+            <button className="btn btn-link p-0" onClick={handlePlayPauseClick}>
+                <i
+                    title={
+                        playing ? toolTipps.ANIMATION_STOP : toolTipps.ANIMATION_START
+                    }
                     className={
                         `bi ${playing ? "bi-pause-fill" : "bi-play-fill"}` +
                         " fs-2"
                     }
                     style={{ color: "black" }}
-                    title="Play/Pause"
                 />
             </button>
 
@@ -93,12 +116,12 @@ export default function TimelineComponent({
                 {/* Speed Button */}
                 <button
                     className="btn btn-link p-0"
-                    onClick={handleSpeedChange}
+                    onClick={handleSpeedChangeClick}
                 >
                     <i
+                        title="Geschwindigkeit ändern"
                         className="bi bi-speedometer2 fs-3"
                         style={{ color: "black" }}
-                        title="Change Speed"
                     />
                 </button>
                 {/* Speed Text */}
@@ -119,14 +142,15 @@ export default function TimelineComponent({
 
                 {/* Slider */}
                 <input
+                    title={toolTipps.TIME_SET}
                     type="range"
                     className="form-range flex-grow-1"
                     min={0}
-                    max={endTime * 60}
+                    max={endTime * 100}
                     step={1}
-                    value={time * 60}
+                    value={time * 100}
                     onChange={(e) =>
-                        handleSliderChange(Number(e.target.value) / 60)
+                        handleSliderChange(Number(e.target.value) / 100)
                     }
                     disabled={playing}
                 />

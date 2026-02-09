@@ -5,6 +5,7 @@ import { ITimeController } from "../../../controller/interface/ITimeController";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 
 import "./DroneManagerComponent.css";
+import { toolTipps } from "../config";
 
 interface DroneManagerComponentProps {
     controller: IUndoableController;
@@ -64,7 +65,7 @@ export default function DroneManagerComponent({
 
     const updateColors = () => {
         const newColors = new Map(
-            controller.getDrones().map((id) => [id, controller.getColor(id)]),
+            allDrones.map((id) => [id, controller.getColor(id)]),
         );
         setColors(newColors);
     };
@@ -96,6 +97,7 @@ export default function DroneManagerComponent({
                 <span className="fw-bold">Drohnen ({allDrones.length})</span>
                 <button
                     className="btn btn-primary btn-sm d-flex gap-2"
+                    title={toolTipps.DRONE_ADD}
                     onClick={onAddDrone}
                 >
                     <i className="bi bi-plus" />
@@ -117,17 +119,19 @@ export default function DroneManagerComponent({
                                 <div
                                     key={droneId}
                                     className="col drone-manager drone-card"
+                                    title= {isSelected ? toolTipps.DRONE_UNSELECT : toolTipps.DRONE_SELECT}
                                 >
                                     <Card
                                         onClick={() =>
                                             onDroneSelectionChange(droneId)
                                         }
-                                        className={` text-center ${
-                                            isSelected
-                                                ? "border-primary border-2 bg-primary bg-opacity-10"
-                                                : "border-secondary"
-                                        } 
-                      ${isColliding ? "border-danger" : ""}`}
+                                        className={` text-center 
+                                            ${
+                                                isSelected
+                                                    ? "border-primary border-2 bg-primary bg-opacity-10"
+                                                    : "border-secondary"
+                                            } 
+                                            ${isColliding ? "border-danger" : ""}`}
                                         style={{
                                             cursor: "pointer",
                                             width: "100px",
@@ -156,6 +160,8 @@ export default function DroneManagerComponent({
                                         {/* Remove Button */}
                                         <button
                                             className="drone-manager drone-card delete position-absolute top-0 end-0 m-0 p-0"
+                                            title={toolTipps.DRONE_DELETE}
+
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 onRemoveDrone(droneId);

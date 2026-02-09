@@ -20,9 +20,15 @@ export default function EditorComponent({
 }: EditorComponentProps) {
     // State Hooks
     const [showSettings, setShowSettings] = useState<boolean>(false);
+    const [recording, setRecording] = useState<boolean>(false);
 
     const toggleSettingsMenu = () => {
         setShowSettings(!showSettings);
+    };
+
+    const toggleRecording = () => {
+        controller.getProject().exportVideo();
+        setRecording(!recording);
     };
 
     return (
@@ -48,7 +54,11 @@ export default function EditorComponent({
         >
             {/* Timeline */}
             <div style={{ gridArea: "timeline", overflow: "hidden" }}>
-                <TimelineComponent controller={controller} />
+                <TimelineComponent
+                    controller={controller}
+                    recording={recording}
+                    toggleRecording={toggleRecording}
+                />
             </div>
 
             {/* SettingsButton */}
@@ -60,7 +70,10 @@ export default function EditorComponent({
             </div>
 
             {/* Viewport */}
-            <div style={{ gridArea: "viewport", overflow: "hidden" }}>
+            <div
+                className={`${recording ? "border border-danger border-2" : ""}`}
+                style={{ gridArea: "viewport", overflow: "hidden" }}
+            >
                 {viewport}
             </div>
 
