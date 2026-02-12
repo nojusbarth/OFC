@@ -1,17 +1,42 @@
+/*KI-generiertes CSS wurde als Ausgangspunkt verwendet*/
 .bg-gradients {
     min-height: 100vh;
     background: linear-gradient(
             135deg,
-            rgba(0, 255, 255, 0.4),  /* cyan */
-            rgba(0, 128, 128, 0.4),  /* teal */
-            rgba(0, 0, 255, 0.4)     /* blue */
+            #7dc3cf,
+            #99bdd1,
+            #7c9ccd
     );
 }
 
 .logo-ofc {
-    font-size: 50px;
+    font-size: 110px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    margin-bottom: 2px;
+
+    background: linear-gradient(
+            135deg,
+            #004577,
+            #005878,
+            #004577
+    );
+
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 8px 50px rgb(0, 113, 154);
 }
 
-.text-cyan {
-    color: cyan;
+.logo-subtitle {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #004577;
+}
+
+.card {
+    border: none;
+    border-radius: 16px;
 }

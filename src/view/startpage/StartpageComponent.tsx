@@ -72,10 +72,13 @@ export default function StartpageComponent({controller, toggleStartpage}: Startp
       <div className="bg-gradients d-flex align-items-center justify-content-center">
         <div className="card shadow-sm" style={{ maxWidth: "500px", width: "100%" }}>
           <div className="card-body">
-            <h1 className="text-center logo-ofc mb-4">
+            <h1 className="text-center logo-ofc">
               OFC
             </h1>
-            <h3 className="card-title text-center mb-3">Olympian Flight Control</h3>
+
+            <h3 className="text-center logo-subtitle mb-3">
+              Olympian Flight Control
+            </h3>
             <form>
 
               {showPopup && (
