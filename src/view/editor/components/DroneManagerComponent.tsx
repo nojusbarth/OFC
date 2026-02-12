@@ -9,7 +9,7 @@ import { toolTipps } from "../config";
 import { IController } from "../../../controller/interface/IController";
 
 /**
- * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht 
+ * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht
  * über die aktuellen Drohnen hat und diese manipulieren kann.
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
  * @returns JSX-Element der Drone Manager Komponente
@@ -19,7 +19,6 @@ export default function DroneManagerComponent({
 }: {
     controller: IUndoableController;
 }) {
-
     /* ---------- State Hooks ---------- */
     const [allDrones, setAllDrones] = useState<Array<number>>(
         controller.getDrones(),
@@ -27,7 +26,9 @@ export default function DroneManagerComponent({
     const [selectedDrones, setSelectedDrones] = useState<Array<number>>(
         controller.getSelectedDrones(),
     );
-    const [collidingDrones, setCollidingDrones] = useState<Array<number>>([]);
+    const [collidingDrones, setCollidingDrones] = useState<Array<number>>(
+        Array.from(controller.getCollisions().keys()),
+    );
 
     /* ---------- Register Events ---------- */
     useEffect(() => {
@@ -35,23 +36,24 @@ export default function DroneManagerComponent({
             setAllDrones(drones);
         };
 
-        const onCollision = (droneIds: Map<number, Map<number, number>>) => {
+        const onCollisionChanged = (
+            droneIds: Map<number, Map<number, number>>,
+        ) => {
             setCollidingDrones(Array.from(droneIds.keys()));
         };
 
-        const onDroneSelected = (selectedDroneIds: Array<number>) => {
+        const onDroneSelectedChange = (selectedDroneIds: Array<number>) => {
             setSelectedDrones(selectedDroneIds);
         };
 
-
         controller.getDronesEvent().register(onDronesChanged);
-        controller.getCollisionEvent().register(onCollision);
-        controller.getDroneSelectEvent().register(onDroneSelected);
+        controller.getCollisionEvent().register(onCollisionChanged);
+        controller.getDroneSelectEvent().register(onDroneSelectedChange);
 
         return () => {
             controller.getDronesEvent().remove(onDronesChanged);
-            controller.getCollisionEvent().remove(onCollision);
-            controller.getDroneSelectEvent().remove(onDroneSelected);
+            controller.getCollisionEvent().remove(onCollisionChanged);
+            controller.getDroneSelectEvent().remove(onDroneSelectedChange);
         };
     }, [controller]);
 
@@ -93,15 +95,16 @@ export default function DroneManagerComponent({
                 {/* Drone List */}
                 <div className="row row-cols-auto justify-content-start g-4">
                     {allDrones.map((droneId) => {
-                        return (<DroneCard
-                            key={droneId}
-                            droneId={droneId}
-                            isSelected={selectedDrones.includes(droneId)}
-                            onDroneSelectionChange={onDroneSelectionChange}
-                            isColliding={collidingDrones.includes(droneId)}
-                            onRemoveDrone={onRemoveDrone}
-                            controller={controller}
-                        />
+                        return (
+                            <DroneCard
+                                key={droneId}
+                                droneId={droneId}
+                                isSelected={selectedDrones.includes(droneId)}
+                                onDroneSelectionChange={onDroneSelectionChange}
+                                isColliding={collidingDrones.includes(droneId)}
+                                onRemoveDrone={onRemoveDrone}
+                                controller={controller}
+                            />
                         );
                     })}
                 </div>
@@ -109,7 +112,21 @@ export default function DroneManagerComponent({
         </Card>
     );
 }
-function DroneCard({ droneId, isSelected, onDroneSelectionChange, isColliding, onRemoveDrone, controller }: { droneId: number, isSelected: boolean, onDroneSelectionChange: (droneId: number) => void, isColliding: boolean, onRemoveDrone: (droneId: number) => void, controller: IController }) {
+function DroneCard({
+    droneId,
+    isSelected,
+    onDroneSelectionChange,
+    isColliding,
+    onRemoveDrone,
+    controller,
+}: {
+    droneId: number;
+    isSelected: boolean;
+    onDroneSelectionChange: (droneId: number) => void;
+    isColliding: boolean;
+    onRemoveDrone: (droneId: number) => void;
+    controller: IController;
+}) {
     const [isVisible, setIsVisible] = useState(true);
     const ref = useRef<HTMLDivElement>(null);
     useEffect(() => {
@@ -133,7 +150,6 @@ function DroneCard({ droneId, isSelected, onDroneSelectionChange, isColliding, o
 
     const [color, setColor] = useState<Color | null>(null);
 
-
     useEffect(() => {
         // only update color if the card is visible to optimize performance
         if (!isVisible) return;
@@ -146,67 +162,78 @@ function DroneCard({ droneId, isSelected, onDroneSelectionChange, isColliding, o
 
         updateColor();
 
-        controller.getTimeController().getTimeChangedEvent().register(updateColor);
+        controller
+            .getTimeController()
+            .getTimeChangedEvent()
+            .register(updateColor);
         controller.getDroneChangedEvent().register(updateColor);
 
         return () => {
-            controller.getTimeController().getTimeChangedEvent().remove(updateColor);
+            controller
+                .getTimeController()
+                .getTimeChangedEvent()
+                .remove(updateColor);
             controller.getDroneChangedEvent().remove(updateColor);
         };
     }, [controller, droneId, isVisible]);
 
-    return <>
-        {/* Drone Component */}
-        <div
-            ref={ref}
-            className="col drone-manager drone-card"
-            title={isSelected ? toolTipps.DRONE_UNSELECT : toolTipps.DRONE_SELECT}
-        >
-            <Card
-                onClick={() => onDroneSelectionChange(droneId)}
-                className={` text-center 
-                                            ${isSelected
-                        ? "border-primary border-2 bg-primary bg-opacity-10"
-                        : "border-secondary"} 
-                                            ${isColliding ? "border-danger" : ""}`}
-                style={{
-                    cursor: "pointer",
-                    width: "100px",
-                    height: "100px",
-                }}
+    return (
+        <>
+            {/* Drone Component */}
+            <div
+                ref={ref}
+                className="col drone-manager drone-card"
+                title={
+                    isSelected
+                        ? toolTipps.DRONE_UNSELECT
+                        : toolTipps.DRONE_SELECT
+                }
             >
-                <Card.Body className="d-flex flex-column align-items-center gap-2 p-3">
-                    {/* Drone Color */}
-                    <div
-                        className="rounded-circle border border-secondary"
-                        style={{
-                            width: "40px",
-                            height: "40px",
-                            backgroundColor: color
-                                ? `#${color.getHexString()}`
-                                : "#888888",
-                        }} />
-
-                    {/* Drone ID */}
-                    <div className="small fw-medium">
-                        ID: {droneId}
-                    </div>
-                </Card.Body>
-
-                {/* Remove Button */}
-                <button
-                    className="drone-manager drone-card delete position-absolute top-0 end-0 m-0 p-0"
-                    title={toolTipps.DRONE_DELETE}
-
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        onRemoveDrone(droneId);
+                <Card
+                    onClick={() => onDroneSelectionChange(droneId)}
+                    className={` text-center 
+                                            ${
+                                                isSelected
+                                                    ? "border-primary border-2 bg-primary bg-opacity-10"
+                                                    : "border-secondary"
+                                            } 
+                                            ${isColliding ? "border-danger" : ""}`}
+                    style={{
+                        cursor: "pointer",
+                        width: "100px",
+                        height: "100px",
                     }}
                 >
-                    <i className="bi bi-trash" />
-                </button>
-            </Card>
-        </div>
-    </>;
-}
+                    <Card.Body className="d-flex flex-column align-items-center gap-2 p-3">
+                        {/* Drone Color */}
+                        <div
+                            className="rounded-circle border border-secondary"
+                            style={{
+                                width: "40px",
+                                height: "40px",
+                                backgroundColor: color
+                                    ? `#${color.getHexString()}`
+                                    : "#888888",
+                            }}
+                        />
 
+                        {/* Drone ID */}
+                        <div className="small fw-medium">ID: {droneId}</div>
+                    </Card.Body>
+
+                    {/* Remove Button */}
+                    <button
+                        className="drone-manager drone-card delete position-absolute top-0 end-0 m-0 p-0"
+                        title={toolTipps.DRONE_DELETE}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            onRemoveDrone(droneId);
+                        }}
+                    >
+                        <i className="bi bi-trash" />
+                    </button>
+                </Card>
+            </div>
+        </>
+    );
+}

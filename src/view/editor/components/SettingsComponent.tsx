@@ -7,6 +7,7 @@ import { IProject } from "../../../controller/interface/IProject";
 import { toolTipps } from "../config";
 import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt eine Settings Komponente auf der der Nutzer alle Einstellungen über das Projekt vornehmen kann
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
@@ -30,7 +31,8 @@ export default function SettingsComponent({
         settings.getCollisionRadius(),
     );
     const [endTime, setEndTime] = useState<number>(settings.getEndTime());
-    const [isSunCalculatorOpen, setIsSunCalculatorOpen] = useState<boolean>(false);
+    const [isSunCalculatorOpen, setIsSunCalculatorOpen] =
+        useState<boolean>(false);
 
     /* ---------- Click Handlers ---------- */
     const onChangeDayTime = (newDayTime: DayTime) => {
@@ -78,9 +80,12 @@ export default function SettingsComponent({
             </Card.Header>
 
             {/* Content */}
-            <DayTimeCalculatorModal show={isSunCalculatorOpen} onHide={() => setIsSunCalculatorOpen(false)} onResult={onChangeDayTime} />
+            <DayTimeCalculatorModal
+                show={isSunCalculatorOpen}
+                onHide={() => setIsSunCalculatorOpen(false)}
+                onResult={onChangeDayTime}
+            />
             <Card.Body className="d-flex flex-column flex-grow-1 overflow-y-auto gap-4">
-
                 <GroupComponent title={"Projekt"} iconClass={"bi-globe"}>
                     <AttributeComponent
                         title={"Tageszeit"}
@@ -112,13 +117,14 @@ export default function SettingsComponent({
 
                             <button
                                 className={`btn btn-outline-primary d-flex flex-column w-100`}
-                                onClick={() => { setIsSunCalculatorOpen(true); }}>
-
+                                onClick={() => {
+                                    setIsSunCalculatorOpen(true);
+                                }}
+                            >
                                 <i className={`bi bi-calculator-fill mb-1`} />
                                 Berechnen
                             </button>
                         </div>
-
                     </AttributeComponent>
 
                     <AttributeComponent
