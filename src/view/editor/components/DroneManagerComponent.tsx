@@ -36,22 +36,24 @@ export default function DroneManagerComponent({
             setAllDrones(drones);
         };
 
-        const onCollision = (droneIds: Map<number, Map<number, number>>) => {
+        const onCollisionChanged = (
+            droneIds: Map<number, Map<number, number>>,
+        ) => {
             setCollidingDrones(Array.from(droneIds.keys()));
         };
 
-        const onDroneSelected = (selectedDroneIds: Array<number>) => {
+        const onDroneSelectedChange = (selectedDroneIds: Array<number>) => {
             setSelectedDrones(selectedDroneIds);
         };
 
         controller.getDronesEvent().register(onDronesChanged);
-        controller.getCollisionEvent().register(onCollision);
-        controller.getDroneSelectEvent().register(onDroneSelected);
+        controller.getCollisionEvent().register(onCollisionChanged);
+        controller.getDroneSelectEvent().register(onDroneSelectedChange);
 
         return () => {
             controller.getDronesEvent().remove(onDronesChanged);
-            controller.getCollisionEvent().remove(onCollision);
-            controller.getDroneSelectEvent().remove(onDroneSelected);
+            controller.getCollisionEvent().remove(onCollisionChanged);
+            controller.getDroneSelectEvent().remove(onDroneSelectedChange);
         };
     }, [controller]);
 
