@@ -32,7 +32,7 @@ export const controlsConfig = {
 export const planeConfig = {
   size: 100,
   color: "#228B22", // Fallback, falls Textur fehlt
-  texturePath: "/assets/floor/cobble_clean.jpg",
+  texturePath: "./assets/floor/cobble_clean.jpg",
   textureRepeat: [50, 50],
   roughness: 1, // 0 = glänzend, 1 = matt
   metalness: 0, // 0 = nicht metallisch, 1 = metallisch
@@ -45,19 +45,19 @@ export const sceneLightFrames: Record<string, LightFrame> = {
     intensity: 0.15,
     color: "#6b7cff",
     position: new Vector3(0, -10, 5),
-    skyTexturePath: "/assets/sky/night.hdr",
+    skyTexturePath: "./assets/sky/night.hdr",
   },
   NOON: {
     intensity: 1.2,
     color: "#ffffff",
     position: new Vector3(0, 20, 0),
-    skyTexturePath: "/assets/sky/noon.hdr",
+    skyTexturePath: "./assets/sky/noon.hdr",
   },
   SUNSET: {
     intensity: 0.5,
     color: "#ff7a18",
     position: new Vector3(-10, 4, -10),
-    skyTexturePath: "/assets/sky/evening.hdr",
+    skyTexturePath: "./assets/sky/evening.hdr",
   },
 };
 
