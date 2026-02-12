@@ -1,18 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Vector3 } from "three";
 import { Color } from "three";
 import { ColorKeyFrame } from "../../../repository/entity/ColorKeyFrame";
 import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
 import { Card, Form } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import { toolTipps } from "../config";
 
-interface DroneEditorComponentProps {
-    controller: IUndoableController;
-}
-
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
+/**
+ * Erstellt eine Drone Editor Komponente auf der der Nutzer für die aktuell ausgewählten Drohnen Keyframes setzen und entfernen kann
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @returns JSX-Element der Drone Editor Komponente
+ */
 export default function DroneEditorComponent({
     controller,
-}: DroneEditorComponentProps) {
+}: {
+    controller: IUndoableController;
+}) {
     /* ---------- State Hooks ---------- */
     const [selectedDrones, setSelectedDrones] = useState<Array<number>>(
         controller.getSelectedDrones(),
@@ -26,6 +31,13 @@ export default function DroneEditorComponent({
         [],
     );
     const [showKeyframes, setShowKeyframes] = useState<boolean>(false);
+
+    /* ---------- Referenced Variables ---------- */
+
+    const positionKeyframeToId = useRef<Map<PositionKeyFrame, number>>(
+        new Map(),
+    );
+    const colorKeyframeToId = useRef<Map<ColorKeyFrame, number>>(new Map());
 
     /* ---------- Register Events ---------- */
     useEffect(() => {
@@ -59,9 +71,23 @@ export default function DroneEditorComponent({
             new Array<PositionKeyFrame>();
         const colorKeyframes: Array<ColorKeyFrame> = new Array<ColorKeyFrame>();
 
+        positionKeyframeToId.current.clear();
+        colorKeyframeToId.current.clear();
+
         controller.getSelectedDrones().forEach((droneId) => {
-            positionKeyframes.push(...controller.getPositionKeyFrames(droneId));
-            colorKeyframes.push(...controller.getColorKeyFrames(droneId));
+            const currentPositionKeyframes =
+                controller.getPositionKeyFrames(droneId);
+            const currentColorKeyframes = controller.getColorKeyFrames(droneId);
+
+            positionKeyframes.push(...currentPositionKeyframes);
+            colorKeyframes.push(...currentColorKeyframes);
+
+            for (const posKeyframe of currentPositionKeyframes) {
+                positionKeyframeToId.current.set(posKeyframe, droneId);
+            }
+            for (const colorKeyframe of currentColorKeyframes) {
+                colorKeyframeToId.current.set(colorKeyframe, droneId);
+            }
         });
 
         setPositionKeyframes(positionKeyframes);
@@ -79,6 +105,20 @@ export default function DroneEditorComponent({
         setColor(new Color(hexColor));
     };
 
+    const handleRemoveKeyframe = (
+        keyframe: PositionKeyFrame | ColorKeyFrame,
+    ) => {
+        if (keyframe instanceof PositionKeyFrame) {
+            const droneId = positionKeyframeToId.current.get(keyframe);
+            if (droneId == undefined) return;
+            controller.removePositionKeyFrame(droneId, keyframe);
+        } else if (keyframe instanceof ColorKeyFrame) {
+            const droneId = colorKeyframeToId.current.get(keyframe);
+            if (droneId == undefined) return;
+            controller.removeColorKeyFrame(droneId, keyframe);
+        }
+    };
+
     const handleAddPositionKeyframe = () => {
         selectedDrones.forEach((droneId) => {
             controller.addPositionKeyFrameNow(droneId, position);
@@ -94,13 +134,13 @@ export default function DroneEditorComponent({
     return (
         <Card
             className="d-flex flex-column h-100 w-100 
-    rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0"
+            rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0"
         >
             <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
                 <span className="fw-bold">Aktionen</span>
                 <div className="d-flex gap-2">
                     <button
-                        title="Rückgängig"
+                        title={toolTipps.PROJECT_UNDO}
                         className="btn btn-primary btn-sm d-flex gap-2"
                         onClick={() => {
                             controller.undo();
@@ -109,7 +149,7 @@ export default function DroneEditorComponent({
                         <i className="bi bi-caret-left" />
                     </button>
                     <button
-                        title="Wiederherstellen"
+                        title={toolTipps.PROJECT_REDO}
                         className="btn btn-primary btn-sm d-flex gap-2"
                         onClick={() => {
                             controller.redo();
@@ -161,167 +201,168 @@ export default function DroneEditorComponent({
                 )}
 
                 {selectedDrones.length > 0 && (
-                    <KeyframeEditorComponent title="Farbe Setzen">
-                        <Form.Group>
-                            <Form.Label className="small">
-                                LED-Farbe wählen
-                            </Form.Label>
-                            <input
-                                type="color"
-                                value={`#${color.getHexString()}`}
-                                onChange={(e) =>
-                                    handleColorChange(e.target.value)
-                                }
-                                style={{
-                                    cursor: "pointer",
-                                    height: "40px",
-                                    width: "100%",
-                                }}
+                    <>
+                        <KeyframeEditorComponent title="Farbe Setzen">
+                            <Form.Group>
+                                <Form.Label className="small">
+                                    LED-Farbe wählen
+                                </Form.Label>
+                                <input
+                                    type="color"
+                                    value={`#${color.getHexString()}`}
+                                    onChange={(e) =>
+                                        handleColorChange(e.target.value)
+                                    }
+                                    style={{
+                                        cursor: "pointer",
+                                        height: "40px",
+                                        width: "100%",
+                                    }}
+                                />
+                            </Form.Group>
+
+                            <AddKeyframeComponent
+                                onClick={handleAddColorKeyframe}
                             />
-                        </Form.Group>
+                        </KeyframeEditorComponent>
 
-                        <AddKeyframeComponent
-                            onClick={handleAddColorKeyframe}
-                        />
-                    </KeyframeEditorComponent>
-                )}
-
-                {/* Keyframe List */}
-                {showKeyframes && (
-                    <div className="mt-3">
-                        {/* Position Keyframes */}
-                        {positionKeyframes.length > 0 && (
-                            <div className="mb-3">
-                                <div className="text-muted small mb-2">
-                                    Position Keyframes
-                                </div>
-                                {positionKeyframes.map((keyframe, index) => (
-                                    <Card key={`pos-${index}`} className="mb-2">
-                                        <Card.Body className="p-2 d-flex align-items-center justify-content-between">
-                                            <div className="flex-grow-1">
-                                                <div className="small text-info fw-bold">
-                                                    {keyframe
-                                                        .getTime()
-                                                        .toFixed(1)}
-                                                    s
-                                                </div>
-                                                <div className="small text-muted">
-                                                    Position • [
-                                                    {keyframe
-                                                        .getPos()
-                                                        .x.toFixed(1)}
-                                                    ,{" "}
-                                                    {keyframe
-                                                        .getPos()
-                                                        .y.toFixed(1)}
-                                                    ,{" "}
-                                                    {keyframe
-                                                        .getPos()
-                                                        .z.toFixed(1)}
-                                                    ]
-                                                </div>
-                                            </div>
-                                            <button
-                                                className="btn btn-sm btn-outline-danger"
-                                                onClick={() => {
-                                                    selectedDrones.forEach(
-                                                        (droneId) => {
-                                                            controller.removePositionKeyFrame(
-                                                                droneId,
-                                                                keyframe,
-                                                            );
-                                                        },
-                                                    );
-                                                }}
-                                                title="Löschen"
-                                            >
-                                                <i className="bi bi-trash" />
-                                            </button>
-                                        </Card.Body>
-                                    </Card>
-                                ))}
+                        <div>
+                            <div>
+                                <button
+                                    className="btn btn-link text-black d-flex align-items-start gap-2"
+                                    onClick={() =>
+                                        setShowKeyframes(!showKeyframes)
+                                    }
+                                >
+                                    <TitleComponent title="Drohnen Keyframes" />
+                                    <i
+                                        className={`bi ${showKeyframes ? "bi-caret-up-fill" : "bi-caret-down-fill"}`}
+                                    />
+                                </button>
                             </div>
-                        )}
 
-                        {/* Color Keyframes */}
-                        {colorKeyframes.length > 0 && (
-                            <div className="mb-3">
-                                <div className="text-muted small mb-2">
-                                    Color Keyframes
-                                </div>
-                                {colorKeyframes.map((keyframe, index) => (
-                                    <Card key={`col-${index}`} className="mb-2">
-                                        <Card.Body className="p-2 d-flex align-items-center justify-content-between">
-                                            <div className="flex-grow-1 d-flex align-items-center gap-2">
-                                                <div
-                                                    style={{
-                                                        width: "20px",
-                                                        height: "20px",
-                                                        borderRadius: "4px",
-                                                        backgroundColor: `#${keyframe.getColor().getHexString()}`,
-                                                        border: "1px solid #ddd",
-                                                    }}
-                                                />
-                                                <div>
-                                                    <div className="small text-info fw-bold">
-                                                        {keyframe
-                                                            .getTime()
-                                                            .toFixed(1)}
-                                                        s
-                                                    </div>
-                                                    <div className="small text-muted">
-                                                        Farbe • [
-                                                        {keyframe
-                                                            .getColor()
-                                                            .r.toFixed(2)}
-                                                        ,{" "}
-                                                        {keyframe
-                                                            .getColor()
-                                                            .g.toFixed(2)}
-                                                        ,{" "}
-                                                        {keyframe
-                                                            .getColor()
-                                                            .b.toFixed(2)}
-                                                        ] • #
-                                                        {keyframe
-                                                            .getColor()
-                                                            .getHexString()
-                                                            .toUpperCase()}
-                                                        ff
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <button
-                                                className="btn btn-sm btn-outline-danger"
-                                                onClick={() => {
-                                                    selectedDrones.forEach(
-                                                        (droneId) => {
-                                                            controller.removeColorKeyFrame(
-                                                                droneId,
-                                                                keyframe,
-                                                            );
-                                                        },
-                                                    );
-                                                }}
-                                                title="Löschen"
-                                            >
-                                                <i className="bi bi-trash" />
-                                            </button>
-                                        </Card.Body>
-                                    </Card>
-                                ))}
-                            </div>
-                        )}
-
-                        {/* No Keyframes */}
-                        {positionKeyframes.length === 0 &&
-                            colorKeyframes.length === 0 && (
-                                <p className="text-muted small mb-2 mt-3">
-                                    Keine Keyframes vorhanden
-                                </p>
+                            {showKeyframes && (
+                                <KeyframeListComponent
+                                    handleRemoveKeyframe={handleRemoveKeyframe}
+                                    selectedDrones={selectedDrones}
+                                    positionKeyframes={positionKeyframes}
+                                    colorKeyframes={colorKeyframes}
+                                />
                             )}
-                    </div>
+                        </div>
+                    </>
                 )}
+            </Card.Body>
+        </Card>
+    );
+}
+
+function KeyframeListComponent({
+    handleRemoveKeyframe,
+    selectedDrones,
+    positionKeyframes,
+    colorKeyframes,
+}: {
+    handleRemoveKeyframe: (keyframe: PositionKeyFrame | ColorKeyFrame) => void;
+    selectedDrones: Array<number>;
+    positionKeyframes: Array<PositionKeyFrame>;
+    colorKeyframes: Array<ColorKeyFrame>;
+}) {
+    return (
+        <div>
+            {positionKeyframes.length > 0 && (
+                <div className="mb-3">
+                    <div className="text-muted small mb-2">
+                        Position Keyframes
+                    </div>
+                    {positionKeyframes.map((keyframe) => (
+                        <KeyframeComponent
+                            keyframe={keyframe}
+                            handleRemoveKeyframe={handleRemoveKeyframe}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {colorKeyframes.length > 0 && (
+                <div className="mb-3">
+                    <div className="text-muted small mb-2">Color Keyframes</div>
+                    {colorKeyframes.map((keyframe) => (
+                        <KeyframeComponent
+                            keyframe={keyframe}
+                            handleRemoveKeyframe={handleRemoveKeyframe}
+                        />
+                    ))}
+                </div>
+            )}
+
+            {positionKeyframes.length === 0 && colorKeyframes.length === 0 && (
+                <p className="text-muted small mb-2 mt-3">
+                    Keine Keyframes vorhanden
+                </p>
+            )}
+        </div>
+    );
+}
+
+function KeyframeComponent({
+    keyframe,
+    handleRemoveKeyframe,
+}: {
+    keyframe: PositionKeyFrame | ColorKeyFrame;
+    handleRemoveKeyframe: (keyframe: PositionKeyFrame | ColorKeyFrame) => void;
+}) {
+    return (
+        <Card className="mb-2">
+            <Card.Body className="p-2 d-flex align-items-center justify-content-between">
+                <div className="flex-grow-1 d-flex align-items-center gap-2">
+                    {keyframe instanceof ColorKeyFrame && (
+                        <div
+                            style={{
+                                width: "20px",
+                                height: "20px",
+                                borderRadius: "4px",
+                                backgroundColor: `#${keyframe.getColor().getHexString()}`,
+                                border: "1px solid var(--bs-secondary)",
+                            }}
+                        />
+                    )}
+
+                    <div>
+                        <div className="small text-info fw-bold">
+                            {keyframe.getTime().toFixed(1)}s
+                        </div>
+                        {keyframe instanceof ColorKeyFrame && (
+                            <div className="small text-muted">
+                                Farbe • [{keyframe.getColor().r.toFixed(2)},{" "}
+                                {keyframe.getColor().g.toFixed(2)},{" "}
+                                {keyframe.getColor().b.toFixed(2)}] • #
+                                {keyframe
+                                    .getColor()
+                                    .getHexString()
+                                    .toUpperCase()}
+                                ff
+                            </div>
+                        )}
+
+                        {keyframe instanceof PositionKeyFrame && (
+                            <div className="small text-muted">
+                                Position • [{keyframe.getPos().x.toFixed(1)},{" "}
+                                {keyframe.getPos().y.toFixed(1)},{" "}
+                                {keyframe.getPos().z.toFixed(1)}]
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <button
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => {
+                        handleRemoveKeyframe(keyframe);
+                    }}
+                    title="Löschen"
+                >
+                    <i className="bi bi-trash" />
+                </button>
             </Card.Body>
         </Card>
     );
@@ -336,7 +377,7 @@ function KeyframeEditorComponent({
 }) {
     return (
         <div>
-            <h6 className="fw-bold text-uppercase text-xs mb-3">{title}</h6>
+            <TitleComponent title={title} />
             <Card>
                 <Card.Body className="d-flex flex-column gap-3">
                     {children}
@@ -344,6 +385,10 @@ function KeyframeEditorComponent({
             </Card>
         </div>
     );
+}
+
+function TitleComponent({ title }: { title: string }) {
+    return <h6 className="fw-bold text-uppercase text-xs mb-3">{title}</h6>;
 }
 
 function AddKeyframeComponent({ onClick }: { onClick: () => void }) {

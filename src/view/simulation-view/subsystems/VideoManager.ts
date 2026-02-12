@@ -1,16 +1,11 @@
 /**
  * VideoManager: Zeichnet die Canvas während der Simulation auf.
- * Start/Stop per Event oder manuell.
  */
 export class VideoManager {
   private recorder: MediaRecorder | null = null;
   private chunks: BlobPart[] = [];
   private canvas: HTMLCanvasElement | null = null;
   private fps: number = 60;
-
-  constructor(fps: number = 60) {
-    this.fps = fps;
-  }
 
   /**
    * Setzt die Canvas-Referenz. Muss aufgerufen werden, bevor Recording startet.
@@ -24,7 +19,7 @@ export class VideoManager {
    */
   public start(): void {
     if (!this.canvas) {
-      console.error("VideoManager: Canvas not set. Call setCanvas() first.");
+      console.error("VideoManager: Canvas wurde nicht gesetzt.");
       return;
     }
 
@@ -48,10 +43,11 @@ export class VideoManager {
       };
 
       this.recorder.start();
-
-      console.log("🔴 Recording started...");
     } catch (error) {
-      console.error("VideoManager: Failed to start recording:", error);
+      console.error(
+        "VideoManager: Recording konnte nicht gestartet werden:",
+        error,
+      );
     }
   }
 
@@ -60,7 +56,7 @@ export class VideoManager {
    */
   public stop(): void {
     if (!this.recorder) {
-      console.warn("VideoManager: Not recording.");
+      console.error("VideoManager: Nicht am Aufzeichnen.");
       return;
     }
 
@@ -75,10 +71,9 @@ export class VideoManager {
     const blob = new Blob(this.chunks, { type: "video/webm" });
     this.downloadVideo(blob);
     this.cleanup();
-
-    console.log("✅ Recording stopped and saved.");
   }
 
+  //Funktion KI GENERIERT
   private downloadVideo(blob: Blob): void {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");

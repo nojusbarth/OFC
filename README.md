@@ -1,19 +1,33 @@
 # Olympian Flight Control
 
-### Run Development Server `npm start`
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Entwicklungsserver starten `npm start`
+Startet die Anwendung im Entwicklungsmodus.\
+Öffne [http://localhost:3000](http://localhost:3000) um die Anwendung im Browser anzuzeigen.
 
-### Run Tests `npm test`
-Run all tests
+### Tests ausführen `npm test`
+Führt alle Tests aus
 
-### Build docker image
-```bash
-# Build the image
-docker build -t ofc-app .
+### Dokumentation generieren `npx typedoc`
+Generiert die Dokumentation
 
-# Run the container
-docker run -p 8080:80 ofc-app
-```
+### Mit Docker ausführen `docker compose up`
 
-Then access your app at `http://localhost:8080`.
+Öffne dann die Anwendung unter `http://localhost:8080`.
+
+### Tastaturkürzel
+
+| Shortcut | Aktion |
+|----------|--------|
+| `Ctrl+S` | Projekt speichern |
+| `Ctrl+Z` | Rückgängig machen |
+| `Ctrl+Shift+Z` | Wiederherstellen |
+| `Ctrl+Shift+N` | Neue Drohne hinzufügen |
+| `Ctrl+A` | Alle Drohnen auswählen |
+| `Ctrl+E` | Wegpunktdaten exportieren |
+| `Ctrl+R` | Aufnahme starten/stoppen |
+| `Delete` | Ausgewählte Drohne(n) löschen |
+| `Escape` | Drohne(n) abwählen |
+| `J` / `Pfeiltaste Links` | Zeit um 1 Sekunde zurückspulen |
+| `L` / `Pfeiltaste Rechts` | Zeit um 1 Sekunde vorspulen |
+| `K` / `Leertaste` | Animation starten/stoppen |
+| `I` | Zum Anfang springen (Zeit = 0) |

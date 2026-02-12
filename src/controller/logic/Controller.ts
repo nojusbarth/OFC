@@ -13,12 +13,14 @@ import { Project } from "./Project";
 import { IProjectRepository } from "../../repository/IProjectRepository";
 import { IDrone } from "../../repository/entity/IDrone";
 
+/**
+ * Implementiert IController
+ */
 export class Controller implements IController {
     private settings: ISettings
     private timeController: ITimeController
     private project: IProject
     private repository: IProjectRepository;
-    // private drones: Map<number, Drone>
     private selectedDrones: number[] = [];
     private droneChangedEvent: OFCEvent<number> = new OFCEvent();
     private dronesEvent: OFCEvent<number[]> = new OFCEvent();
@@ -27,10 +29,17 @@ export class Controller implements IController {
     private collisionState: Map<number, Map<number, number>> = new Map();
     constructor(settings: ISettings, repository: IProjectRepository) {
         this.settings = settings;
-        this.project = new Project(repository, this);
+        this.project = new Project(repository);
         this.repository = repository;
         this.timeController = new TimeController(settings);
-        this.project.getProjectLoadedEvent().register(() => this.reset());
+        this.project.getProjectLoadedEvent().register(() => {
+            this.selectedDrones = [];
+            this.recalculateCollisions();
+        });
+        this.settings.getCollisionRadiusChangedEvent().register(() => {
+            this.recalculateCollisions();
+            this.collisionEvent.notify(new Map(this.collisionState));
+        });
     }
 
     getSettings(): ISettings {
@@ -45,15 +54,15 @@ export class Controller implements IController {
         return this.project;
     }
 
-    private reset(): void {
-        this.selectedDrones = [];
+    private recalculateCollisions(): void {
         this.collisionState = new Map();
         const drones = this.repository.getAllDrones();
         for (const drone of drones) {
             const result = checkCollisions(drone, drones, this.settings.getCollisionRadius());
-            this.collisionState.set(drone.getId(), result);
+            if (result.size > 0) {
+                this.collisionState.set(drone.getId(), result);
+            }
         }
-        this.droneSelectEvent.notify(this.selectedDrones);
     }
 
     addDrone(): number {

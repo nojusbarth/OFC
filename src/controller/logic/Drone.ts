@@ -3,6 +3,9 @@ import type {PositionKeyFrame} from "../../repository/entity/PositionKeyFrame";
 import type {ColorKeyFrame} from "../../repository/entity/ColorKeyFrame";
 import {IDrone} from "../../repository/entity/IDrone";
 
+/**
+ * Implementiert IDrone
+ */
 export class Drone implements IDrone {
     id: number
     positionKeyFrames: PositionKeyFrame[] = [];
@@ -55,18 +58,14 @@ export class Drone implements IDrone {
             return new Color();
         }
         if (this.colorKeyFrames[0].getTime() >= t) {
-            return new Color().copy(this.colorKeyFrames[0].getColor());
+            return this.colorKeyFrames[0].getColor().clone();
         }
-        for (let i = 1; i < this.colorKeyFrames.length; i++) {
-            if (this.colorKeyFrames[i].getTime() >= t) {
-                const key0 = this.colorKeyFrames[i-1];
-                const key2 = this.colorKeyFrames[i];
-                return new Color().copy(key0.getColor()).lerp(
-                    key2.getColor(),
-                    (t - key0.getTime()) / (key2.getTime() - key0.getTime()));
+        for (let i = this.colorKeyFrames.length - 1; i >= 0; i--) {
+            if (this.colorKeyFrames[i].getTime() <= t) {
+                return this.colorKeyFrames[i].getColor().clone();
             }
         }
-        return new Color().copy(this.colorKeyFrames[this.colorKeyFrames.length-1].getColor());
+        return this.colorKeyFrames[this.colorKeyFrames.length-1].getColor().clone();
     }
     
     getColorKeyFrames(): ColorKeyFrame[] {

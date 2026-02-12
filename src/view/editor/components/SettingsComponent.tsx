@@ -3,18 +3,27 @@ import { ISettings } from "../../../controller/interface/ISettings";
 import { DayTime } from "../../../repository/entity/DayTime";
 import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import { IProject } from "../../../controller/interface/IProject";
+import { toolTipps } from "../config";
+import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 
-interface SettingsComponentProps {
-    controller: IUndoableController;
-    toggleStartpage: () => void;
-}
-
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
+/**
+ * Erstellt eine Settings Komponente auf der der Nutzer alle Einstellungen über das Projekt vornehmen kann
+ * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param toggleStartpage Funktion zum Wechsel der Startpage
+ * @returns JSX-Element der Settings Komponente
+ */
 export default function SettingsComponent({
     controller,
     toggleStartpage,
-}: SettingsComponentProps) {
+}: {
+    controller: IUndoableController;
+    toggleStartpage: () => void;
+}) {
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
+    const project: IProject = controller.getProject();
 
     /* ---------- State Hooks ---------- */
     const [dayTime, setDayTime] = useState<DayTime>(settings.getDayTime());
@@ -22,6 +31,8 @@ export default function SettingsComponent({
         settings.getCollisionRadius(),
     );
     const [endTime, setEndTime] = useState<number>(settings.getEndTime());
+    const [isSunCalculatorOpen, setIsSunCalculatorOpen] =
+        useState<boolean>(false);
 
     /* ---------- Click Handlers ---------- */
     const onChangeDayTime = (newDayTime: DayTime) => {
@@ -59,7 +70,7 @@ export default function SettingsComponent({
             <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
                 <span className="fw-bold">Einstellungen</span>
                 <button
-                    title="Änderungen Speichern"
+                    title={toolTipps.PROJECT_SAVE}
                     className="btn btn-primary btn-sm d-flex gap-2"
                     onClick={onSaveSettings}
                 >
@@ -69,34 +80,51 @@ export default function SettingsComponent({
             </Card.Header>
 
             {/* Content */}
-            <Card.Body className="d-flex flex-column flex-grow-1 overflow-y-auto gap-3">
+            <DayTimeCalculatorModal
+                show={isSunCalculatorOpen}
+                onHide={() => setIsSunCalculatorOpen(false)}
+                onResult={onChangeDayTime}
+            />
+            <Card.Body className="d-flex flex-column flex-grow-1 overflow-y-auto gap-4">
                 <GroupComponent title={"Projekt"} iconClass={"bi-globe"}>
                     <AttributeComponent
                         title={"Tageszeit"}
                         description={"Beleuchtung im 3D-Viewport"}
                         iconClass={"bi-sun"}
                     >
-                        <DayTimeButtonComponent
-                            currentDayTime={dayTime}
-                            buttonDayTime={DayTime.NOON}
-                            iconClass={"bi-sun"}
-                            text={"Tag"}
-                            onChangeDayTime={onChangeDayTime}
-                        />
-                        <DayTimeButtonComponent
-                            currentDayTime={dayTime}
-                            buttonDayTime={DayTime.SUNSET}
-                            iconClass={"bi-sunset"}
-                            text={"Dämmerung"}
-                            onChangeDayTime={onChangeDayTime}
-                        />
-                        <DayTimeButtonComponent
-                            currentDayTime={dayTime}
-                            buttonDayTime={DayTime.NIGHT}
-                            iconClass={"bi-moon-stars"}
-                            text={"Nacht"}
-                            onChangeDayTime={onChangeDayTime}
-                        />
+                        <div className="d-flex flex-wrap gap-2 w-100">
+                            <DayTimeButtonComponent
+                                currentDayTime={dayTime}
+                                buttonDayTime={DayTime.NOON}
+                                iconClass={"bi-sun"}
+                                text={"Tag"}
+                                onChangeDayTime={onChangeDayTime}
+                            />
+                            <DayTimeButtonComponent
+                                currentDayTime={dayTime}
+                                buttonDayTime={DayTime.SUNSET}
+                                iconClass={"bi-sunset"}
+                                text={"Dämmerung"}
+                                onChangeDayTime={onChangeDayTime}
+                            />
+                            <DayTimeButtonComponent
+                                currentDayTime={dayTime}
+                                buttonDayTime={DayTime.NIGHT}
+                                iconClass={"bi-moon-stars"}
+                                text={"Nacht"}
+                                onChangeDayTime={onChangeDayTime}
+                            />
+
+                            <button
+                                className={`btn btn-outline-primary d-flex flex-column w-100`}
+                                onClick={() => {
+                                    setIsSunCalculatorOpen(true);
+                                }}
+                            >
+                                <i className={`bi bi-calculator-fill mb-1`} />
+                                Berechnen
+                            </button>
+                        </div>
                     </AttributeComponent>
 
                     <AttributeComponent
@@ -147,11 +175,27 @@ export default function SettingsComponent({
                         <button
                             className="btn btn-outline-success"
                             onClick={() => {
-                                controller.getProject().saveProject();
+                                project.saveProject();
                             }}
                         >
                             <i className="bi bi-save me-2"></i>
                             Speichern
+                        </button>
+                    </AttributeComponent>
+                    <AttributeComponent
+                        title={"Waypoint-Export"}
+                        description={"Exportiere als Waypoint-at-Time Format"}
+                        iconClass={"bi-file-earmark-text"}
+                    >
+                        <button
+                            className="btn btn-outline-primary w-100 mt-2"
+                            title={toolTipps.PROJECT_WAYPOINT_EXPORT}
+                            onClick={() => {
+                                project.exportWayPointData();
+                            }}
+                        >
+                            <i className="bi bi-file-earmark-arrow-down me-2"></i>
+                            Waypoints exportieren
                         </button>
                     </AttributeComponent>
                     <AttributeComponent
@@ -165,30 +209,6 @@ export default function SettingsComponent({
                         >
                             <i className="bi bi-house-door me-2"></i>
                             Zur Startseite
-                        </button>
-                    </AttributeComponent>
-                    <AttributeComponent
-                        title={"Video-Export"}
-                        description={"Exportiere die Show als MP4-Video"}
-                        iconClass={"bi-camera-video"}
-                    >
-                        <button
-                            className="btn btn-outline-primary w-100 mt-2" /*TODO: Export Function*/
-                        >
-                            <i className="bi bi-camera-video me-2"></i>
-                            Video exportieren
-                        </button>
-                    </AttributeComponent>
-                    <AttributeComponent
-                        title={"Waypoint-Export"}
-                        description={"Exportiere als Waypoint-at-Time Format"}
-                        iconClass={"bi-file-earmark-text"}
-                    >
-                        <button
-                            className="btn btn-outline-primary w-100 mt-2" /*TODO: Export Function*/
-                        >
-                            <i className="bi bi-file-earmark-arrow-down me-2"></i>
-                            Waypoints exportieren
                         </button>
                     </AttributeComponent>
                 </GroupComponent>

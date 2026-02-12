@@ -1,15 +1,12 @@
-import { Result } from "../../repository/Result"
-import { OFCEvent } from "./OFCEvent"
+import {Result} from "../../repository/Result"
+import {OFCEvent} from "./OFCEvent"
+
 // Kommentare von KI verfasst
 /**
  * Schnittstelle für Projektverwaltungsvorgänge.
  * Verwaltet Projektpersistierung und Import-/Export-Funktionalität.
  */
 export interface IProject {
-    /**
-     * Exportiert die aktuelle Animation als Videodatei.
-     */
-    exportVideo(): void
 
     /**
      * Exportiert Wegpunktdaten für alle Drohnen.
@@ -27,11 +24,12 @@ export interface IProject {
     newProject(): void
 
     /**
-     * Lädt ein Projekt aus serialisierten Daten.
-     * @param data - Serialisierter Projektdaten-String
-     * @throws wenn die Daten ungültig sind
+     * Lädt ein Projekt aus einer Datei.
+     * @param file - Die Datei, die geladen werden soll.
+     * @param onCompleted - Wird ausgeführt, sobald das Projekt geladen wurde und zeigt das Ergebnis als `Result`.
+     *
      */
-    loadProject(file: File, onCompleted: (result: Result<null>) => void): void
+    loadProject(file: File, onCompleted: (result: Result<boolean>) => void): void
 
     /**
      * Lädt das zuletzt gespeicherte Projekt aus dem lokalen Speicher.
@@ -49,4 +47,26 @@ export interface IProject {
      * @returns Das Projekt geladen Ereignis
      */
     getProjectLoadedEvent(): OFCEvent<void>;
+
+        /**
+     * Startet die Aufzeichnung der Animation.
+     */
+    startRecording(): void
+
+    /**
+     * Stoppt die Aufzeichnung der Animation.
+     */
+    stopRecording(): void
+
+    /**
+     * Prüft, ob die Animation aktuell aufgezeichnet wird.
+     * @returns true, wenn die Animation aufgezeichnet wird, sonst false
+     */
+    getRecordingRunning(): boolean
+    
+    /**
+     * Ruft den Event-Emitter für Aufzeichnungszustand-Änderungen ab.
+     * @returns Event-Emitter für Aufzeichnungszustand (true = aufzeichnen, false = nicht aufzeichnen)
+     */
+    getRecordingRunningEvent(): OFCEvent<boolean>
 }

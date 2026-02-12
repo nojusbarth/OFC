@@ -1,16 +1,18 @@
 import { useEffect } from "react";
 import { IUndoableController } from "../controller/interface/IUndoableController";
 
-export function KeyboardShortcuts({
-    controller,
-}: {
-    controller: IUndoableController;
-}) {
+/**
+ * Verwaltet Tastaturkürzel für den gegebenen Controller.
+ * @param controller der Controller auf dem die Aktionen ausgeführt werden sollen.
+ * @returns 
+ */
+export function KeyboardShortcuts({controller}: {controller: IUndoableController}) {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.ctrlKey && event.key === "s") {
                 event.preventDefault();
                 controller.getProject().saveProject();
+                return;
             }
             if (event.ctrlKey && event.key.toLowerCase() === "z") {
                 event.preventDefault();
@@ -19,14 +21,41 @@ export function KeyboardShortcuts({
                 } else {
                     controller.undo();
                 }
+                return;
             }
-            if (event.ctrlKey && event.key === "n") {
+            if (event.ctrlKey && event.shiftKey && event.key === "n") {
                 event.preventDefault();
                 controller.addDrone();
+                return;
             }
-            // console.log(event.key);
+            if (event.ctrlKey && event.key === "a") {
+                event.preventDefault();
+                controller.getDrones().forEach(drone => controller.selectDrone(drone));
+                return;
+            }
+            if (event.ctrlKey && event.key === "e") {
+                event.preventDefault();
+                controller.getProject().exportWayPointData();
+                return;
+            }
+            if (event.ctrlKey && event.key === "r") { 
+                event.preventDefault();
+                if (controller.getProject().getRecordingRunning()) {
+                    controller.getProject().stopRecording();
+                } else {
+                    controller.getProject().startRecording();
+                }
+                return;
+            }
+
             let newTime;
             switch (event.key) {
+                case "Delete":
+                    controller.getSelectedDrones().forEach(drone => controller.removeDrone(drone));
+                    break;
+                case "Escape":
+                    controller.getSelectedDrones().forEach(drone => controller.unselectDrone(drone));
+                    break;
                 case "j":
                 case "ArrowLeft":
                     newTime = controller.getTimeController().getTime() - 1;

@@ -3,6 +3,10 @@ import { OFCEvent } from "../interface/OFCEvent";
 import type { ISettings } from "../interface/ISettings";
 import { IProjectRepository } from "../../repository/IProjectRepository";
 
+
+/**
+ * Implementiert ISettings
+ */
 export class Settings implements ISettings {
     private repository: IProjectRepository;
 
