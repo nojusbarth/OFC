@@ -21,7 +21,7 @@ Generiert die Dokumentation
 | `Ctrl+S` | Projekt speichern |
 | `Ctrl+Z` | Rückgängig machen |
 | `Ctrl+Shift+Z` | Wiederherstellen |
-| `Ctrl+N` | Neue Drohne hinzufügen |
+| `Ctrl+Shift+N` | Neue Drohne hinzufügen |
 | `Ctrl+A` | Alle Drohnen auswählen |
 | `Ctrl+E` | Wegpunktdaten exportieren |
 | `Ctrl+R` | Aufnahme starten/stoppen |
