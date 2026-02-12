@@ -7,6 +7,7 @@ import SettingsButtonComponent from "./components/SettingsButtonComponent";
 import { IUndoableController } from "../../controller/interface/IUndoableController";
 import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
 
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt die vollständige Editor Seite als Editor Komponente
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
@@ -27,19 +28,24 @@ export default function EditorComponent({
 
     /* ---------- State Hooks ---------- */
     const [showSettings, setShowSettings] = useState<boolean>(false);
-    const [recording, setRecording] = useState<boolean>(controller.getProject().getRecordingRunning());
+    const [recording, setRecording] = useState<boolean>(
+        controller.getProject().getRecordingRunning(),
+    );
 
     /* ---------- Register Events ---------- */
     useEffect(() => {
-
         const handleRecordingRunningChange = (isRunning: boolean) => {
             setRecording(isRunning);
         };
 
-        project.getRecordingRunningEvent().register(handleRecordingRunningChange);
+        project
+            .getRecordingRunningEvent()
+            .register(handleRecordingRunningChange);
 
         return () => {
-            project.getRecordingRunningEvent().remove(handleRecordingRunningChange);
+            project
+                .getRecordingRunningEvent()
+                .remove(handleRecordingRunningChange);
         };
     }, [controller]);
 
@@ -71,9 +77,7 @@ export default function EditorComponent({
         >
             {/* Timeline */}
             <div style={{ gridArea: "timeline", overflow: "hidden" }}>
-                <TimelineComponent
-                    controller={controller}
-                />
+                <TimelineComponent controller={controller} />
             </div>
 
             {/* SettingsButton */}

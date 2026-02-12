@@ -7,6 +7,7 @@ import { Card, Form } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { toolTipps } from "../config";
 
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt eine Drone Editor Komponente auf der der Nutzer für die aktuell ausgewählten Drohnen Keyframes setzen und entfernen kann
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
@@ -15,7 +16,7 @@ import { toolTipps } from "../config";
 export default function DroneEditorComponent({
     controller,
 }: {
-    controller: IUndoableController,
+    controller: IUndoableController;
 }) {
     /* ---------- State Hooks ---------- */
     const [selectedDrones, setSelectedDrones] = useState<Array<number>>(
