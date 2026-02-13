@@ -88,7 +88,7 @@ function App() {
     // Reset time to 0
     ctrl.getTimeController().setTime(0);
 
-    return new UndoableController(ctrl, new UndoRepository(), new UndoRepository());
+    return new UndoableController(ctrl, repository, new UndoRepository(), new UndoRepository());
   }, []);
 
   const tolleSache = useMemo(() => [
@@ -132,8 +132,8 @@ function App() {
   let inhalt: React.ReactNode;
   if (showStartpage) {
     inhalt = <StartpageComponent
-        controller={controller}
-        toggleStartpage={() => setShowStartpage(false)}
+      controller={controller}
+      toggleStartpage={() => setShowStartpage(false)}
     />;
   } else {
     inhalt = (

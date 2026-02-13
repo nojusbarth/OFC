@@ -42,7 +42,7 @@ export interface IController {
     removeDrone(id: number): void;
 
     /**
-     * Ruft alle Drohnen-IDs im System ab.
+     * Ruft alle Drohnen-IDs im System in aufsteigender Reihenfolge ab.
      * @returns Array von Drohnen-IDs
      */
     getDrones(): number[];

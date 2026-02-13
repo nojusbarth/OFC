@@ -11,6 +11,7 @@ import type { IUndoRepository } from "../../repository/IUndoRepository";
 import { ActionType } from "../../repository/entity/ActionType";
 import { Action } from "../../repository/entity/Action";
 import { IAction } from "../../repository/entity/IAction";
+import { IProjectRepository } from "../../repository/IProjectRepository";
 
 /**
  * Implementiert IUndoableController, ein Decorator für IController
@@ -22,16 +23,18 @@ export class UndoableController implements IUndoableController {
     private idRemapping: Map<number, number> = new Map();
     private undoFlag: boolean = false; // indicates if we are currently performing an undo
     private redoFlag: boolean = false; // indicates if we are currently performing a redo
+    repository: IProjectRepository;
 
-    constructor(controller: IController, undoStack: IUndoRepository, redoStack: IUndoRepository) {
+    constructor(controller: IController, repository: IProjectRepository, undoStack: IUndoRepository, redoStack: IUndoRepository) {
         this.controller = controller;
+        this.repository = repository;
         this.undoStack = undoStack;
         this.redoStack = redoStack;
 
         this.controller.getProject().getProjectLoadedEvent().register(() => {
             this.idRemapping.clear();
-            while (this.undoStack.popAction()) {}
-            while (this.redoStack.popAction()) {}
+            while (this.undoStack.popAction()) { }
+            while (this.redoStack.popAction()) { }
             this.undoFlag = false;
             this.redoFlag = false;
         });
@@ -55,37 +58,29 @@ export class UndoableController implements IUndoableController {
         this.redoFlag = false;
     }
 
-    private _getRemappedId(id: number): number {
-        while (this.idRemapping.has(id)) {
-            id = this.idRemapping.get(id)!;
-        }
-        return id;
-    }
-
     private _reverseAction(action: IAction): void {
 
         switch (action.getType()) {
             case ActionType.ADD_DRONE: {
-                const droneId = action.getData().droneId;
-                this.removeDrone(droneId);
+                const id = action.getData().id;
+                this.removeDrone(id);
                 break;
             }
 
             case ActionType.REMOVE_DRONE: {
-                const droneData = action.getData();
-                const newId = this.addDrone();
-                this.idRemapping.set(droneData.id, newId);
-                for (const pkf of droneData.positionKeyFrames) {
-                    this.controller.addPositionKeyFrame(newId, pkf);
+                const drone = action.getData().drone;
+                const selected = action.getData().selected;
+                this.repository.addDrone(drone);
+                this.getDronesEvent().notify(this.getDrones());
+                if (selected) {
+                    this.controller.selectDrone(drone.getId());
                 }
-                for (const ckf of droneData.colorKeyFrames) {
-                    this.controller.addColorKeyFrame(newId, ckf);
-                }
+                this._pushAction(ActionType.ADD_DRONE, { id: drone.getId() });
                 break;
             }
 
             case ActionType.ADD_POSITION_KEYFRAME: {
-                const id = this._getRemappedId(action.getData().id);
+                const id = action.getData().id;
                 const previousKeyFrame = action.getData().previousKeyFrame;
                 if (previousKeyFrame) {
                     this.addPositionKeyFrame(id, previousKeyFrame);
@@ -101,14 +96,14 @@ export class UndoableController implements IUndoableController {
             }
 
             case ActionType.REMOVE_POSITION_KEYFRAME: {
-                const id = this._getRemappedId(action.getData().id);
+                const id = action.getData().id;
                 const keyFrame: PositionKeyFrame = action.getData().keyFrame;
                 this.addPositionKeyFrame(id, keyFrame);
                 break;
             }
 
             case ActionType.ADD_COLOR_KEYFRAME: {
-                const id = this._getRemappedId(action.getData().id);
+                const id = action.getData().id;
                 const previousKeyFrame = action.getData().previousKeyFrame;
                 if (previousKeyFrame) {
                     this.addColorKeyFrame(id, previousKeyFrame);
@@ -122,14 +117,14 @@ export class UndoableController implements IUndoableController {
                 }
                 break;
             }
-            
+
             case ActionType.REMOVE_COLOR_KEYFRAME: {
-                const id = this._getRemappedId(action.getData().id);
+                const id = action.getData().id;
                 const keyFrame: ColorKeyFrame = action.getData().keyFrame;
                 this.addColorKeyFrame(id, keyFrame);
                 break;
             }
-    
+
             case ActionType.SELECT_DRONE: {
                 const id = action.getData().id;
                 this.unselectDrone(id);
@@ -154,7 +149,7 @@ export class UndoableController implements IUndoableController {
 
         this.undoStack.addAction(action);
         if (!this.redoFlag) {
-            while (this.redoStack.popAction()) {}
+            while (this.redoStack.popAction()) { }
         }
     }
 
@@ -174,35 +169,34 @@ export class UndoableController implements IUndoableController {
     getSettings(): ISettings {
         return this.controller.getSettings();
     }
-    
+
     getTimeController(): ITimeController {
         return this.controller.getTimeController();
     }
-    
+
     getProject(): IProject {
         return this.controller.getProject();
     }
-    
+
     addDrone(): number {
-        const droneId = this.controller.addDrone();
-        this._pushAction(ActionType.ADD_DRONE, { droneId });
-        return droneId;
+        const id = this.controller.addDrone();
+        this._pushAction(ActionType.ADD_DRONE, { id });
+        return id;
     }
-    
+
     removeDrone(id: number): void {
-        const droneData = {
-            id: id,
-            positionKeyFrames: this.controller.getPositionKeyFrames(id),
-            colorKeyFrames: this.controller.getColorKeyFrames(id)
-        };
-        this._pushAction(ActionType.REMOVE_DRONE, droneData);
+        const drone = this.repository.getDroneById(id);
+        if (drone) {
+            const selected = this.controller.getSelectedDrones().includes(id);
+            this._pushAction(ActionType.REMOVE_DRONE, { drone, selected });
+        }
         this.controller.removeDrone(id);
     }
-    
+
     getDrones(): number[] {
         return this.controller.getDrones();
     }
-    
+
     selectDrone(id: number): void {
         const previousSize = this.controller.getSelectedDrones().length;
         this.controller.selectDrone(id);
@@ -219,23 +213,23 @@ export class UndoableController implements IUndoableController {
         if (previousSize !== newSize) {
             this._pushAction(ActionType.UNSELECT_DRONE, { id });
         }
-    }        
+    }
     getSelectedDrones(): number[] {
         return this.controller.getSelectedDrones();
     }
-    
+
     getPositionKeyFrames(id: number): PositionKeyFrame[] {
         return this.controller.getPositionKeyFrames(id);
     }
-    
+
     getPosition(id: number): Vector3 {
         return this.controller.getPosition(id);
     }
-    
+
     getPositionAt(id: number, time: number): Vector3 {
         return this.controller.getPositionAt(id, time);
     }
-    
+
     addPositionKeyFrameNow(id: number, position: Vector3): void {
         this.addPositionKeyFrame(id, new PositionKeyFrame(position, this.controller.getTimeController().getTime()));
     }
@@ -247,7 +241,7 @@ export class UndoableController implements IUndoableController {
         this._pushAction(ActionType.ADD_POSITION_KEYFRAME, { id, previousKeyFrame });
         this.controller.addPositionKeyFrame(id, keyFrame);
     }
-    
+
     removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
         if (this._findKeyFrameAtTime(this.controller.getPositionKeyFrames(id), keyFrame.getTime()) !== null) {
             // only undo if keyframe existed
@@ -256,15 +250,15 @@ export class UndoableController implements IUndoableController {
         this.controller.removePositionKeyFrame(id, keyFrame);
     }
 
-    
+
     getColorKeyFrames(id: number): ColorKeyFrame[] {
         return this.controller.getColorKeyFrames(id);
     }
-    
+
     getColor(id: number): Color {
         return this.controller.getColor(id);
     }
-    
+
     getColorAt(id: number, time: number): Color {
         return this.controller.getColorAt(id, time);
     }
@@ -272,15 +266,15 @@ export class UndoableController implements IUndoableController {
     addColorKeyFrameNow(id: number, color: Color): void {
         this.addColorKeyFrame(id, new ColorKeyFrame(color, this.controller.getTimeController().getTime()));
     }
-    
+
     addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
         const keyFrames = this.controller.getColorKeyFrames(id);
         const previousKeyFrame = this._findKeyFrameAtTime(keyFrames, this._currentTime());
-        
+
         this._pushAction(ActionType.ADD_COLOR_KEYFRAME, { id, previousKeyFrame });
         this.controller.addColorKeyFrame(id, keyFrame);
     }
-    
+
     removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
         if (this._findKeyFrameAtTime(this.controller.getColorKeyFrames(id), keyFrame.getTime()) !== null) {
             // only undo if keyframe existed
@@ -292,19 +286,19 @@ export class UndoableController implements IUndoableController {
     getCollisions(): Map<number, Map<number, number>> {
         return this.controller.getCollisions();
     }
-    
+
     getDroneChangedEvent(): OFCEvent<number> {
         return this.controller.getDroneChangedEvent();
     }
-    
+
     getDronesEvent(): OFCEvent<number[]> {
         return this.controller.getDronesEvent();
     }
-    
+
     getCollisionEvent(): OFCEvent<Map<number, Map<number, number>>> {
         return this.controller.getCollisionEvent();
     }
-    
+
     getDroneSelectEvent(): OFCEvent<number[]> {
         return this.controller.getDroneSelectEvent();
     }
