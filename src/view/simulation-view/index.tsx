@@ -16,6 +16,14 @@ export function initSimulation(controller : IController) {
 
   // Registriere Controller Events
 
+  controller.getProject().getProjectLoadedEvent().register(() => {
+      console.log("Project loaded event ");
+
+      simulation.notifyCollisionChange(Array.from(controller.getCollisions().keys()));
+      simulation.setSimulationTime(controller.getSettings().getDayTime());
+  
+  });
+
   controller.getDronesEvent().register((drones) => {
     console.log("Drones changed event ", drones);  
   
@@ -83,6 +91,7 @@ export function initSimulation(controller : IController) {
       lightStore={lightStore}
       onReady={(gl: THREE.WebGLRenderer) => {
         simulation.setCanvasForRecording(gl.domElement);
+        
         simulation.notifyFrameChange();
       }}
     />

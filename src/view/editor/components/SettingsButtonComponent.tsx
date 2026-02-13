@@ -3,6 +3,7 @@ interface SettingsButtonComponentProps {
     toggleSettingsMenu: () => void;
 }
 
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt eine einfache Settings Button Komponente auf der der Nutzer zwischen dem Settings Menü
  * oder Drone Editor Menü swichen kann.

@@ -1,6 +1,7 @@
 {
   "name": "olympian-flight-control",
   "version": "0.1.0",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@react-three/drei": "^10.7.7",

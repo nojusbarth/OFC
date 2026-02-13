@@ -8,6 +8,7 @@ import { IUndoableController } from "../../../controller/interface/IUndoableCont
 import { toolTipps } from "../config";
 import { ITimeController } from "../../../controller/interface/ITimeController";
 
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt eine Drone Editor Komponente auf der der Nutzer für die aktuell ausgewählten Drohnen Keyframes setzen und entfernen kann
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit

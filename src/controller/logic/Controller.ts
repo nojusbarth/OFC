@@ -59,7 +59,9 @@ export class Controller implements IController {
         const drones = this.repository.getAllDrones();
         for (const drone of drones) {
             const result = checkCollisions(drone, drones, this.settings.getCollisionRadius());
-            this.collisionState.set(drone.getId(), result);
+            if (result.size > 0) {
+                this.collisionState.set(drone.getId(), result);
+            }
         }
     }
 
@@ -81,7 +83,7 @@ export class Controller implements IController {
     }
 
     getDrones(): number[] {
-        return this.repository.getAllDrones().map(drone => drone.getId());
+        return this.repository.getAllDrones().map(drone => drone.getId()).sort((a, b) => a - b);
     }
 
     selectDrone(id: number): void {
