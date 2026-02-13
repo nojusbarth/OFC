@@ -388,7 +388,6 @@ function KeyframeComponent({
                                         .getColor()
                                         .getHexString()
                                         .toUpperCase()}
-                                    ff
                                 </>
                             )}
                             {keyframe instanceof PositionKeyFrame && (
