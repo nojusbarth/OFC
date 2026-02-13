@@ -1,100 +1,80 @@
-import "./App.css";
-import { useEffect, useMemo, useState } from "react";
-import { initSimulation } from "./view/simulation-view";
-import { Controller } from "./controller/logic/Controller";
-import { ProjectRepository } from "./repository/ProjectRepository";
-import { Settings } from "./controller/logic/Settings";
-import { Color, Vector3 } from "three";
-import { DayTime } from "./repository/entity/DayTime";
-import { PositionKeyFrame } from "./repository/entity/PositionKeyFrame";
-import { ColorKeyFrame } from "./repository/entity/ColorKeyFrame";
-import EditorComponent from "./view/editor/EditorComponent";
-import StartpageComponent from "./view/startpage/StartpageComponent";
-import { Canvas } from "@react-three/fiber";
-import { UndoableController } from "./controller/logic/UndoableController";
-import { UndoRepository } from "./repository/UndoRepository";
-import { KeyboardShortcuts } from "./view/KeyboardShortcuts";
-import { rocketShow } from "./shows/rocket";
-import { runnerShow } from "./shows/runner";
-import { helloKitShow } from "./shows/hello_kit";
+import './App.css';
+import { useEffect, useMemo, useState } from 'react';
+import { initSimulation } from './view/simulation-view';
+import { Controller } from './controller/logic/Controller';
+import { ProjectRepository } from './repository/ProjectRepository';
+import { Settings } from './controller/logic/Settings';
+import { Color, Vector3 } from 'three';
+import { DayTime } from './repository/entity/DayTime';
+import { PositionKeyFrame } from './repository/entity/PositionKeyFrame';
+import { ColorKeyFrame } from './repository/entity/ColorKeyFrame';
+import EditorComponent from './view/editor/EditorComponent';
+import StartpageComponent from './view/startpage/StartpageComponent';
+import { Canvas } from '@react-three/fiber';
+import { UndoableController } from './controller/logic/UndoableController';
+import { UndoRepository } from './repository/UndoRepository';
+import { KeyboardShortcuts } from './view/KeyboardShortcuts';
+
 
 function App() {
   // State Hooks
-  const [showStartpage, setShowStartpage] = useState<boolean>(true);
+  const [showStartpage, setShowStartpage] = useState<boolean>(true); //TODO true
 
-    // create controller with some test data
-    const controller = useMemo(() => {
-        const repository = new ProjectRepository();
-        const settings = new Settings(repository);
-        const ctrl = new Controller(settings, repository);
-        const ctrl2 = new UndoableController(
-            ctrl,
-            new UndoRepository(),
-            new UndoRepository(),
-        );
+  // create controller with some test data
+  const controller = useMemo(() => {
+    const repository = new ProjectRepository();
+    const settings = new Settings(repository);
+    const ctrl = new Controller(settings, repository);
 
-        //helloKitShow(ctrl2);
-        rocketShow(ctrl2);
-        //runnerShow(ctrl2);
+    // Configure settings
+    ctrl.getSettings().setEndTime(30);
+    ctrl.getSettings().setCollisionRadius(2);
 
-        // Reset time to 0
-        ctrl2.getTimeController().setTime(0);
-
-        return ctrl2;
-    }, []);
-
-    const tolleSache = useMemo(
-        () =>
-            [
-                ["Record start", () => simulation.startRecording()],
-                ["Record stop", () => simulation.stopRecording()],
-            ] as Array<[string, () => void]>,
-        [controller],
+    // Add drones with position keyframes
+    const drone1 = ctrl.addDrone();
+    ctrl.addPositionKeyFrame(
+      drone1,
+      new PositionKeyFrame(new Vector3(0, 0, 0), 0),
+    );
+    ctrl.getTimeController().setTime(10);
+    ctrl.addPositionKeyFrame(
+      drone1,
+      new PositionKeyFrame(new Vector3(10, 5, 0), 10),
+    );
+    ctrl.getTimeController().setTime(20);
+    ctrl.addPositionKeyFrame(
+      drone1,
+      new PositionKeyFrame(new Vector3(20, 0, 0), 20),
     );
 
-    useEffect(() => {
-        // keypress listener
-        const handleKeyPress = (event: KeyboardEvent) => {
-            if (event.key === "t") {
-                const action = tolleSache.shift();
-                if (action) {
-                    const [msg, fn] = action;
-                    console.log("Aktion:", msg);
-                    fn();
-                }
-            }
-        };
-        window.addEventListener("keydown", handleKeyPress);
-        return () => {
-            window.removeEventListener("keydown", handleKeyPress);
-        };
-    }, [tolleSache]);
-
-    // initSimulation liefert die Simulation-Fassade und die Scene-Komponente
-    const { simulation, Scene } = useMemo(
-        () => initSimulation(controller),
-        [controller],
+    const drone2 = ctrl.addDrone();
+    ctrl.getTimeController().setTime(0);
+    ctrl.addPositionKeyFrame(
+      drone2,
+      new PositionKeyFrame(new Vector3(0, 10, 0), 0),
+    );
+    ctrl.getTimeController().setTime(10);
+    ctrl.addPositionKeyFrame(
+      drone2,
+      new PositionKeyFrame(new Vector3(10, 15, 0), 10),
+    );
+    ctrl.getTimeController().setTime(20);
+    ctrl.addPositionKeyFrame(
+      drone2,
+      new PositionKeyFrame(new Vector3(20, 10, 0), 20),
     );
 
-    let inhalt: React.ReactNode;
-    if (showStartpage) {
-        inhalt = <StartpageComponent />;
-    } else {
-        inhalt = (
-            <>
-                <EditorComponent
-                    viewport={
-                        <Canvas>
-                            <Scene />
-                        </Canvas>
-                    }
-                    controller={controller}
-                    toggleStartpage={() => setShowStartpage(true)}
-                />
-                <KeyboardShortcuts controller={controller} />
-            </>
-        );
-    }
+    const drone3 = ctrl.addDrone();
+    ctrl.getTimeController().setTime(0);
+    ctrl.addPositionKeyFrame(
+      drone3,
+      new PositionKeyFrame(new Vector3(5, 5, 5), 0),
+    );
+    ctrl.getTimeController().setTime(15);
+    ctrl.addPositionKeyFrame(
+      drone3,
+      new PositionKeyFrame(new Vector3(15, 10, 5), 15),
+    );
 
     // Add color keyframes
     ctrl.getTimeController().setTime(0);
