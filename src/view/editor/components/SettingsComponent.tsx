@@ -10,11 +10,12 @@ import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt eine Settings Komponente auf der der Nutzer alle Einstellungen über das Projekt vornehmen kann
- * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
- * @param toggleStartpage Funktion zum Wechsel der Startpage
+ * @param props
+ * @param props.controller - Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param props.toggleStartpage - Funktion zum Wechsel zur Startpage
  * @returns JSX-Element der Settings Komponente
  */
-export default function SettingsComponent({
+export function SettingsComponent({
     controller,
     toggleStartpage,
 }: {

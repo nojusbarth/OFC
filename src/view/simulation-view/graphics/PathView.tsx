@@ -7,16 +7,13 @@ import { useFrame } from '@react-three/fiber'
 
 import { pathConfig } from "../config";
 
-type Props = {
-  frame: PathFrame;
-};
-
 /**
- * JSX Komponente, die die Pfade der Drohnen in der Szene rendert.
- * @param frame PathFrame, der die Positionen und Farben der Pfade enthält 
+ * JSX Komponente, die die Pfade der Drohnen in der Szene rendert
+ * @param props
+ * @param props.frame - PathFrame, der die Positionen und Farben der Pfade enthält
  * @returns JSX-Elemente für die Pfade in der Szene
  */
-export const PathView: React.FC<Props> = ({ frame }) => {
+export function PathView({ frame }: { frame: PathFrame }) {
   return (
     <>
       {Array.from(frame.pathPositions.entries()).map(([id, points]) => {

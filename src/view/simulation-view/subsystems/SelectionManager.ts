@@ -61,7 +61,7 @@ export class SelectionManager {
   /**
    * Aktualisiert die Liste der Drohnen, die ausgwählt sind.
    *
-   * @param id - Die ID der Drohne
+   * @param ids - Die IDs der ausgewählten Drohnen
    * @public
    */
   public selectDrone(ids: number[]) {

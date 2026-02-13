@@ -4,15 +4,19 @@ import { initSimulation } from './view/simulation-view';
 import { Controller } from './controller/logic/Controller';
 import { ProjectRepository } from './repository/ProjectRepository';
 import { Settings } from './controller/logic/Settings';
-import EditorComponent from './view/editor/EditorComponent';
-import StartpageComponent from './view/startpage/StartpageComponent';
+import { EditorComponent } from './view/editor/EditorComponent';
+import { StartpageComponent } from './view/startpage/StartpageComponent';
 import { Canvas } from '@react-three/fiber';
 import { UndoableController } from './controller/logic/UndoableController';
 import { UndoRepository } from './repository/UndoRepository';
 import { KeyboardShortcuts } from './view/KeyboardShortcuts';
 
-
-function App() {
+/**
+ * Hauptkomponente der Anwendung
+ * Verwaltet den globalen Zustand zwischen Startpage und Editor
+ * @returns JSX-Element der Anwendung
+ */
+export function App() {
   // State Hooks
   const [showStartpage, setShowStartpage] = useState<boolean>(true);
   const controller = useMemo(() => {
@@ -40,8 +44,8 @@ function App() {
 
   if (showStartpage) {
     return <StartpageComponent
-        controller={controller}
-        toggleStartpage={() => setShowStartpage(false)}
+      controller={controller}
+      toggleStartpage={() => setShowStartpage(false)}
     />;
   } else {
     return (
@@ -57,4 +61,3 @@ function App() {
   }
 }
 
-export default App;

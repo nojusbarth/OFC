@@ -1,19 +1,20 @@
-import {useEffect, useRef, useState} from "react";
-import {Color} from "three";
-import {Card} from "react-bootstrap";
-import {IUndoableController} from "../../../controller/interface/IUndoableController";
+import { useEffect, useRef, useState } from "react";
+import { Color } from "three";
+import { Card } from "react-bootstrap";
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
 
 import "./DroneManagerComponent.css";
-import {toolTipps} from "../config";
-import {IController} from "../../../controller/interface/IController";
+import { toolTipps } from "../config";
+import { IController } from "../../../controller/interface/IController";
 
 /**
  * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht
- * über die aktuellen Drohnen hat und diese manipulieren kann.
- * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * über die aktuellen Drohnen hat und diese manipulieren kann
+ * @param props
+ * @param props.controller - Stellt den Controller mit Zugriff auf die Logik bereit
  * @returns JSX-Element der Drone Manager Komponente
  */
-export default function DroneManagerComponent({
+export function DroneManagerComponent({
     controller,
 }: {
     controller: IUndoableController;
@@ -111,6 +112,7 @@ export default function DroneManagerComponent({
         </Card>
     );
 }
+
 function DroneCard({
     droneId,
     isSelected,
@@ -191,11 +193,10 @@ function DroneCard({
                 <Card
                     onClick={() => onDroneSelectionChange(droneId)}
                     className={` text-center 
-                                            ${
-                                                isSelected
-                                                    ? "border-primary border-2 bg-primary bg-opacity-10"
-                                                    : "border-secondary"
-                                            } 
+                                            ${isSelected
+                            ? "border-primary border-2 bg-primary bg-opacity-10"
+                            : "border-secondary"
+                        } 
                                             ${isColliding ? "border-danger" : ""}`}
                     style={{
                         cursor: "pointer",
