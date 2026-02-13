@@ -1,11 +1,11 @@
-import React, {useState} from "react";
-import {ISettings} from "../../../controller/interface/ISettings";
-import {DayTime} from "../../../repository/entity/DayTime";
-import {Card} from "react-bootstrap";
-import {IUndoableController} from "../../../controller/interface/IUndoableController";
-import {IProject} from "../../../controller/interface/IProject";
-import {toolTipps} from "../config";
-import {DayTimeCalculatorModal} from "./DayTimeCalculatorModal";
+import React, { useState } from "react";
+import { ISettings } from "../../../controller/interface/ISettings";
+import { DayTime } from "../../../repository/entity/DayTime";
+import { Card } from "react-bootstrap";
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import { IProject } from "../../../controller/interface/IProject";
+import { toolTipps } from "../config";
+import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -135,12 +135,12 @@ export default function SettingsComponent({
                         <input
                             type="number"
                             className="form-control"
-                            value={collisionRadius}
+                            value={collisionRadius * 2}
                             min="0.1"
                             step="0.1"
                             onChange={(e) => {
                                 onChangeCollisionRadius(
-                                    parseFloat(e.target.value),
+                                    parseFloat(e.target.value) / 2,
                                 );
                             }}
                         />

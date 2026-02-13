@@ -1,9 +1,9 @@
-import {IProjectRepository} from "./IProjectRepository";
-import {IDrone} from "./entity/IDrone";
-import {DayTime} from "./entity/DayTime";
-import {mapToJsonDrones, parseJsonToDrones, ProjectConfig, WaypointAtTime} from "./ProjectConfig";
-import {FILE_VERSION, LAST_PROJECT_DATA_KEY} from "./RepositoryConstants";
-import {Result} from "./Result";
+import { IProjectRepository } from "./IProjectRepository";
+import { IDrone } from "./entity/IDrone";
+import { DayTime } from "./entity/DayTime";
+import { mapToJsonDrones, parseJsonToDrones, ProjectConfig, WaypointAtTime } from "./ProjectConfig";
+import { FILE_VERSION, LAST_PROJECT_DATA_KEY } from "./RepositoryConstants";
+import { Result } from "./Result";
 
 /**
  * Implementiert das ProjectRepository.
@@ -14,12 +14,12 @@ export class ProjectRepository implements IProjectRepository {
     private dayTime: DayTime = DayTime.NOON
     private endTime: number = 0
 
-    load(input: File|string|null, onFinished: (result: Result<boolean>) => void) {
+    load(input: File | string | null, onFinished: (result: Result<boolean>) => void) {
         if (input == null) {
             this.drones = []
-            this.collisionRadius = 0
+            this.collisionRadius = 0.3
             this.dayTime = DayTime.NOON
-            this.endTime = 0
+            this.endTime = 30
             return; // neues Projekt
         }
         if (input instanceof File) {
@@ -63,14 +63,14 @@ export class ProjectRepository implements IProjectRepository {
         const jsonResult = this.parseJson(data)
         const config = jsonResult.getResult();
         if (config != null && jsonResult.isSuccess()) {
-          this.setProjectConfig(config);
-          return new Result(true)
+            this.setProjectConfig(config);
+            return new Result(true)
         } else {
             return new Result(false, jsonResult.getError())
         }
     }
 
-    private parseJson(content: string): Result<ProjectConfig|null> {
+    private parseJson(content: string): Result<ProjectConfig | null> {
         let data: ProjectConfig
         try {
             data = JSON.parse(content)
@@ -85,8 +85,8 @@ export class ProjectRepository implements IProjectRepository {
 
     getNextDroneId(): number {
         let max: number = 0
-        this.drones.forEach((drone) => { if(drone.getId() > max) max = drone.getId() });
-        return max+1
+        this.drones.forEach((drone) => { if (drone.getId() > max) max = drone.getId() });
+        return max + 1
 
     }
 
@@ -106,8 +106,8 @@ export class ProjectRepository implements IProjectRepository {
         return this.dayTime;
     }
 
-    getDroneById(id: number): IDrone|undefined {
-        return this.drones.find(d => d.getId() === id );
+    getDroneById(id: number): IDrone | undefined {
+        return this.drones.find(d => d.getId() === id);
     }
 
     getMaxTime(): number {
@@ -145,7 +145,7 @@ export class ProjectRepository implements IProjectRepository {
     exportConfig(): string {
         const config: ProjectConfig = {
             version: FILE_VERSION,
-            settings : {
+            settings: {
                 endTime: this.endTime,
                 dayTime: this.dayTime,
                 collisionRadius: this.collisionRadius,
