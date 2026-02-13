@@ -1,23 +1,15 @@
 /**
- * Stellt der Startpage eine Fehlermeldungsanzeige zur Verfügung.
+ * Stellt der Startpage eine Fehlermeldungsanzeige zur Verfügung
+ * @param props
+ * @param props.message - Die genaue Fehlermeldung als Text
+ * @param props.messageType - Der Typ des Fehlers zur Kategorisierung
+ * @returns JSX-Element der Popup-Komponente
  */
-interface PopupComponentProps {
-  // Props
-  message: String;
-  messageType: string;
-}
-
-/**
- * Gibt eine Fehlermeldungsanzeige zurück.
- * @param message die genaue Fehlermessage
- * @param messageType der Typ des Fehlers
- * @constructor
- */
-export default function PopupComponent({message, messageType}: PopupComponentProps) {
+export function PopupComponent({ message, messageType }: { message: String; messageType: string; }) {
   return (
-  <div className="alert alert-danger" role="alert">
-    <b>{messageType}</b><br></br>
-    {message}
-  </div>
+    <div className="alert alert-danger" role="alert">
+      <b>{messageType}</b><br></br>
+      {message}
+    </div>
   );
 }

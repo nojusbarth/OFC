@@ -1,18 +1,19 @@
-import {useEffect, useState} from "react";
-import {Card} from "react-bootstrap";
-import {ISettings} from "../../../controller/interface/ISettings";
-import {ITimeController} from "../../../controller/interface/ITimeController";
-import {IUndoableController} from "../../../controller/interface/IUndoableController";
-import {SPEED_VALUES, toolTipps} from "../config";
-import {IProject} from "../../../controller/interface/IProject";
+import { useEffect, useState } from "react";
+import { Card } from "react-bootstrap";
+import { ISettings } from "../../../controller/interface/ISettings";
+import { ITimeController } from "../../../controller/interface/ITimeController";
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import { SPEED_VALUES, toolTipps } from "../config";
+import { IProject } from "../../../controller/interface/IProject";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
- * Erstellt eine Timeline Komponente auf der der Nutzer alle Änderungen an der Zeit und ähnlichem vornehmen kann.
- * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * Erstellt eine Timeline Komponente auf der der Nutzer alle Änderungen an der Zeit und ähnlichem vornehmen kann
+ * @param props
+ * @param props.controller - Stellt den Controller mit Zugriff auf die Logik bereit
  * @returns JSX-Element der Timeline Komponente
  */
-export default function TimelineComponent({
+export function TimelineComponent({
     controller,
 }: {
     controller: IUndoableController;

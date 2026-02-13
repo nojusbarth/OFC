@@ -1,19 +1,20 @@
-import {useEffect, useRef, useState} from "react";
-import {Color, Vector3} from "three";
-import {ColorKeyFrame} from "../../../repository/entity/ColorKeyFrame";
-import {PositionKeyFrame} from "../../../repository/entity/PositionKeyFrame";
-import {Card, Form} from "react-bootstrap";
-import {IUndoableController} from "../../../controller/interface/IUndoableController";
-import {toolTipps} from "../config";
-import {ITimeController} from "../../../controller/interface/ITimeController";
+import { useEffect, useRef, useState } from "react";
+import { Color, Vector3 } from "three";
+import { ColorKeyFrame } from "../../../repository/entity/ColorKeyFrame";
+import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
+import { Card, Form } from "react-bootstrap";
+import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import { toolTipps } from "../config";
+import { ITimeController } from "../../../controller/interface/ITimeController";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt eine Drone Editor Komponente auf der der Nutzer für die aktuell ausgewählten Drohnen Keyframes setzen und entfernen kann
- * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param props
+ * @param props.controller - Stellt den Controller mit Zugriff auf die Logik bereit
  * @returns JSX-Element der Drone Editor Komponente
  */
-export default function DroneEditorComponent({
+export function DroneEditorComponent({
     controller,
 }: {
     controller: IUndoableController;

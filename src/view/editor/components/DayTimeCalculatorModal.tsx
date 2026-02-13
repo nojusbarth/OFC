@@ -3,12 +3,6 @@ import { Form, Modal, Spinner } from "react-bootstrap";
 import { DayTime } from "../../../repository/entity/DayTime";
 import SunCalc from 'suncalc';
 
-interface DayTimeCalculatorModalProps {
-    show: boolean;
-    onHide: () => void;
-    onResult: (dayTime: DayTime) => void;
-}
-
 async function getCoords(cityName: string) {
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(cityName)}`);
@@ -31,7 +25,19 @@ function mapDayTimeToDisplayName(dayTime: DayTime): string {
     }
 }
 
-export const DayTimeCalculatorModal: React.FC<DayTimeCalculatorModalProps> = ({ show, onHide, onResult }) => {
+/**
+ * DayTimeCalculatorModal Komponente für die Berechnung der Tageszeit basierend auf geografischen Koordinaten
+ * @param props
+ * @param props.show - Ob das Modal angezeigt werden soll
+ * @param props.onHide - Callback wenn das Modal geschlossen wird
+ * @param props.onResult - Callback mit dem berechneten DayTime Resultat
+ * @returns JSX-Element des Tageszeit-Rechner-Modals
+ */
+export function DayTimeCalculatorModal({ show, onHide, onResult }: {
+    show: boolean;
+    onHide: () => void;
+    onResult: (dayTime: DayTime) => void;
+}) {
     // Form States
     const [cityInput, setCityInput] = useState("");
     const [dateStr, setDateStr] = useState(new Date().toISOString().split('T')[0]);
@@ -157,4 +163,4 @@ export const DayTimeCalculatorModal: React.FC<DayTimeCalculatorModalProps> = ({ 
             </Modal.Footer>
         </Modal>
     );
-};
+}

@@ -2,11 +2,12 @@ import { useEffect } from "react";
 import { IUndoableController } from "../controller/interface/IUndoableController";
 
 /**
- * Verwaltet Tastaturkürzel für den gegebenen Controller.
- * @param controller der Controller auf dem die Aktionen ausgeführt werden sollen.
- * @returns 
+ * Verwaltet Tastaturkürzel für den gegebenen Controller und reagiert auf Benutzer-Eingaben
+ * @param props
+ * @param props.controller - Der Controller auf dem die Aktionen ausgeführt werden sollen
+ * @returns
  */
-export function KeyboardShortcuts({controller}: {controller: IUndoableController}) {
+export function KeyboardShortcuts({ controller }: { controller: IUndoableController }) {
     useEffect(() => {
         const handleKeyDown = (event: KeyboardEvent) => {
             if (event.ctrlKey && event.key === "s") {
@@ -38,7 +39,7 @@ export function KeyboardShortcuts({controller}: {controller: IUndoableController
                 controller.getProject().exportWayPointData();
                 return;
             }
-            if (event.ctrlKey && event.key === "r") { 
+            if (event.ctrlKey && event.key === "r") {
                 event.preventDefault();
                 if (controller.getProject().getRecordingRunning()) {
                     controller.getProject().stopRecording();

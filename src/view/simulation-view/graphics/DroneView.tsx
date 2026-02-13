@@ -9,17 +9,13 @@ import { Line } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
 
 
-type Props = {
-  frame: DroneFrame;
-};
-
-
 /**
- * JSX Komponente, die die Drohnen in der Szene rendert.
- * @param frame DroneFrame, der die Positionen, Farben und optionalen Outline-Farben der Drohnen enthält 
+ * JSX Komponente, die die Drohnen in der Szene rendert
+ * @param props
+ * @param props.frame - DroneFrame, der die Positionen, Farben und optionalen Outline-Farben der Drohnen enthält
  * @returns JSX-Elemente für die Drohnen in der Szene
  */
-export const DroneView: React.FC<Props> = ({ frame }) => {
+export function DroneView({ frame }: { frame: DroneFrame }) {
   const droneEntries = Array.from(frame.dronePositions.entries())
 
   return (

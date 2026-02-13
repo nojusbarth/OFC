@@ -27,18 +27,19 @@ import {
 
 /**
  * JSX Komponente für die 3D-Szene der Simulation.
- * @param droneStore Wrapper für den Drone-Frame State
- * @param pathStore Wrapper für den Path-Frame State
- * @param lightStore Wrapper für den Light-Frame State
- * @param onReady Callback, der die WebGLRenderer-Instanz zurückgibt, sobald sie verfügbar ist.
- * @returns JXSX.Element der Szene
+ * @param props
+ * @param props.droneStore - Wrapper für den Drone-Frame State
+ * @param props.pathStore - Wrapper für den Path-Frame State
+ * @param props.lightStore - Wrapper für den Light-Frame State
+ * @param props.onReady - Callback, der die WebGLRenderer-Instanz zurückgibt, sobald sie verfügbar ist
+ * @returns JSX.Element der Szene
  */
-export const SceneRenderer: React.FC<{
+export function SceneRenderer({ droneStore, pathStore, lightStore, onReady }: {
   droneStore: DroneStateStore;
   pathStore: PathStateStore;
   lightStore: LightStateStore;
   onReady?: (gl: THREE.WebGLRenderer) => void;
-}> = ({ droneStore, pathStore, lightStore, onReady }) => {
+}) {
 
   const [droneFrame, setDroneFrame] = useState(defaultDroneFrame);
   const [pathFrame, setPathFrame] = useState(defaultPathFrame);
@@ -220,4 +221,4 @@ export const SceneRenderer: React.FC<{
       <PathView frame={pathFrame} />
     </>
   );
-};
+}

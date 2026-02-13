@@ -1,21 +1,22 @@
-import DroneManagerComponent from "./components/DroneManagerComponent";
-import DroneEditorComponent from "./components/DroneEditorComponent";
-import TimelineComponent from "./components/TimelineComponent";
-import SettingsComponent from "./components/SettingsComponent";
-import {JSX, useEffect, useState} from "react";
-import {IUndoableController} from "../../controller/interface/IUndoableController";
-import {DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT, toolTipps} from "./config";
-import {Card} from "react-bootstrap";
+import { DroneManagerComponent } from "./components/DroneManagerComponent";
+import { DroneEditorComponent } from "./components/DroneEditorComponent";
+import { TimelineComponent } from "./components/TimelineComponent";
+import { SettingsComponent } from "./components/SettingsComponent";
+import { JSX, useEffect, useState } from "react";
+import { IUndoableController } from "../../controller/interface/IUndoableController";
+import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT, toolTipps } from "./config";
+import { Card } from "react-bootstrap";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
- * Erstellt die vollständige Editor Seite als Editor Komponente
- * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
- * @param toggleStartpage Funktion zum Wechsel der Startpage
- * @param viewport Viewport für den Editor
+ * Erstellt die vollständige Editor Seite als Editor Komponente und stellt das Haupt-Layout bereit
+ * @param props
+ * @param props.controller - Stellt den Controller mit Zugriff auf die Logik bereit
+ * @param props.toggleStartpage - Funktion zum Wechsel zur Startpage
+ * @param props.viewport - JSX-Element für den 3D-Viewport
  * @returns JSX-Element der Editor Seite als Komponente
  */
-export default function EditorComponent({
+export function EditorComponent({
     controller,
     toggleStartpage,
     viewport,
@@ -103,7 +104,7 @@ export default function EditorComponent({
                         >
                             <i
                                 className="bi bi-house fs-2"
-                                style={{color: "black"}}
+                                style={{ color: "black" }}
                             />
                         </button>
                         <button
@@ -113,7 +114,7 @@ export default function EditorComponent({
                         >
                             <i
                                 className="bi bi-download fs-2"
-                                style={{color: "black"}}
+                                style={{ color: "black" }}
                             />
                         </button>
                         <button
@@ -124,11 +125,11 @@ export default function EditorComponent({
                             {showSettings ? (
                                 <i
                                     className="bi bi-geo fs-2"
-                                    style={{color: "black"}}
+                                    style={{ color: "black" }}
                                 />
                             ) : (
                                 <i className="bi bi-gear fs-2"
-                                   style={{color: "black"}}/>
+                                    style={{ color: "black" }} />
                             )}
                         </button>
                     </div>
