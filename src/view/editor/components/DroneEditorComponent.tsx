@@ -6,6 +6,7 @@ import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
 import { Card, Form } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { toolTipps } from "../config";
+import { ITimeController } from "../../../controller/interface/ITimeController";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -18,6 +19,9 @@ export default function DroneEditorComponent({
 }: {
     controller: IUndoableController;
 }) {
+    /* ---------- Used Controllers ---------- */
+    const timerController: ITimeController = controller.getTimeController();
+
     /* ---------- State Hooks ---------- */
     const [selectedDrones, setSelectedDrones] = useState<Array<number>>(
         controller.getSelectedDrones(),
@@ -41,6 +45,8 @@ export default function DroneEditorComponent({
 
     /* ---------- Register Events ---------- */
     useEffect(() => {
+        updateKeyframes();
+
         const onSelectionChange = (newSelectedDrones: Array<number>) => {
             // Update Color and Position if no drones were previously selected
             if (selectedDrones.length == 0 && newSelectedDrones.length != 0) {
@@ -90,9 +96,21 @@ export default function DroneEditorComponent({
             }
         });
 
+        positionKeyframes.sort((a, b) => a.getTime() - b.getTime());
+        colorKeyframes.sort((a, b) => a.getTime() - b.getTime());
+
         setPositionKeyframes(positionKeyframes);
         setColorKeyframes(colorKeyframes);
     }
+
+    const getIdForKeyframe = (keyframe: PositionKeyFrame | ColorKeyFrame) => {
+        if (keyframe instanceof PositionKeyFrame) {
+            return positionKeyframeToId.current.get(keyframe);
+        } else if (keyframe instanceof ColorKeyFrame) {
+            return colorKeyframeToId.current.get(keyframe);
+        }
+        return undefined;
+    };
 
     /* ---------- Click Handlers ---------- */
     const handlePositionChange = (axis: "x" | "y" | "z", value: number) => {
@@ -108,15 +126,19 @@ export default function DroneEditorComponent({
     const handleRemoveKeyframe = (
         keyframe: PositionKeyFrame | ColorKeyFrame,
     ) => {
+        const droneId = getIdForKeyframe(keyframe);
+
         if (keyframe instanceof PositionKeyFrame) {
-            const droneId = positionKeyframeToId.current.get(keyframe);
             if (droneId == undefined) return;
             controller.removePositionKeyFrame(droneId, keyframe);
         } else if (keyframe instanceof ColorKeyFrame) {
-            const droneId = colorKeyframeToId.current.get(keyframe);
             if (droneId == undefined) return;
             controller.removeColorKeyFrame(droneId, keyframe);
         }
+    };
+
+    const handleJumpToTime = (keyframe: PositionKeyFrame | ColorKeyFrame) => {
+        timerController.setTime(keyframe.getTime());
     };
 
     const handleAddPositionKeyframe = () => {
@@ -244,7 +266,8 @@ export default function DroneEditorComponent({
                             {showKeyframes && (
                                 <KeyframeListComponent
                                     handleRemoveKeyframe={handleRemoveKeyframe}
-                                    selectedDrones={selectedDrones}
+                                    handleJumpToTime={handleJumpToTime}
+                                    getIdForKeyframe={getIdForKeyframe}
                                     positionKeyframes={positionKeyframes}
                                     colorKeyframes={colorKeyframes}
                                 />
@@ -259,12 +282,16 @@ export default function DroneEditorComponent({
 
 function KeyframeListComponent({
     handleRemoveKeyframe,
-    selectedDrones,
+    handleJumpToTime,
+    getIdForKeyframe,
     positionKeyframes,
     colorKeyframes,
 }: {
     handleRemoveKeyframe: (keyframe: PositionKeyFrame | ColorKeyFrame) => void;
-    selectedDrones: Array<number>;
+    handleJumpToTime: (keyframe: PositionKeyFrame | ColorKeyFrame) => void;
+    getIdForKeyframe: (
+        keyframe: PositionKeyFrame | ColorKeyFrame,
+    ) => number | undefined;
     positionKeyframes: Array<PositionKeyFrame>;
     colorKeyframes: Array<ColorKeyFrame>;
 }) {
@@ -279,6 +306,8 @@ function KeyframeListComponent({
                         <KeyframeComponent
                             keyframe={keyframe}
                             handleRemoveKeyframe={handleRemoveKeyframe}
+                            handleJumpToTime={handleJumpToTime}
+                            getIdForKeyframe={getIdForKeyframe}
                         />
                     ))}
                 </div>
@@ -291,6 +320,8 @@ function KeyframeListComponent({
                         <KeyframeComponent
                             keyframe={keyframe}
                             handleRemoveKeyframe={handleRemoveKeyframe}
+                            handleJumpToTime={handleJumpToTime}
+                            getIdForKeyframe={getIdForKeyframe}
                         />
                     ))}
                 </div>
@@ -308,9 +339,15 @@ function KeyframeListComponent({
 function KeyframeComponent({
     keyframe,
     handleRemoveKeyframe,
+    handleJumpToTime,
+    getIdForKeyframe,
 }: {
     keyframe: PositionKeyFrame | ColorKeyFrame;
     handleRemoveKeyframe: (keyframe: PositionKeyFrame | ColorKeyFrame) => void;
+    handleJumpToTime: (keyframe: PositionKeyFrame | ColorKeyFrame) => void;
+    getIdForKeyframe: (
+        keyframe: PositionKeyFrame | ColorKeyFrame,
+    ) => number | undefined;
 }) {
     return (
         <Card className="mb-2">
@@ -329,29 +366,39 @@ function KeyframeComponent({
                     )}
 
                     <div>
-                        <div className="small text-info fw-bold">
+                        <div
+                            className="small text-info fw-bold"
+                            onClick={() => handleJumpToTime(keyframe)}
+                            style={{ cursor: "pointer" }}
+                        >
                             {keyframe.getTime().toFixed(1)}s
                         </div>
-                        {keyframe instanceof ColorKeyFrame && (
-                            <div className="small text-muted">
-                                Farbe • [{keyframe.getColor().r.toFixed(2)},{" "}
-                                {keyframe.getColor().g.toFixed(2)},{" "}
-                                {keyframe.getColor().b.toFixed(2)}] • #
-                                {keyframe
-                                    .getColor()
-                                    .getHexString()
-                                    .toUpperCase()}
-                                ff
-                            </div>
-                        )}
 
-                        {keyframe instanceof PositionKeyFrame && (
-                            <div className="small text-muted">
-                                Position • [{keyframe.getPos().x.toFixed(1)},{" "}
-                                {keyframe.getPos().y.toFixed(1)},{" "}
-                                {keyframe.getPos().z.toFixed(1)}]
-                            </div>
-                        )}
+                        <div className="small text-muted">
+                            {getIdForKeyframe(keyframe) !== undefined
+                                ? "ID: " + getIdForKeyframe(keyframe)
+                                : "Keine ID"}{" "}
+                            •{" "}
+                            {keyframe instanceof ColorKeyFrame && (
+                                <>
+                                    [{keyframe.getColor().r.toFixed(2)},{" "}
+                                    {keyframe.getColor().g.toFixed(2)},{" "}
+                                    {keyframe.getColor().b.toFixed(2)}] • #
+                                    {keyframe
+                                        .getColor()
+                                        .getHexString()
+                                        .toUpperCase()}
+                                    ff
+                                </>
+                            )}
+                            {keyframe instanceof PositionKeyFrame && (
+                                <>
+                                    [{keyframe.getPos().x.toFixed(1)},{" "}
+                                    {keyframe.getPos().y.toFixed(1)},{" "}
+                                    {keyframe.getPos().z.toFixed(1)}]
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
                 <button
