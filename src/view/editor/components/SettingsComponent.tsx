@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import { ISettings } from "../../../controller/interface/ISettings";
-import { DayTime } from "../../../repository/entity/DayTime";
-import { Card } from "react-bootstrap";
-import { IUndoableController } from "../../../controller/interface/IUndoableController";
-import { IProject } from "../../../controller/interface/IProject";
-import { toolTipps } from "../config";
-import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
+import React, {useState} from "react";
+import {ISettings} from "../../../controller/interface/ISettings";
+import {DayTime} from "../../../repository/entity/DayTime";
+import {Card} from "react-bootstrap";
+import {IUndoableController} from "../../../controller/interface/IUndoableController";
+import {IProject} from "../../../controller/interface/IProject";
+import {toolTipps} from "../config";
+import {DayTimeCalculatorModal} from "./DayTimeCalculatorModal";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -168,21 +168,6 @@ export default function SettingsComponent({
 
                 <GroupComponent title={"Export"} iconClass={"bi-download"}>
                     <AttributeComponent
-                        title={"Speichern"}
-                        description={"Speichere das aktuelle Projekt"}
-                        iconClass={"bi-save"}
-                    >
-                        <button
-                            className="btn btn-outline-success"
-                            onClick={() => {
-                                project.saveProject();
-                            }}
-                        >
-                            <i className="bi bi-save me-2"></i>
-                            Speichern
-                        </button>
-                    </AttributeComponent>
-                    <AttributeComponent
                         title={"Waypoint-Export"}
                         description={"Exportiere als Waypoint-at-Time Format"}
                         iconClass={"bi-file-earmark-text"}
@@ -196,22 +181,6 @@ export default function SettingsComponent({
                         >
                             <i className="bi bi-file-earmark-arrow-down me-2"></i>
                             Waypoints exportieren
-                        </button>
-                    </AttributeComponent>
-                    <AttributeComponent
-                        title={"Startseite anzeigen"}
-                        description={"Zurück zur Startseite wechseln"}
-                        iconClass={"bi-house-door"}
-                    >
-                        <button
-                            className="btn btn-outline-secondary"
-                            onClick={() => {
-                                controller.getProject().saveProjectLocally();
-                                toggleStartpage();
-                            }}
-                        >
-                            <i className="bi bi-house-door me-2"></i>
-                            Zur Startseite
                         </button>
                     </AttributeComponent>
                 </GroupComponent>
