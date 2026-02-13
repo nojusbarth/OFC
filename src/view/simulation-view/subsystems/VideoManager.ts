@@ -1,6 +1,7 @@
 /**
  * VideoManager: Zeichnet die Canvas während der Simulation auf.
  */
+//Klasse ist KI GENERIERT
 export class VideoManager {
   private recorder: MediaRecorder | null = null;
   private chunks: BlobPart[] = [];
@@ -73,7 +74,6 @@ export class VideoManager {
     this.cleanup();
   }
 
-  //Funktion KI GENERIERT
   private downloadVideo(blob: Blob): void {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
