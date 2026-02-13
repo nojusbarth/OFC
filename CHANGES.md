@@ -8,11 +8,29 @@
 
 ### Editor
 
-- **Generell**: Den Komponenten wird zur übersicht und erweiterbarkeit der gesamte Controller übergeben
-- **Generell**: Hinzufügen eines SettingsButtonComponent welcher zwischen DroneEditor und Settings switcht
+**Generell**
 
-- **SettingsComponent**: _droneDistance_ geändert zu _collisionRadius_
-- **EditorComponent**: simulation-view szene im Interface hinzugefügt
+- Den Komponenten wird zur Übersicht und Erweiterbarkeit der gesamte `Controller` übergeben
+
+**EditorComponent**
+
+- `viewport` als Prop für das Positionieren der Simulation-View hinzugefügt
+
+- `showSettings` als State mit Hook `setShowSettings` hinzugefügt
+- `recording` als State mit Hook `setRecording` hinzugefügt
+
+**SettingsComponent**
+
+- `droneDistance` umbenannt zu `collisionRadius`
+- `isSunCalculatorOpen` als State mit Hook `setIsSunCalculatorOpen` hinzugefügt
+
+**TimelineComponent**
+
+- `recording` als State mit Hook `setRecording` hinzugefügt
+
+**DroneManagerComponent**
+
+- `colors` als State mit Hook `setColors` entfernt
 
 ### Simulation View
 
