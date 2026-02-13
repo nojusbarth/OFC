@@ -12,6 +12,7 @@ import {Card} from "react-bootstrap";
  * Erstellt die vollständige Editor Seite als Editor Komponente
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
  * @param toggleStartpage Funktion zum Wechsel der Startpage
+ * @param viewport Viewport für den Editor
  * @returns JSX-Element der Editor Seite als Komponente
  */
 export default function EditorComponent({
