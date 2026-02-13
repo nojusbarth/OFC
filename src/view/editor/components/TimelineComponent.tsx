@@ -6,6 +6,7 @@ import { IUndoableController } from "../../../controller/interface/IUndoableCont
 import { SPEED_VALUES, toolTipps } from "../config";
 import { IProject } from "../../../controller/interface/IProject";
 
+// Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt eine Timeline Komponente auf der der Nutzer alle Änderungen an der Zeit und ähnlichem vornehmen kann.
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
@@ -55,14 +56,20 @@ export default function TimelineComponent({
         };
 
         project.getRecordingRunningEvent().register(onRecordingRunningChanged);
-        timeController.getAnimationSpeedChangedEvent().register(onAnimationSpeedChanged);
+        timeController
+            .getAnimationSpeedChangedEvent()
+            .register(onAnimationSpeedChanged);
         timeController.getAnimationRunningEvent().register(onPlayingChanged);
         timeController.getTimeChangedEvent().register(onTimeChanged);
         settings.getEndTimeChangedEvent().register(onEndTimeChanged);
 
         return () => {
-            project.getRecordingRunningEvent().remove(onRecordingRunningChanged);
-            timeController.getAnimationSpeedChangedEvent().remove(onAnimationSpeedChanged);
+            project
+                .getRecordingRunningEvent()
+                .remove(onRecordingRunningChanged);
+            timeController
+                .getAnimationSpeedChangedEvent()
+                .remove(onAnimationSpeedChanged);
             timeController.getAnimationRunningEvent().remove(onPlayingChanged);
             timeController.getTimeChangedEvent().remove(onTimeChanged);
             settings.getEndTimeChangedEvent().remove(onEndTimeChanged);
@@ -106,7 +113,11 @@ export default function TimelineComponent({
                 onClick={handleRecordingClick}
             >
                 <i
-                    title={recording ? toolTipps.RECORD_STOP : toolTipps.RECORD_START}
+                    title={
+                        recording
+                            ? toolTipps.RECORD_STOP
+                            : toolTipps.RECORD_START
+                    }
                     className={
                         `bi ${recording ? "bi-stop-fill" : "bi-record-fill"}` +
                         " fs-2"
@@ -118,7 +129,9 @@ export default function TimelineComponent({
             <button className="btn btn-link p-0" onClick={handlePlayPauseClick}>
                 <i
                     title={
-                        playing ? toolTipps.ANIMATION_STOP : toolTipps.ANIMATION_START
+                        playing
+                            ? toolTipps.ANIMATION_STOP
+                            : toolTipps.ANIMATION_START
                     }
                     className={
                         `bi ${playing ? "bi-pause-fill" : "bi-play-fill"}` +

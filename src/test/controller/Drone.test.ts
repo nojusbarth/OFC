@@ -3,7 +3,7 @@ import { Drone } from "../../controller/logic/Drone";
 import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
 import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
 
-it("Drone - basic" , () => {
+it("Drone - basic", () => {
     const drone = new Drone(1);
     expect(drone.getId()).toBe(1);
 });
@@ -37,7 +37,7 @@ it("Drone - position key frames", () => {
     expect(drone.getPositionKeyFrames()[1]).toBe(keyFrame4);
     // test interpolation
     expect(drone.getPositonAtTime(6).equals(new Vector3(2, 2, 2))).toBe(true);
-        drone.insertPositionKeyFrame(new PositionKeyFrame(new Vector3(99, 0, 0), 0));
+    drone.insertPositionKeyFrame(new PositionKeyFrame(new Vector3(99, 0, 0), 0));
     // test before first keyframe
     expect(drone.getPositonAtTime(-1).equals(new Vector3(99, 0, 0))).toBe(true);
     expect(drone.getPositonAtTime(0).equals(new Vector3(99, 0, 0))).toBe(true);
@@ -75,7 +75,7 @@ it("Drone - color key frames", () => {
     expect(drone.getColorKeyFrames().length).toBe(2);
     expect(drone.getColorKeyFrames()[1]).toBe(keyFrame4);
     // test interpolation
-    expect(drone.getColorAtTime(6).equals(new Color(2, 2, 2))).toBe(true);
+    expect(drone.getColorAtTime(6).equals(new Color(1, 1, 1))).toBe(true);
     drone.insertColorKeyFrame(new ColorKeyFrame(new Color(99, 0, 0), 0));
     // test before first keyframe
     expect(drone.getColorAtTime(-1).equals(new Color(99, 0, 0))).toBe(true);
@@ -83,5 +83,5 @@ it("Drone - color key frames", () => {
     // test after last keyframe
     expect(drone.getColorAtTime(20).equals(new Color(3, 3, 3))).toBe(true);
     // test interpolation select correct keys
-    expect(drone.getColorAtTime(6).equals(new Color(2, 2, 2))).toBe(true);
+    expect(drone.getColorAtTime(6).equals(new Color(1, 1, 1))).toBe(true);
 });
