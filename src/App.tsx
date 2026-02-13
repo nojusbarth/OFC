@@ -19,7 +19,7 @@ function App() {
     const repository = new ProjectRepository();
     const settings = new Settings(repository);
     const ctrl = new Controller(settings, repository);
-    return new UndoableController(ctrl, new UndoRepository(), new UndoRepository());
+    return new UndoableController(ctrl, repository, new UndoRepository(), new UndoRepository());
   }, []);
 
   // initSimulation liefert die Simulation-Fassade und die Scene-Komponente
