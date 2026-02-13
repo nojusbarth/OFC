@@ -205,7 +205,10 @@ export default function SettingsComponent({
                     >
                         <button
                             className="btn btn-outline-secondary"
-                            onClick={toggleStartpage}
+                            onClick={() => {
+                                controller.getProject().saveProjectLocally();
+                                toggleStartpage();
+                            }}
                         >
                             <i className="bi bi-house-door me-2"></i>
                             Zur Startseite

@@ -1,5 +1,5 @@
 import './App.css';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { initSimulation } from './view/simulation-view';
 import { Controller } from './controller/logic/Controller';
 import { ProjectRepository } from './repository/ProjectRepository';
@@ -24,6 +24,19 @@ function App() {
 
   // initSimulation liefert die Simulation-Fassade und die Scene-Komponente
   const { Scene } = useMemo(() => initSimulation(controller), [controller]);
+
+  useEffect(() => {
+    if (showStartpage) {
+      return;
+    }
+    const handleUnload = () => {
+      controller.getProject().saveProjectLocally();
+    };
+    window.addEventListener('beforeunload', handleUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleUnload);
+    };
+  }, [showStartpage, controller]);
 
   if (showStartpage) {
     return <StartpageComponent
