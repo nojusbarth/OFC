@@ -25,9 +25,13 @@ export class Project implements IProject {
     }
 
     saveProject(): void {
-        this.repository.saveToLocalStorage();
         const data = this.repository.exportConfig();
         saveAs(new Blob([data], { type: 'application/json' }), 'project.json');
+        this.repository.saveToLocalStorage();
+    }
+
+    saveProjectLocally(): void {
+        this.repository.saveToLocalStorage();
     }
 
     newProject(): void {

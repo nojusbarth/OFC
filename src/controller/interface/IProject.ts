@@ -19,6 +19,11 @@ export interface IProject {
     saveProject(): void
 
     /**
+     * Speichert das Aktuelle Projekt ohne dass eine Datei heruntergeladen wird im lokalen Speicher des Browsers.
+     */
+    saveProjectLocally(): void
+
+    /**
      * Erstellt ein neues, leeres Projekt.
      */
     newProject(): void
