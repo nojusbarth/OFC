@@ -36,7 +36,7 @@ export const PathView: React.FC<Props> = ({ frame }) => {
   )
 }
 
-
+//Abschnitt ist KI GENERIERT
 function AnimatedPath({ points, color }: { points: THREE.Vector3[]; color: string }) {
   const ref = useRef<any>(null)
 

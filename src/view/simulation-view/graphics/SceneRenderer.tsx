@@ -155,6 +155,7 @@ export const SceneRenderer: React.FC<{
     if (!tex) return;
 
     // PMREM (Environment Licht) nur einmal pro Textur erzeugen und cachen
+    //Abschnitt ist KI GENERIERT
     if (!envMapCacheRef.current[lightFrame.skyTexturePath]) {
       const pmremGenerator = new THREE.PMREMGenerator(gl);
       pmremGenerator.compileEquirectangularShader();
