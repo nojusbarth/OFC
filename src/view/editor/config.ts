@@ -16,6 +16,9 @@ export const SPEED_VALUES: number[] = [0.25, 0.5, 0.75, 1, 1.5, 2, 3];
  * Die angezeigten Tooltips bei hovern über spezifische Elemente.
  */
 export const toolTipps = {
+    BACK_HOME: "Zurück zur Startseite",
+    TO_SETTINGS: "Zu den Projekteinstellungen",
+    TO_DRONE_SETTINGS: "Zu den Drohneneinstellungen",
     RECORD_START: "Aufnahme starten \n(Strg + R)",
     RECORD_STOP: "Aufnahme stoppen \n(Strg + R)",
     ANIMATION_START: "Animation starten \n(Leertaste)",

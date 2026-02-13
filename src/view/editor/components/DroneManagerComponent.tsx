@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { Color } from "three";
-import { Card } from "react-bootstrap";
-import { IUndoableController } from "../../../controller/interface/IUndoableController";
+import {useEffect, useRef, useState} from "react";
+import {Color} from "three";
+import {Card} from "react-bootstrap";
+import {IUndoableController} from "../../../controller/interface/IUndoableController";
 
 import "./DroneManagerComponent.css";
-import { toolTipps } from "../config";
-import { IController } from "../../../controller/interface/IController";
+import {toolTipps} from "../config";
+import {IController} from "../../../controller/interface/IController";
 
 /**
  * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht
@@ -78,7 +78,7 @@ export default function DroneManagerComponent({
             className="d-flex flex-column h-100 w-100 
       rounded-0 border-2 border-secondary border-start-0 border-end-0 border-bottom-0"
         >
-            <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
+            <Card.Header className="d-flex justify-content-between align-items-center border-bottom">
                 <span className="fw-bold">Drohnen ({allDrones.length})</span>
                 <button
                     className="btn btn-primary btn-sm d-flex gap-2"
@@ -217,12 +217,12 @@ function DroneCard({
                         />
 
                         {/* Drone ID */}
-                        <div className="small fw-medium">ID: {droneId}</div>
+                        <div className="small fw-medium font-monospace">{droneId}</div>
                     </Card.Body>
 
                     {/* Remove Button */}
                     <button
-                        className="drone-manager drone-card delete position-absolute top-0 end-0 m-0 p-0"
+                        className="drone-manager drone-card delete position-absolute t-1 end-0 m-0 p-1"
                         title={toolTipps.DRONE_DELETE}
                         onClick={(e) => {
                             e.stopPropagation();

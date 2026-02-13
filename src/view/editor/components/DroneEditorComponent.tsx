@@ -1,12 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { Vector3 } from "three";
-import { Color } from "three";
-import { ColorKeyFrame } from "../../../repository/entity/ColorKeyFrame";
-import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
-import { Card, Form } from "react-bootstrap";
-import { IUndoableController } from "../../../controller/interface/IUndoableController";
-import { toolTipps } from "../config";
-import { ITimeController } from "../../../controller/interface/ITimeController";
+import {useEffect, useRef, useState} from "react";
+import {Color, Vector3} from "three";
+import {ColorKeyFrame} from "../../../repository/entity/ColorKeyFrame";
+import {PositionKeyFrame} from "../../../repository/entity/PositionKeyFrame";
+import {Card, Form} from "react-bootstrap";
+import {IUndoableController} from "../../../controller/interface/IUndoableController";
+import {toolTipps} from "../config";
+import {ITimeController} from "../../../controller/interface/ITimeController";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -34,8 +33,6 @@ export default function DroneEditorComponent({
     const [colorKeyframes, setColorKeyframes] = useState<Array<ColorKeyFrame>>(
         [],
     );
-    const [showKeyframes, setShowKeyframes] = useState<boolean>(false);
-
     /* ---------- Referenced Variables ---------- */
 
     const positionKeyframeToId = useRef<Map<PositionKeyFrame, number>>(
@@ -160,6 +157,10 @@ export default function DroneEditorComponent({
         >
             <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
                 <span className="fw-bold">Aktionen</span>
+                {/* Selected Drones Info */}
+                <div className="text-muted small">
+                    {selectedDrones.length} {selectedDrones.length == 1 ? "Drohne" : "Drohnen"} ausgewählt
+                </div>
                 <div className="d-flex gap-2">
                     <button
                         title={toolTipps.PROJECT_UNDO}
@@ -168,7 +169,8 @@ export default function DroneEditorComponent({
                             controller.undo();
                         }}
                     >
-                        <i className="bi bi-caret-left" />
+                        <i className="bi bi-arrow-counterclockwise"></i>
+
                     </button>
                     <button
                         title={toolTipps.PROJECT_REDO}
@@ -177,19 +179,13 @@ export default function DroneEditorComponent({
                             controller.redo();
                         }}
                     >
-                        <i className="bi bi-caret-right" />
+                        <i className="bi bi-arrow-clockwise"></i>
                     </button>
                 </div>
             </Card.Header>
 
             {/* Content */}
             <Card.Body className="d-flex flex-column overflow-y-auto p-3 gap-3">
-                {/* Selected Drones Info */}
-                <div className="text-muted small">
-                    <i className="bi bi-info-circle me-2" />
-                    {selectedDrones.length} Drohne(n) ausgewählt
-                </div>
-
                 {selectedDrones.length == 1 && (
                     <KeyframeEditorComponent title="Position Setzen">
                         <div className="d-flex align-items-center gap-2">
@@ -248,22 +244,9 @@ export default function DroneEditorComponent({
                             />
                         </KeyframeEditorComponent>
 
-                        <div>
-                            <div>
-                                <button
-                                    className="btn btn-link text-black d-flex align-items-start gap-2"
-                                    onClick={() =>
-                                        setShowKeyframes(!showKeyframes)
-                                    }
-                                >
-                                    <TitleComponent title="Drohnen Keyframes" />
-                                    <i
-                                        className={`bi ${showKeyframes ? "bi-caret-up-fill" : "bi-caret-down-fill"}`}
-                                    />
-                                </button>
-                            </div>
-
-                            {showKeyframes && (
+                        {selectedDrones.length === 1 && (
+                            <Card className="p-3">
+                                <TitleComponent title="Drohnen Keyframes" />
                                 <KeyframeListComponent
                                     handleRemoveKeyframe={handleRemoveKeyframe}
                                     handleJumpToTime={handleJumpToTime}
@@ -271,8 +254,8 @@ export default function DroneEditorComponent({
                                     positionKeyframes={positionKeyframes}
                                     colorKeyframes={colorKeyframes}
                                 />
-                            )}
-                        </div>
+                            </Card>
+                        )}
                     </>
                 )}
             </Card.Body>
@@ -297,7 +280,7 @@ function KeyframeListComponent({
 }) {
     return (
         <div>
-            {positionKeyframes.length > 0 && (
+            {(positionKeyframes.length > 0) && (
                 <div className="mb-3">
                     <div className="text-muted small mb-2">
                         Position Keyframes
@@ -423,9 +406,9 @@ function KeyframeEditorComponent({
 }) {
     return (
         <div>
-            <TitleComponent title={title} />
             <Card>
                 <Card.Body className="d-flex flex-column gap-3">
+                    <TitleComponent title={title} />
                     {children}
                 </Card.Body>
             </Card>
@@ -434,13 +417,13 @@ function KeyframeEditorComponent({
 }
 
 function TitleComponent({ title }: { title: string }) {
-    return <h6 className="fw-bold text-uppercase text-xs mb-3">{title}</h6>;
+    return <h6 className="fw-bold text-uppercase text-xs">{title}</h6>;
 }
 
 function AddKeyframeComponent({ onClick }: { onClick: () => void }) {
     return (
         <button
-            className="btn btn-info w-100 mb-2 text-white"
+            className="btn btn-primary w-100 mb-2 text-white"
             onClick={onClick}
         >
             <i className="bi bi-pencil me-2" />

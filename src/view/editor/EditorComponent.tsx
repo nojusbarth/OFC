@@ -2,16 +2,17 @@ import DroneManagerComponent from "./components/DroneManagerComponent";
 import DroneEditorComponent from "./components/DroneEditorComponent";
 import TimelineComponent from "./components/TimelineComponent";
 import SettingsComponent from "./components/SettingsComponent";
-import { JSX, useEffect, useState } from "react";
-import SettingsButtonComponent from "./components/SettingsButtonComponent";
-import { IUndoableController } from "../../controller/interface/IUndoableController";
-import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT } from "./config";
+import {JSX, useEffect, useState} from "react";
+import {IUndoableController} from "../../controller/interface/IUndoableController";
+import {DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT, toolTipps} from "./config";
+import {Card} from "react-bootstrap";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
  * Erstellt die vollständige Editor Seite als Editor Komponente
  * @param controller Stellt den Controller mit Zugriff auf die Logik bereit
  * @param toggleStartpage Funktion zum Wechsel der Startpage
+ * @param viewport Viewport für den Editor
  * @returns JSX-Element der Editor Seite als Komponente
  */
 export default function EditorComponent({
@@ -54,6 +55,15 @@ export default function EditorComponent({
         setShowSettings(!showSettings);
     };
 
+    const exportProjektToFile = () => {
+        project.saveProject()
+    }
+
+    const toggleStartPage = () => {
+        controller.getProject().saveProjectLocally()
+        toggleStartpage()
+    }
+
     return (
         <div
             style={{
@@ -82,10 +92,47 @@ export default function EditorComponent({
 
             {/* SettingsButton */}
             <div style={{ gridArea: "settingsbutton", overflow: "hidden" }}>
-                <SettingsButtonComponent
-                    showSettings={showSettings}
-                    toggleSettingsMenu={toggleSettingsMenu}
-                />
+                <Card
+                    className="d-flex flex-column h-100 w-100 rounded-0 border-2 border-secondary border-top-0 border-end-0"
+                >
+                    <div className="rounded-0 justify-content-end border-secondary border-0 d-flex flex-row align-items-end gap-4 p-3 w-100">
+                        <button
+                            className="btn btn-link p-0"
+                            title={toolTipps.BACK_HOME}
+                            onClick={toggleStartPage}
+                        >
+                            <i
+                                className="bi bi-house fs-2"
+                                style={{color: "black"}}
+                            />
+                        </button>
+                        <button
+                            className="btn btn-link p-0"
+                            title={toolTipps.PROJECT_SAVE}
+                            onClick={exportProjektToFile}
+                        >
+                            <i
+                                className="bi bi-download fs-2"
+                                style={{color: "black"}}
+                            />
+                        </button>
+                        <button
+                            className="btn btn-link p-0"
+                            title={showSettings ? toolTipps.TO_DRONE_SETTINGS : toolTipps.TO_SETTINGS}
+                            onClick={toggleSettingsMenu}
+                        >
+                            {showSettings ? (
+                                <i
+                                    className="bi bi-geo fs-2"
+                                    style={{color: "black"}}
+                                />
+                            ) : (
+                                <i className="bi bi-gear fs-2"
+                                   style={{color: "black"}}/>
+                            )}
+                        </button>
+                    </div>
+                </Card>
             </div>
 
             {/* Viewport */}

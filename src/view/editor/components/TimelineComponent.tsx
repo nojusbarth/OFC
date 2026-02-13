@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { Card } from "react-bootstrap";
-import { ISettings } from "../../../controller/interface/ISettings";
-import { ITimeController } from "../../../controller/interface/ITimeController";
-import { IUndoableController } from "../../../controller/interface/IUndoableController";
-import { SPEED_VALUES, toolTipps } from "../config";
-import { IProject } from "../../../controller/interface/IProject";
+import {useEffect, useState} from "react";
+import {Card} from "react-bootstrap";
+import {ISettings} from "../../../controller/interface/ISettings";
+import {ITimeController} from "../../../controller/interface/ITimeController";
+import {IUndoableController} from "../../../controller/interface/IUndoableController";
+import {SPEED_VALUES, toolTipps} from "../config";
+import {IProject} from "../../../controller/interface/IProject";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -107,24 +107,6 @@ export default function TimelineComponent({
 
     return (
         <Card className="rounded-0 border-2 border-secondary border-start-0 border-top-0 border-end-0 d-flex flex-row align-items-center gap-4 p-3">
-            {/* Record Button */}
-            <button
-                className="btn btn-link p-0 text-danger"
-                onClick={handleRecordingClick}
-            >
-                <i
-                    title={
-                        recording
-                            ? toolTipps.RECORD_STOP
-                            : toolTipps.RECORD_START
-                    }
-                    className={
-                        `bi ${recording ? "bi-stop-fill" : "bi-record-fill"}` +
-                        " fs-2"
-                    }
-                />
-            </button>
-
             {/* Play Button */}
             <button className="btn btn-link p-0" onClick={handlePlayPauseClick}>
                 <i
@@ -185,6 +167,24 @@ export default function TimelineComponent({
                     disabled={playing}
                 />
             </div>
+
+            {/* Record Button */}
+            <button
+                className="btn btn-link p-0 text-danger"
+                onClick={handleRecordingClick}
+            >
+                <i
+                    title={
+                        recording
+                            ? toolTipps.RECORD_STOP
+                            : toolTipps.RECORD_START
+                    }
+                    className={
+                        `bi ${recording ? "bi-stop-fill" : "bi-record-fill"}` +
+                        " fs-2"
+                    }
+                />
+            </button>
         </Card>
     );
 }

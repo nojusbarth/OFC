@@ -58,7 +58,7 @@ export class ProjectRepository implements IProjectRepository {
     loadLastProject(): Result<boolean> {
         const data = localStorage.getItem(LAST_PROJECT_DATA_KEY)
         if (data == null) {
-            return new Result(false, new Error(`Failed to load project from local storage`))
+            return new Result(false, new Error(`Projekt konnte nicht geladen werden`))
         }
         const jsonResult = this.parseJson(data)
         const config = jsonResult.getResult();
@@ -75,10 +75,10 @@ export class ProjectRepository implements IProjectRepository {
         try {
             data = JSON.parse(content)
         } catch (e) {
-            return new Result(null, new Error(`Failed to parse project: SyntaxError`))
+            return new Result(null, new Error(`Projekt kann nicht geladen werden aufgrund der fehlerhaften Syntax`))
         }
         if (data.version !== FILE_VERSION) {
-            return new Result(null, new Error(`Failed to load project: ${data.version} is not supported`));
+            return new Result(null, new Error(`Projekt hat die falsche Version: ${data.version} wird nicht unterstützt`));
         }
         return new Result(data);
     }
@@ -156,7 +156,12 @@ export class ProjectRepository implements IProjectRepository {
         return JSON.stringify(config, null, 0)
     }
 
-    saveToLocalStorage(): void {
-        localStorage.setItem(LAST_PROJECT_DATA_KEY, this.exportConfig());
+    saveToLocalStorage(): Result<boolean> {
+        try {
+            localStorage.setItem(LAST_PROJECT_DATA_KEY, this.exportConfig());
+            return new Result(true)
+        } catch (error) {
+            return new Result(false, new Error(`Projekt kann nicht lokal gespeichert werden`))
+        }
     }
 }

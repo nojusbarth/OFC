@@ -1,7 +1,7 @@
-import { useState } from "react";
+import React, {useState} from "react";
 import {IController} from "../../controller/interface/IController";
 import PopupComponent from "./PopupComponent";
-import { Result } from "../../repository/Result";
+import {Result} from "../../repository/Result";
 import "./StartpageComponent.css";
 
 
@@ -69,38 +69,38 @@ export default function StartpageComponent({controller, toggleStartpage}: Startp
   };
 
   return (
-      <div className="bg-gradients">
-        <div className="startpage-container">
-          <div className="text-center logo-ofc-wrapper">
-            <h1 className="logo-ofc">
-              <img src="./ofc.png" alt="OFC Logo" />
-            </h1>
-          </div>
-          <div className="card shadow-sm startpage-card">
-            <h3 className="text-center logo-subtitle mb-3">Olympian Flight Control</h3>
+      <div className="bg-gradients d-flex align-items-center justify-content-center">
+        <div className="card shadow-sm" style={{ maxWidth: "500px", width: "100%" }}>
+          <div className="card-body">
+
+            <h2 className="text-center logo-subtitle mb-3">
+              Olympian Flight Control
+            </h2>
             <form>
+              <hr/>
+              <div className="mb-3">
+                <input className="form-control" type="file" id="fileInput" onChange={onFileChange}/>
+              </div>
               {showPopup && (
                   <PopupComponent message={message} messageType={messageType}/>
               )}
 
-              <div className="mb-3">
-                <input className="form-control" type="file" id="fileInput" onChange={onFileChange}/>
-              </div>
-
-              <div className="d-grid gap-2 mt-3">
-                <button type="button" className="btn btn-primary shadow-sm" onClick={onCreateProject}>
-                  <i className="bi bi-file-earmark-plus me-2" />
-                  Projekt erstellen
-                </button>
-                <button type="button" className="btn btn-primary shadow-sm" onClick={onOpenProject} disabled={!file}>
-                  <i className="bi bi-folder me-2" />
+                <button type="button" className="btn btn-primary shadow-sm w-100 mb-2" onClick={onOpenProject}
+                        disabled={!file}>
+                  <i className="bi bi-folder me-2"/>
                   Projekt öffnen
                 </button>
-                <button type="button" className="btn btn-primary shadow-sm" onClick={onOpenLastProject} disabled={!controller.getProject().canLoadLastProject()}>
-                  <i className="bi bi-arrow-clockwise me-2" />
+                <button type="button" className="btn btn-outline-primary shadow-sm w-100" onClick={onOpenLastProject}
+                        disabled={!controller.getProject().canLoadLastProject()}>
+                  <i className="bi bi-arrow-clockwise me-2"/>
                   Zuletzt geöffnetes Projekt öffnen
                 </button>
-              </div>
+
+              <hr/>
+              <button type="button" className="btn btn-primary shadow-sm w-100" onClick={onCreateProject}>
+              <i className="bi bi-file-earmark-plus me-2" />
+              Projekt erstellen
+            </button>
             </form>
           </div>
         </div>
