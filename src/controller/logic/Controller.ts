@@ -83,7 +83,7 @@ export class Controller implements IController {
     }
 
     getDrones(): number[] {
-        return this.repository.getAllDrones().map(drone => drone.getId());
+        return this.repository.getAllDrones().map(drone => drone.getId()).sort((a, b) => a - b);
     }
 
     selectDrone(id: number): void {
