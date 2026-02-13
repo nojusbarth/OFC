@@ -32,7 +32,19 @@ function App() {
 
 
 
-    return ctr2;
+    // Add color keyframes
+    ctrl.getTimeController().setTime(0);
+    ctrl.addColorKeyFrame(drone1, new ColorKeyFrame(new Color(1, 0, 0), 0)); // Red
+    ctrl.addColorKeyFrame(drone2, new ColorKeyFrame(new Color(0, 1, 0), 0)); // Green
+    ctrl.addColorKeyFrame(drone3, new ColorKeyFrame(new Color(0, 0, 1), 0)); // Blue
+
+    ctrl.getTimeController().setTime(10);
+    ctrl.addColorKeyFrame(drone1, new ColorKeyFrame(new Color(1, 1, 0), 10)); // Yellow
+
+    // Reset time to 0
+    ctrl.getTimeController().setTime(0);
+
+    return new UndoableController(ctrl, repository, new UndoRepository(), new UndoRepository());
   }, []);
 
   const tolleSache = useMemo(() => [
@@ -76,8 +88,8 @@ function App() {
   let inhalt: React.ReactNode;
   if (showStartpage) {
     inhalt = <StartpageComponent
-        controller={controller}
-        toggleStartpage={() => setShowStartpage(false)}
+      controller={controller}
+      toggleStartpage={() => setShowStartpage(false)}
     />;
   } else {
     inhalt = (
