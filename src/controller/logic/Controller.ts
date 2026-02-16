@@ -35,6 +35,9 @@ export class Controller implements IController {
         this.project.getProjectLoadedEvent().register(() => {
             this.selectedDrones = [];
             this.recalculateCollisions();
+            this.timeController.stopAnimation()
+            this.timeController.setTime(0);
+            this.timeController.setAnimationSpeed(1);
         });
         this.settings.getCollisionRadiusChangedEvent().register(() => {
             this.recalculateCollisions();
