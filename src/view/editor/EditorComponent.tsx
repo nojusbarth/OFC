@@ -117,21 +117,23 @@ export function EditorComponent({
                                 style={{ color: "black" }}
                             />
                         </button>
-                        <button
-                            className="btn btn-link p-0"
+                        <div
+                            className="form-check form-switch m-0 d-flex align-items-center gap-3"
                             title={showSettings ? toolTipps.TO_DRONE_SETTINGS : toolTipps.TO_SETTINGS}
-                            onClick={toggleSettingsMenu}
                         >
-                            {showSettings ? (
-                                <i
-                                    className="bi bi-geo fs-2"
-                                    style={{ color: "black" }}
-                                />
-                            ) : (
-                                <i className="bi bi-gear fs-2"
-                                    style={{ color: "black" }} />
-                            )}
-                        </button>
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                checked={showSettings}
+                                onChange={toggleSettingsMenu}
+                                style={{ transform: "scale(1.4)", cursor: "pointer" }}
+                            />
+                            <i
+                                className={`bi ${showSettings ? "bi-geo" : "bi-gear"} fs-2`}
+                                style={{ color: "black" }}
+                            />
+                        </div>
                     </div>
                 </Card>
             </div>
