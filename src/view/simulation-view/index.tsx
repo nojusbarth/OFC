@@ -19,6 +19,13 @@ export function initSimulation(controller : IController) {
   controller.getProject().getProjectLoadedEvent().register(() => {
       console.log("Project loaded event ");
 
+      simulation = new SimulationView(
+        droneStore,
+        pathStore,
+        lightStore,
+        controller
+      );
+
       simulation.notifyCollisionChange(Array.from(controller.getCollisions().keys()));
       simulation.setSimulationTime(controller.getSettings().getDayTime());
   
@@ -75,7 +82,7 @@ export function initSimulation(controller : IController) {
   const pathStore = new PathStateStore();
   const lightStore = new LightStateStore();
 
-  const simulation = new SimulationView(
+  var simulation = new SimulationView(
     droneStore,
     pathStore,
     lightStore,
@@ -98,7 +105,6 @@ export function initSimulation(controller : IController) {
   );
 
   return {
-    simulation,
     Scene,
   };
 }
