@@ -26,9 +26,8 @@ unit-test:
 e2e-test:
     stage: test
     image: mcr.microsoft.com/playwright:v1.58.2-noble
-    parallel: 7
     script:
         - npm ci
-        - npx playwright test --shard=$CI_NODE_INDEX/$CI_NODE_TOTAL
+        - npx playwright test
     rules:
         - when: always
