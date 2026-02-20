@@ -21,4 +21,4 @@ test:
       - coverage/
   coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   rules:
-    - when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
