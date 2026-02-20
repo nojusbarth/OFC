@@ -12,10 +12,13 @@ test:
   stage: test
   script:
     - npm ci --cache .npm --prefer-offline
-    - npm test -- --watchAll=false --ci --reporters=default --reporters=jest-junit
+    - npm test -- --watchAll=false --ci --reporters=default --reporters=jest-junit --coverage
   artifacts:
     when: always
     reports:
       junit: junit.xml
+    paths:
+      - coverage/
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   rules:
-    - when: always
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
