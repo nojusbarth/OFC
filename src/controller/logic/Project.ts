@@ -1,5 +1,4 @@
 import type {IProject} from "../interface/IProject";
-import {IController} from "../interface/IController";
 import {IProjectRepository} from "../../repository/IProjectRepository";
 import {saveAs} from 'file-saver';
 import {LAST_PROJECT_DATA_KEY} from "../../repository/RepositoryConstants";
