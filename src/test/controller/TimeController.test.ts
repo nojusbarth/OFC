@@ -1,9 +1,8 @@
 import { ISettings } from "../../controller/interface/ISettings";
 import { ITimeController } from "../../controller/interface/ITimeController";
-import { DayTime } from "../../repository/entity/DayTime";
 import { makeBasicController } from "./testHelper";
 // Tests von KI generiert
-describe("Subcontroller Event Emission Tests", () => {
+describe("TimeController Tests", () => {
     let settings: ISettings;
     let timeController: ITimeController;
 

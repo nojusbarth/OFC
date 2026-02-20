@@ -103,3 +103,43 @@ it("UndoableController: add/remove position keyframe", () => {
     undoableController.redo();
     expect(undoableController.getPositionKeyFrames(droneId).length).toBe(0);
 });
+
+it("UndoableController: add/remove color keyframe", () => {
+    const [undoableController, _repository] = makeUndoableController();
+
+    const droneId = undoableController.addDrone();
+    // test add 
+    undoableController.addColorKeyFrameNow(droneId, new Color(1, 2, 3));
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(1);
+    expect(undoableController.getColorAt(droneId, 0).equals(new Color(1, 2, 3))).toBe(true);
+    
+    undoableController.undo();
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(0);
+
+    undoableController.redo();
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(1);
+    expect(undoableController.getColorAt(droneId, 0).equals(new Color(1, 2, 3))).toBe(true);
+
+    // test replace (same time keyframe)
+    undoableController.addColorKeyFrameNow(droneId, new Color(4, 5, 6));
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(1);
+    expect(undoableController.getColorAt(droneId, 0).equals(new Color(4, 5, 6))).toBe(true);
+
+    undoableController.undo();
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(1);
+    expect(undoableController.getColorAt(droneId, 0).equals(new Color(1, 2, 3))).toBe(true);
+    undoableController.redo();
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(1);
+    expect(undoableController.getColorAt(droneId, 0).equals(new Color(4, 5, 6))).toBe(true);
+
+    // test remove
+    const keyFrame = undoableController.getColorKeyFrames(droneId)[0];
+    undoableController.removeColorKeyFrame(droneId, keyFrame);
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(0);
+
+    undoableController.undo();
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(1);
+    expect(undoableController.getColorAt(droneId, 0).equals(new Color(4, 5, 6))).toBe(true);
+    undoableController.redo();
+    expect(undoableController.getColorKeyFrames(droneId).length).toBe(0);
+});
