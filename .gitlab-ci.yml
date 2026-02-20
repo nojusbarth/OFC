@@ -1,24 +1,40 @@
 image: node:25
 
 stages:
-  - test
+    - test
 
 cache:
-  key: npm-cache
-  paths:
-    - .npm/
-
-test:
-  stage: test
-  script:
-    - npm ci --cache .npm --prefer-offline
-    - npm test -- --watchAll=false --ci --reporters=default --reporters=jest-junit --coverage
-  artifacts:
-    when: always
-    reports:
-      junit: junit.xml
+    key: npm-cache
     paths:
-      - coverage/
-  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
-  rules:
-    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+        - .npm/
+
+unit-test:
+    stage: test
+    script:
+        - npm ci --cache .npm --prefer-offline
+        - npm test -- --watchAll=false --ci --reporters=default --reporters=jest-junit --coverage
+    artifacts:
+        when: always
+        reports:
+            junit: junit-unit.xml
+        paths:
+            - coverage/
+    coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+
+e2e-test:
+    stage: test
+    image: mcr.microsoft.com/playwright:v1.58.2-noble
+    script:
+        - npm ci
+        - PLAYWRIGHT_JUNIT_OUTPUT_DIR=. PLAYWRIGHT_JUNIT_OUTPUT_NAME=junit-e2e.xml npx playwright test --reporter=junit,html
+    artifacts:
+        when: always
+        reports:
+            junit: junit-e2e.xml
+        paths:
+            - junit-e2e.xml
+            - playwright-report/
+    rules:
+        - if: $CI_PIPELINE_SOURCE == "merge_request_event"
