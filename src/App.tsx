@@ -27,7 +27,7 @@ export function App() {
   }, []);
 
   // initSimulation liefert die Simulation-Fassade und die Scene-Komponente
-  const { Scene } = useMemo(() => initSimulation(controller), [controller]);
+  const { Scene } = useMemo(() => initSimulation(controller), []);
 
   useEffect(() => {
     if (showStartpage) {
