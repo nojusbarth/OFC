@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Form, Modal, Spinner } from "react-bootstrap";
 import { DayTime } from "../../../repository/entity/DayTime";
-import SunCalc from 'suncalc';
+import { mapDayTimeToDisplayName } from "../utils/dayTimeMapper";
+import {
+  calculateDayTimeFromSunPosition,
+  convertToUTCWithLongitude,
+} from "../utils/dayTimeCalculator";
 
 async function getCoords(cityName: string) {
     try {
@@ -14,14 +18,6 @@ async function getCoords(cityName: string) {
     } catch (error) {
         console.error("Fehler beim Abrufen der Koordinaten", error);
         return null;
-    }
-}
-
-function mapDayTimeToDisplayName(dayTime: DayTime): string {
-    switch (dayTime) {
-        case DayTime.NOON: return "Mittag"
-        case DayTime.SUNSET: return "Dämmerung"
-        case DayTime.NIGHT: return "Nacht"
     }
 }
 
@@ -62,23 +58,13 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
             setIsLoading(false);
             return;
         }
-        const utcDate = new Date(`${dateStr}T${timeStr}Z`);
 
-        const offsetHours = coords.lon / 15;
-        utcDate.setHours(utcDate.getHours() - offsetHours);
-
-        const sunPos = SunCalc.getPosition(utcDate, coords.lat, coords.lon);
-        const altitudeDeg = sunPos.altitude * (180 / Math.PI);
-
-        let result: DayTime;
-
-        if (altitudeDeg < -6) {
-            result = DayTime.NIGHT;
-        } else if (altitudeDeg >= -6 && altitudeDeg <= 6) {
-            result = DayTime.SUNSET;
-        } else {
-            result = DayTime.NOON;
-        }
+        const utcDate = convertToUTCWithLongitude(dateStr, timeStr, coords.lon);
+        const result = calculateDayTimeFromSunPosition(
+            utcDate,
+            coords.lat,
+            coords.lon,
+        );
 
         setIsLoading(false);
         setLocalResult({
