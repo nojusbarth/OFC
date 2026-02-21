@@ -6,6 +6,8 @@ import { LightFrame } from "../../../view/simulation-view/state/LightFrame";
 import { PathFrame } from "../../../view/simulation-view/state/PathFrame";
 import { Vector3 } from "three";
 
+//KI GENERIERT
+
 describe("DroneStateStore", () => {
   it("should bind state setter correctly", () => {
     const store = new DroneStateStore();

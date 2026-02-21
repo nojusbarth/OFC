@@ -5,6 +5,7 @@ import { ITimeController } from "../../../controller/interface/ITimeController";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { SPEED_VALUES, toolTipps } from "../config";
 import { IProject } from "../../../controller/interface/IProject";
+import { formatTime } from "../utils/timeFormatter";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -188,10 +189,4 @@ export function TimelineComponent({
             </button>
         </Card>
     );
-}
-
-function formatTime(seconds: number): string {
-    const mins = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
 }

@@ -3,6 +3,8 @@ import { LightFrame } from "../../../view/simulation-view/state/LightFrame";
 import { DayTime } from "../../../repository/entity/DayTime";
 import { lightFrames } from "../../../view/simulation-view/config";
 
+//KI GENERIERT
+
 it("Setting simulation time to NOON should apply noon light", () => {
   var timeManager = new TimeManager();
 
@@ -85,4 +87,16 @@ it("Setting simulation time back to previous value should work correctly", () =>
   timeManager.setSimulationTime(DayTime.SUNSET);
   var light3 = timeManager.applyLightChanges(new LightFrame());
   expect(light3).toEqual(lightFrames.sunset);
+});
+
+it("Setting invalid time should log error and not change light", () => {
+  var timeManager = new TimeManager();
+
+  const consoleErrorSpy = jest.spyOn(console, "error").mockImplementation();
+
+  timeManager.setSimulationTime(-1 as DayTime); // Ungültiger Wert
+
+  expect(consoleErrorSpy).toHaveBeenCalledWith(
+    "Ungültige Tageszeit für die Simulation gesetzt.",
+  );
 });

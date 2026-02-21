@@ -3,6 +3,8 @@ import { DroneFrame } from "../../../view/simulation-view/state/DroneFrame";
 import { PathFrame } from "../../../view/simulation-view/state/PathFrame";
 import { Vector3 } from "three";
 
+//KI GENERIERT
+
 it("Selecting drones should visualize selected drones", () => {
   var selectionManager = new SelectionManager();
 
