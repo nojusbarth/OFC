@@ -21,6 +21,7 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
+import { DroneGroup } from "../../../repository/grouping/DroneGroup";
 
 /**
  * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht
@@ -43,6 +44,10 @@ export function DroneManagerComponent({
   );
   const [collidingDrones, setCollidingDrones] = useState<Array<number>>(
     Array.from(controller.getCollisions().keys()),
+  );
+
+  const [groups, setGroups] = useState<DroneGroup[]>(
+    controller.getGroupManager().getAllGroups(),
   );
 
   //Drag und Drop
@@ -71,6 +76,11 @@ export function DroneManagerComponent({
       setSelectedDrones(selectedDroneIds);
     };
 
+    const handleGroupsChanged = (updatedGroups: DroneGroup[]) => {
+      setGroups(updatedGroups);
+    };
+
+    controller.getGroupEvent().register(handleGroupsChanged);
     controller.getDronesEvent().register(onDronesChanged);
     controller.getCollisionEvent().register(onCollisionChanged);
     controller.getDroneSelectEvent().register(onDroneSelectedChange);
@@ -79,6 +89,7 @@ export function DroneManagerComponent({
       controller.getDronesEvent().remove(onDronesChanged);
       controller.getCollisionEvent().remove(onCollisionChanged);
       controller.getDroneSelectEvent().remove(onDroneSelectedChange);
+      controller.getGroupEvent().remove(handleGroupsChanged);
     };
   }, [controller]);
 
@@ -109,6 +120,31 @@ export function DroneManagerComponent({
     },
     [controller, selectedDrones],
   );
+
+  //Neue Gruppe erstellen
+  const onGroupCreate = useCallback(() => {
+    const selectedDroneIds = selectedDrones; // aus State
+    if (selectedDroneIds.length === 0) return;
+
+    const groupId = controller.getGroupManager().createGroup();
+    controller.getGroupManager().addDronesToGroup(selectedDroneIds, groupId);
+
+    controller
+      .getGroupEvent()
+      .notify(controller.getGroupManager().getAllGroups());
+  }, [controller, selectedDrones]);
+
+  //Drohnen aus Gruppe entfernen
+  const onGroupRemove = useCallback(() => {
+    const selectedDroneIds = selectedDrones; // aus State
+
+    if (selectedDroneIds.length === 0) return;
+
+    controller.getGroupManager().removeDronesFromGroup(selectedDroneIds);
+    controller
+      .getGroupEvent()
+      .notify(controller.getGroupManager().getAllGroups());
+  }, [controller, selectedDrones]);
 
   /* ---------- Drag Handler ---------- */
   const handleDragEnd = (event: DragEndEvent) => {
@@ -141,18 +177,29 @@ export function DroneManagerComponent({
           <i className="bi bi-plus" />
           Hinzufügen
         </button>
+
+        <button className="btn btn-sm btn-secondary" onClick={onGroupCreate}>
+          Gruppieren
+        </button>
+
+        <button
+          className="btn btn-sm btn-outline-danger"
+          onClick={onGroupRemove}
+        >
+          Gruppe auflösen
+        </button>
       </Card.Header>
 
       <Card.Body className="d-flex flex-column overflow-y-auto p-3">
         <DndContext
-  sensors={sensors}
-  collisionDetection={closestCenter}
-  onDragEnd={handleDragEnd}
-  measuring={{
-    droppable: {
-      strategy: MeasuringStrategy.WhileDragging,
-    },
-  }}
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+          measuring={{
+            droppable: {
+              strategy: MeasuringStrategy.WhileDragging,
+            },
+          }}
         >
           <SortableContext items={orderedDrones} strategy={rectSortingStrategy}>
             <div className="row row-cols-auto justify-content-start g-4">
@@ -160,6 +207,9 @@ export function DroneManagerComponent({
                 <SortableDroneCard
                   key={droneId}
                   droneId={droneId}
+                  groupId={controller
+                    .getGroupManager()
+                    .getDroneGroupId(droneId)}
                   isSelected={selectedDrones.includes(droneId)}
                   onDroneSelectionChange={onDroneSelectionChange}
                   isColliding={collidingDrones.includes(droneId)}

@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, memo } from "react";
 import { Color } from "three";
 import { Card } from "react-bootstrap";
 
-
 import "./DroneManagerComponent.css";
 import { toolTipps } from "../config";
 import { IController } from "../../../controller/interface/IController";
@@ -18,6 +17,7 @@ export function DroneCard({
   onRemoveDrone,
   controller,
   dragListeners,
+  groupId,
 }: {
   droneId: number;
   isSelected: boolean;
@@ -26,6 +26,7 @@ export function DroneCard({
   onRemoveDrone: (droneId: number) => void;
   controller: IController;
   dragListeners?: any;
+  groupId?: number;
 }) {
   const [isVisible, setIsVisible] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
@@ -49,6 +50,11 @@ export function DroneCard({
   }, []);
 
   const [color, setColor] = useState<Color | null>(null);
+
+  //Gruppenfarbe in Abhängigkeit von groupId
+  const groupColor = groupId
+    ? `hsl(${(groupId * 137) % 360}, 65%, 75%)`
+    : undefined;
 
   useEffect(() => {
     // only update color if the card is visible to optimize performance
@@ -77,6 +83,11 @@ export function DroneCard({
       <div
         ref={ref}
         className="col drone-manager drone-card"
+        style={{
+          backgroundColor: groupColor,
+          borderRadius: "12px",
+          padding: "4px",
+        }}
         title={isSelected ? toolTipps.DRONE_UNSELECT : toolTipps.DRONE_SELECT}
       >
         <Card
