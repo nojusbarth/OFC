@@ -21,7 +21,6 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
-import { DroneGroup } from "../../../repository/grouping/DroneGroup";
 
 /**
  * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht
@@ -39,16 +38,6 @@ export function DroneManagerComponent({
   const [allDrones, setAllDrones] = useState<Array<number>>(
     controller.getDrones(),
   );
-  const [selectedDrones, setSelectedDrones] = useState<Array<number>>(
-    controller.getSelectedDrones(),
-  );
-  const [collidingDrones, setCollidingDrones] = useState<Array<number>>(
-    Array.from(controller.getCollisions().keys()),
-  );
-
-  const [groups, setGroups] = useState<DroneGroup[]>(
-    controller.getGroupManager().getAllGroups(),
-  );
 
   //Drag und Drop
   const [orderedDrones, setOrderedDrones] = useState<number[]>([]);
@@ -64,32 +53,10 @@ export function DroneManagerComponent({
 
   /* ---------- Register Events ---------- */
   useEffect(() => {
-    const onDronesChanged = (drones: Array<number>) => {
-      setAllDrones(drones);
-    };
-
-    const onCollisionChanged = (droneIds: Map<number, Map<number, number>>) => {
-      setCollidingDrones(Array.from(droneIds.keys()));
-    };
-
-    const onDroneSelectedChange = (selectedDroneIds: Array<number>) => {
-      setSelectedDrones(selectedDroneIds);
-    };
-
-    const handleGroupsChanged = (updatedGroups: DroneGroup[]) => {
-      setGroups(updatedGroups);
-    };
-
-    controller.getGroupEvent().register(handleGroupsChanged);
-    controller.getDronesEvent().register(onDronesChanged);
-    controller.getCollisionEvent().register(onCollisionChanged);
-    controller.getDroneSelectEvent().register(onDroneSelectedChange);
+    controller.getDronesEvent().register(setAllDrones);
 
     return () => {
-      controller.getDronesEvent().remove(onDronesChanged);
-      controller.getCollisionEvent().remove(onCollisionChanged);
-      controller.getDroneSelectEvent().remove(onDroneSelectedChange);
-      controller.getGroupEvent().remove(handleGroupsChanged);
+      controller.getDronesEvent().remove(setAllDrones);
     };
   }, [controller]);
 
@@ -103,48 +70,23 @@ export function DroneManagerComponent({
     controller.addDrone();
   }, [controller]);
 
-  const onRemoveDrone = useCallback(
-    (droneId: number) => {
-      controller.removeDrone(droneId);
-    },
-    [controller],
-  );
-
-  const onDroneSelectionChange = useCallback(
-    (droneId: number) => {
-      if (selectedDrones.includes(droneId)) {
-        controller.unselectDrone(droneId);
-      } else {
-        controller.selectDrone(droneId);
-      }
-    },
-    [controller, selectedDrones],
-  );
-
   //Neue Gruppe erstellen
   const onGroupCreate = useCallback(() => {
-    const selectedDroneIds = selectedDrones; // aus State
+    const selectedDroneIds = controller.getSelectedDrones(); // aus State
     if (selectedDroneIds.length === 0) return;
 
     const groupId = controller.getGroupManager().createGroup();
     controller.getGroupManager().addDronesToGroup(selectedDroneIds, groupId);
-
-    controller
-      .getGroupEvent()
-      .notify(controller.getGroupManager().getAllGroups());
-  }, [controller, selectedDrones]);
+  }, [controller]);
 
   //Drohnen aus Gruppe entfernen
   const onGroupRemove = useCallback(() => {
-    const selectedDroneIds = selectedDrones; // aus State
+    const selectedDroneIds = controller.getSelectedDrones(); // aus State
 
     if (selectedDroneIds.length === 0) return;
 
     controller.getGroupManager().removeDronesFromGroup(selectedDroneIds);
-    controller
-      .getGroupEvent()
-      .notify(controller.getGroupManager().getAllGroups());
-  }, [controller, selectedDrones]);
+  }, [controller]);
 
   /* ---------- Drag Handler ---------- */
   const handleDragEnd = (event: DragEndEvent) => {
@@ -207,13 +149,6 @@ export function DroneManagerComponent({
                 <SortableDroneCard
                   key={droneId}
                   droneId={droneId}
-                  groupId={controller
-                    .getGroupManager()
-                    .getDroneGroupId(droneId)}
-                  isSelected={selectedDrones.includes(droneId)}
-                  onDroneSelectionChange={onDroneSelectionChange}
-                  isColliding={collidingDrones.includes(droneId)}
-                  onRemoveDrone={onRemoveDrone}
                   controller={controller}
                 />
               ))}

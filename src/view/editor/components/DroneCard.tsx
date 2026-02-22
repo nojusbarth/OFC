@@ -11,22 +11,12 @@ import { CSS } from "@dnd-kit/utilities";
 
 export function DroneCard({
   droneId,
-  isSelected,
-  onDroneSelectionChange,
-  isColliding,
-  onRemoveDrone,
   controller,
-  dragListeners,
-  groupId,
+  dragListeners
 }: {
   droneId: number;
-  isSelected: boolean;
-  onDroneSelectionChange: (droneId: number) => void;
-  isColliding: boolean;
-  onRemoveDrone: (droneId: number) => void;
   controller: IController;
   dragListeners?: any;
-  groupId?: number;
 }) {
   const [isVisible, setIsVisible] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
@@ -50,6 +40,9 @@ export function DroneCard({
   }, []);
 
   const [color, setColor] = useState<Color | null>(null);
+  const [groupId, setGroupId] = useState<number | undefined>(undefined);
+  const [isColliding, setIsColliding] = useState<boolean>(false);
+  const [isSelected, setIsSelected] = useState<boolean>(false);
 
   //Gruppenfarbe in Abhängigkeit von groupId
   const groupColor = groupId
@@ -66,16 +59,47 @@ export function DroneCard({
       }
     };
 
+    const updateGroup = () => {
+      const newGroupId = controller.getGroupManager().getDroneGroupId(droneId);
+      setGroupId(newGroupId);
+    }
+
+    const updateCollisions = (collidingDrones: Map<number, Map<number, number>>) => {
+      const isColliding = collidingDrones.has(droneId);
+      setIsColliding(isColliding);
+    }
+
+    const updateSelection = (selectedDroneIds: number[]) => {
+      setIsSelected(selectedDroneIds.includes(droneId));
+    }
+
     updateColor();
+    updateGroup();
+    updateCollisions(controller.getCollisions());
+    updateSelection(controller.getSelectedDrones());
 
     controller.getTimeController().getTimeChangedEvent().register(updateColor);
     controller.getDroneChangedEvent().register(updateColor);
+    controller.getGroupManager().getGroupEvent().register(updateGroup);
+    controller.getCollisionEvent().register(updateCollisions);
+    controller.getDroneSelectEvent().register(updateSelection);
 
     return () => {
       controller.getTimeController().getTimeChangedEvent().remove(updateColor);
       controller.getDroneChangedEvent().remove(updateColor);
+      controller.getGroupManager().getGroupEvent().remove(updateGroup);
+      controller.getCollisionEvent().remove(updateCollisions);
+      controller.getDroneSelectEvent().remove(updateSelection);
     };
   }, [controller, droneId, isVisible]);
+
+  const toggleSelection = () => {
+    if (isSelected) {
+      controller.unselectDrone(droneId);
+    } else {
+      controller.selectDrone(droneId);
+    }
+  }
 
   return (
     <>
@@ -91,7 +115,7 @@ export function DroneCard({
         title={isSelected ? toolTipps.DRONE_UNSELECT : toolTipps.DRONE_SELECT}
       >
         <Card
-          onClick={() => onDroneSelectionChange(droneId)}
+          onClick={toggleSelection}
           className={`text-center position-relative
     ${
       isSelected
@@ -140,7 +164,7 @@ export function DroneCard({
             title={toolTipps.DRONE_DELETE}
             onClick={(e) => {
               e.stopPropagation();
-              onRemoveDrone(droneId);
+              controller.removeDrone(droneId);
             }}
           >
             <i className="bi bi-trash" />

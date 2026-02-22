@@ -1,9 +1,11 @@
 import { DroneGroup } from "../../repository/grouping/DroneGroup";
+import { OFCEvent } from "../interface/OFCEvent";
 
 export class DroneGroupManager {
   private groups: Map<number, DroneGroup> = new Map();
   private droneToGroup: Map<number, number> = new Map(); // droneId -> groupId
   private nextGroupId: number = 1;
+  groupEvent = new OFCEvent<DroneGroup[]>();
 
   /* ---------- Group Creation ---------- */
 
@@ -41,6 +43,7 @@ export class DroneGroupManager {
       group.droneIds.add(droneId);
       this.droneToGroup.set(droneId, groupId);
     }
+    this.groupEvent.notify(this.getAllGroups());
   }
 
   /* ---------- Remove Multiple Drones From Their Groups ---------- */
@@ -60,6 +63,7 @@ export class DroneGroupManager {
         this.groups.delete(groupId);
       }
     }
+    this.groupEvent.notify(this.getAllGroups());
   }
 
   /* ---------- Queries ---------- */
@@ -80,5 +84,9 @@ export class DroneGroupManager {
     const group = this.groups.get(groupId);
     if (!group) return [];
     return Array.from(group.droneIds);
+  }
+
+  public getGroupEvent(): OFCEvent<DroneGroup[]> {
+    return this.groupEvent;
   }
 }

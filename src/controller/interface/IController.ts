@@ -187,7 +187,5 @@ export interface IController {
    */
   getDroneSelectEvent(): OFCEvent<number[]>;
 
-  getGroupEvent(): OFCEvent<DroneGroup[]>;
-
   getGroupManager(): DroneGroupManager;
 }

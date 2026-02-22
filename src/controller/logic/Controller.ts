@@ -30,7 +30,6 @@ export class Controller implements IController {
   private collisionEvent: OFCEvent<Map<number, Map<number, number>>> =
     new OFCEvent();
   private droneSelectEvent: OFCEvent<number[]> = new OFCEvent();
-  private groupEvent: OFCEvent<DroneGroup[]> = new OFCEvent();
   private collisionState: Map<number, Map<number, number>> = new Map();
   constructor(settings: ISettings, repository: IProjectRepository) {
     this.settings = settings;
@@ -254,10 +253,6 @@ export class Controller implements IController {
 
   getDroneSelectEvent(): OFCEvent<number[]> {
     return this.droneSelectEvent;
-  }
-
-  getGroupEvent(): OFCEvent<DroneGroup[]> {
-    return this.groupEvent;
   }
 
   getGroupManager(): DroneGroupManager {
