@@ -267,6 +267,10 @@ export class UndoableController implements IUndoableController {
     this.controller.addPositionKeyFrame(id, keyFrame);
   }
 
+  clearSelection(): void {
+    return this.controller.clearSelection();
+  }
+
   removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
     if (
       this._findKeyFrameAtTime(
@@ -321,6 +325,10 @@ export class UndoableController implements IUndoableController {
       this._pushAction(ActionType.REMOVE_COLOR_KEYFRAME, { id, keyFrame });
     }
     this.controller.removeColorKeyFrame(id, keyFrame);
+  }
+
+  selectGroupOfDrone(droneId: number): void {
+    this.controller.selectGroupOfDrone(droneId);
   }
 
   getCollisions(): Map<number, Map<number, number>> {

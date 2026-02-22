@@ -12,10 +12,12 @@ import { CSS } from "@dnd-kit/utilities";
 export function DroneCard({
   droneId,
   controller,
-  dragListeners
+  onDroneClick,
+  dragListeners,
 }: {
   droneId: number;
   controller: IController;
+  onDroneClick: (droneId: number, isShift: boolean) => void;
   dragListeners?: any;
 }) {
   const [isVisible, setIsVisible] = useState(true);
@@ -62,16 +64,18 @@ export function DroneCard({
     const updateGroup = () => {
       const newGroupId = controller.getGroupManager().getDroneGroupId(droneId);
       setGroupId(newGroupId);
-    }
+    };
 
-    const updateCollisions = (collidingDrones: Map<number, Map<number, number>>) => {
+    const updateCollisions = (
+      collidingDrones: Map<number, Map<number, number>>,
+    ) => {
       const isColliding = collidingDrones.has(droneId);
       setIsColliding(isColliding);
-    }
+    };
 
     const updateSelection = (selectedDroneIds: number[]) => {
       setIsSelected(selectedDroneIds.includes(droneId));
-    }
+    };
 
     updateColor();
     updateGroup();
@@ -93,14 +97,6 @@ export function DroneCard({
     };
   }, [controller, droneId, isVisible]);
 
-  const toggleSelection = () => {
-    if (isSelected) {
-      controller.unselectDrone(droneId);
-    } else {
-      controller.selectDrone(droneId);
-    }
-  }
-
   return (
     <>
       {/* Drone Component */}
@@ -115,7 +111,11 @@ export function DroneCard({
         title={isSelected ? toolTipps.DRONE_UNSELECT : toolTipps.DRONE_SELECT}
       >
         <Card
-          onClick={toggleSelection}
+          onClick={(e) => onDroneClick(droneId, e.shiftKey)}
+          onDoubleClick={(e) => {
+            e.stopPropagation();
+            controller.selectGroupOfDrone(droneId);
+          }}
           className={`text-center position-relative
     ${
       isSelected

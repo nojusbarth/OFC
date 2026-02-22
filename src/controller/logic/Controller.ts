@@ -195,6 +195,24 @@ export class Controller implements IController {
     return this.collisionState;
   }
 
+  selectGroupOfDrone(droneId: number): void {
+    const groupId = this.groupManager.getDroneGroupId(droneId);
+    if (groupId === undefined) return;
+
+    const dronesInGroup = this.groupManager.getDronesInGroup(groupId);
+
+    this.clearSelection();
+
+    for (const id of dronesInGroup) {
+      this.selectDrone(id);
+    }
+  }
+
+  clearSelection(): void {
+    const selected = this.getSelectedDrones();
+    selected.forEach((id) => this.unselectDrone(id));
+  }
+
   private _checkCollisions(drone: IDrone): void {
     const collisions = checkCollisions(
       drone,

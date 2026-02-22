@@ -39,6 +39,9 @@ export function DroneManagerComponent({
     controller.getDrones(),
   );
 
+  //Shif select für Mehrfachauswahl
+  const [lastClickedDrone, setLastClickedDrone] = useState<number | null>(null);
+
   //Drag und Drop
   const [orderedDrones, setOrderedDrones] = useState<number[]>([]);
 
@@ -75,6 +78,8 @@ export function DroneManagerComponent({
     const selectedDroneIds = controller.getSelectedDrones(); // aus State
     if (selectedDroneIds.length === 0) return;
 
+    controller.clearSelection(); // Auswahl zurücksetzen, da Drohnen jetzt in Gruppe sind
+
     const groupId = controller.getGroupManager().createGroup();
     controller.getGroupManager().addDronesToGroup(selectedDroneIds, groupId);
   }, [controller]);
@@ -85,8 +90,46 @@ export function DroneManagerComponent({
 
     if (selectedDroneIds.length === 0) return;
 
+    controller.clearSelection(); // Auswahl zurücksetzen, da Drohnen jetzt nicht in Gruppe sind
+
     controller.getGroupManager().removeDronesFromGroup(selectedDroneIds);
   }, [controller]);
+
+  const onDroneSelectionChange = useCallback(
+    (droneId: number, isShift: boolean) => {
+      // SHIFT + es gibt eine Referenz-Drohne
+      if (isShift && lastClickedDrone !== null) {
+        const startIndex = orderedDrones.indexOf(lastClickedDrone);
+        const endIndex = orderedDrones.indexOf(droneId);
+
+        if (startIndex === -1 || endIndex === -1) return;
+
+        const [from, to] =
+          startIndex < endIndex
+            ? [startIndex, endIndex]
+            : [endIndex, startIndex];
+
+        const range = orderedDrones.slice(from, to + 1);
+        controller.clearSelection();
+        range.forEach((id) => {
+          controller.selectDrone(id);
+        });
+
+        return;
+      }
+      const selectedDrones = controller.getSelectedDrones();
+
+      // Normaler Toggle
+      if (selectedDrones.includes(droneId)) {
+        controller.unselectDrone(droneId);
+      } else {
+        controller.selectDrone(droneId);
+      }
+
+      setLastClickedDrone(droneId);
+    },
+    [controller, orderedDrones, lastClickedDrone],
+  );
 
   /* ---------- Drag Handler ---------- */
   const handleDragEnd = (event: DragEndEvent) => {
@@ -150,6 +193,7 @@ export function DroneManagerComponent({
                   key={droneId}
                   droneId={droneId}
                   controller={controller}
+                  onDroneClick={onDroneSelectionChange}
                 />
               ))}
             </div>
