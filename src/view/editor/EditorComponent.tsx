@@ -1,5 +1,5 @@
 import { DroneManagerComponent } from "./components/DroneManagerComponent";
-import { DroneEditorComponent } from "./components/DroneEditorComponent";
+import { DroneEditorComponent } from "./components/DroneEditorComponent/DroneEditorComponent";
 import { TimelineComponent } from "./components/TimelineComponent";
 import { SettingsComponent } from "./components/SettingsComponent";
 import { JSX, useEffect, useState } from "react";
