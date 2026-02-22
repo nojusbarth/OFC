@@ -174,9 +174,10 @@ export function DroneCard({
     </>
   );
 }
+const MemoizedDroneCard = memo(DroneCard);
 
 //Drag and Drop Card
-export function _SortableDroneCard(props: any) {
+export function SortableDroneCard(props: any) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.droneId });
 
@@ -187,8 +188,7 @@ export function _SortableDroneCard(props: any) {
 
   return (
     <div ref={setNodeRef} style={style} {...attributes}>
-      <DroneCard {...props} dragListeners={listeners} />
+      <MemoizedDroneCard {...props} dragListeners={listeners} />
     </div>
   );
 }
-export const SortableDroneCard = memo(_SortableDroneCard);
