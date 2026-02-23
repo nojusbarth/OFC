@@ -1,7 +1,7 @@
 import { Card } from "react-bootstrap";
-import { ColorKeyFrame } from "../../../../repository/entity/ColorKeyFrame";
-import { PositionKeyFrame } from "../../../../repository/entity/PositionKeyFrame";
-import { TitleComponent } from "./SharedComponents";
+import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
+import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
+import { TitleComponent } from "../SharedComponents";
 import { KeyframeGroup } from "./KeyframeGroup";
 
 export function KeyframeSection({

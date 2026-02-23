@@ -1,6 +1,6 @@
 import { Color } from "three";
-import { IUndoableController } from "../../../../controller/interface/IUndoableController";
-import { KeyframeEditorComponent, AddKeyframeComponent } from "./SharedComponents";
+import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { KeyframeEditorComponent, AddKeyframeComponent } from ".././SharedComponents";
 
 export function ColorSection({
     color,

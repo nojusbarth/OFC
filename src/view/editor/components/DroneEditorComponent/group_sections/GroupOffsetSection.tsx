@@ -1,0 +1,74 @@
+import { useState } from "react";
+import { Vector3 } from "three";
+import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import {
+  KeyframeEditorComponent,
+  PositionInputComponent,
+} from "../SharedComponents";
+import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
+
+export function GroupOffsetSection({
+  selectedDrones,
+  controller,
+}: {
+  selectedDrones: number[];
+  controller: IUndoableController;
+}) {
+  const [offset, setOffset] = useState<Vector3>(new Vector3(0, 0, 0));
+
+  const handleOffsetChange = (axis: "x" | "y" | "z", value: number) => {
+    const newOffset = offset.clone();
+    newOffset[axis] = value;
+    setOffset(newOffset);
+  };
+
+  const handleApplyOffset = () => {
+    selectedDrones.forEach((droneId) => {
+      const currentPosition = controller.getPositionAt(
+        droneId,
+        controller.getTimeController().getTime(),
+      );
+
+      const newPosition = currentPosition.clone().add(offset);
+
+      const newFrame = new PositionKeyFrame(
+        newPosition,
+        controller.getTimeController().getTime(),
+      );
+
+      controller.addPositionKeyFrame(droneId, newFrame);
+    });
+  };
+
+  return (
+    <KeyframeEditorComponent title="Offset angeben">
+      <div className="d-flex flex-column gap-3">
+        {/* Eingabefelder */}
+        <div className="d-flex align-items-center gap-2">
+          <PositionInputComponent
+            title="X"
+            currentValue={offset.x}
+            onChangePosition={(value) => handleOffsetChange("x", value)}
+          />
+          <PositionInputComponent
+            title="Y"
+            currentValue={offset.y}
+            onChangePosition={(value) => handleOffsetChange("y", value)}
+          />
+          <PositionInputComponent
+            title="Z"
+            currentValue={offset.z}
+            onChangePosition={(value) => handleOffsetChange("z", value)}
+          />
+        </div>
+
+        {/* Button darunter */}
+        <div className="d-flex justify-content-end">
+          <button className="btn btn-primary" onClick={handleApplyOffset}>
+            Anwenden
+          </button>
+        </div>
+      </div>
+    </KeyframeEditorComponent>
+  );
+}

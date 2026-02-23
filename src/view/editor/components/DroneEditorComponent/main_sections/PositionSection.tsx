@@ -1,7 +1,7 @@
 
 import { Vector3 } from "three";
-import { IUndoableController } from "../../../../controller/interface/IUndoableController"; // deinen Pfad einsetzen
-import { KeyframeEditorComponent, PositionInputComponent, AddKeyframeComponent } from "./SharedComponents";
+import { IUndoableController } from "../../../../../controller/interface/IUndoableController"; // deinen Pfad einsetzen
+import { KeyframeEditorComponent, PositionInputComponent, AddKeyframeComponent } from "../SharedComponents";
 
 
 export function PositionSection({

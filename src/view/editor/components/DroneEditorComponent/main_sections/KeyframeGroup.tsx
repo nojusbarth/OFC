@@ -1,7 +1,7 @@
 
-import { PositionKeyFrame } from "../../../../repository/entity/PositionKeyFrame";
+import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
 
-import { ColorKeyFrame } from "../../../../repository/entity/ColorKeyFrame";
+import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
 import { Card } from "react-bootstrap";
 
 export function KeyframeGroup({

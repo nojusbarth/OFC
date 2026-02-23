@@ -2,13 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import { Color, Vector3 } from "three";
 import { ColorKeyFrame } from "../../../../repository/entity/ColorKeyFrame";
 import { PositionKeyFrame } from "../../../../repository/entity/PositionKeyFrame";
-import { Card, Form } from "react-bootstrap";
+import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../../controller/interface/IUndoableController";
 import { toolTipps } from "../../config";
 import { ITimeController } from "../../../../controller/interface/ITimeController";
-import { KeyframeSection } from "./KeyframeSection";
-import { ColorSection } from "./ColorSection";
-import { PositionSection } from "./PositionSection";
+import { KeyframeSection } from "./main_sections/KeyframeSection";
+import { ColorSection } from "././main_sections/ColorSection";
+import { PositionSection } from "./main_sections/PositionSection";
+import { GroupTransformSection } from "./main_sections/GroupTransformSection";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -168,6 +169,13 @@ export function DroneEditorComponent({
           <PositionSection
             position={position}
             setPosition={setPosition}
+            selectedDrones={selectedDrones}
+            controller={controller}
+          />
+        )}
+
+        {selectedDrones.length > 1 && (
+          <GroupTransformSection
             selectedDrones={selectedDrones}
             controller={controller}
           />
