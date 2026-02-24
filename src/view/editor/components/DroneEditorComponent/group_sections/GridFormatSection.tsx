@@ -46,7 +46,8 @@ export function GridFormatSection({
 
     const totalWidth = (cols - 1) * spacingX;
     const totalHeight = (rows - 1) * spacingY;
-
+    
+    controller.startBatching();
     selectedDrones.forEach((droneId, index) => {
       const row = Math.floor(index / cols);
       const col = index % cols;
@@ -75,6 +76,7 @@ export function GridFormatSection({
 
       controller.addPositionKeyFrameNow(droneId, newPosition);
     });
+    controller.endBatching();
   };
 
   return (

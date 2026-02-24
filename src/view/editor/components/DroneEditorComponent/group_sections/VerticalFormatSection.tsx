@@ -38,6 +38,7 @@ export function VerticalFormatSection({
         const totalHeight = (count - 1) * spacing;
         const startY = center.y - totalHeight / 2;
 
+        controller.startBatching();
         selectedDrones.forEach((droneId, index) => {
             const newPosition = new Vector3(
                 center.x,
@@ -47,6 +48,7 @@ export function VerticalFormatSection({
 
             controller.addPositionKeyFrameNow(droneId, newPosition);
         });
+        controller.endBatching();
     };
 
     return (

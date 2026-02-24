@@ -12,7 +12,6 @@ import { checkCollisions } from "./CollisionHandler";
 import { Project } from "./Project";
 import { IProjectRepository } from "../../repository/IProjectRepository";
 import { IDrone } from "../../repository/entity/IDrone";
-import { DroneGroup } from "../../repository/grouping/DroneGroup";
 import { DroneGroupManager } from "./GroupManager";
 
 /**
@@ -31,6 +30,8 @@ export class Controller implements IController {
     new OFCEvent();
   private droneSelectEvent: OFCEvent<number[]> = new OFCEvent();
   private collisionState: Map<number, Map<number, number>> = new Map();
+  private batching: boolean = false;
+
   constructor(settings: ISettings, repository: IProjectRepository) {
     this.settings = settings;
     this.project = new Project(repository);
@@ -47,6 +48,32 @@ export class Controller implements IController {
       this.recalculateCollisions();
       this.collisionEvent.notify(new Map(this.collisionState));
     });
+  }
+
+  startBatching(): void {
+    if (this.batching) {
+      throw new Error("Already batching!");
+    }
+    this.batching = true;
+    this.droneChangedEvent.startBatching((l, v) => {
+      if (!l.includes(v)) {
+        l.push(v);
+      }
+    });
+    this.dronesEvent.startBatching((l, v) => l[0] = v);
+    this.collisionEvent.startBatching((l, v) => l[0] = v);
+    this.droneSelectEvent.startBatching((l, v) => l[0] = v);
+  }
+
+  endBatching(): void {
+    if (!this.batching) {
+      throw new Error("Not batching!");
+    }
+    this.batching = false;
+    this.dronesEvent.endBatching();
+    this.droneChangedEvent.endBatching();
+    this.collisionEvent.endBatching();
+    this.droneSelectEvent.endBatching();
   }
 
   getSettings(): ISettings {
@@ -193,24 +220,6 @@ export class Controller implements IController {
 
   getCollisions(): Map<number, Map<number, number>> {
     return this.collisionState;
-  }
-
-  selectGroupOfDrone(droneId: number): void {
-    const groupId = this.groupManager.getDroneGroupId(droneId);
-    if (groupId === undefined) return;
-
-    const dronesInGroup = this.groupManager.getDronesInGroup(groupId);
-
-    this.clearSelection();
-
-    for (const id of dronesInGroup) {
-      this.selectDrone(id);
-    }
-  }
-
-  clearSelection(): void {
-    const selected = this.getSelectedDrones();
-    selected.forEach((id) => this.unselectDrone(id));
   }
 
   private _checkCollisions(drone: IDrone): void {

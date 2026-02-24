@@ -189,7 +189,7 @@ export interface IController {
 
   getGroupManager(): DroneGroupManager;
 
-  selectGroupOfDrone(droneId: number): void;
+  startBatching(): void;
 
-  clearSelection(): void;
+  endBatching(): void;
 }

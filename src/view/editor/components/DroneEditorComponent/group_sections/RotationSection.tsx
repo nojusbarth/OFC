@@ -33,25 +33,18 @@ export function RotationSection({
 
     const handleApplyRotation = () => {
 
-        const time = controller.getTimeController().getTime();
-
         // aktuelle Positionen holen
         const positions = selectedDrones.map((id) =>
-            controller.getPositionAt(id, time).clone()
+            controller.getPosition(id).clone()
         );
 
         const rotatedPositions =
             RotationHelper.rotatePositions(positions, rotation);
-
+        controller.startBatching();
         selectedDrones.forEach((droneId, index) => {
-            const newFrame = new PositionKeyFrame(
-                rotatedPositions[index],
-                time
-            );
-
-            controller.addPositionKeyFrame(droneId, newFrame);
+            controller.addPositionKeyFrameNow(droneId, rotatedPositions[index]);
         });
-
+        controller.endBatching();
 
     };
 

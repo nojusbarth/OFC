@@ -48,8 +48,7 @@ export function generateDroneFormation(
     throw new Error(`Maximale Drohnenanzahl von ${MAX_DRONES} überschritten.`);
   }
 
-  // HIER MUSS NOCH OPTIMIERT WERDEN
-
+  controller.startBatching();
   const droneIds: number[] = [];
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
@@ -83,6 +82,7 @@ export function generateDroneFormation(
   }
   const groupId = controller.getGroupManager().createGroup();
   controller.getGroupManager().addDronesToGroup(droneIds, groupId);
+  controller.endBatching();
 }
 
 /**

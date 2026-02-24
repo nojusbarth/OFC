@@ -39,6 +39,7 @@ export function RandomFormatSection({
     };
 
     const handleApply = () => {
+        controller.startBatching();
         selectedDrones.forEach((droneId) => {
             const randomOffset = new Vector3(
                 (Math.random() * 2 - 1) * bounds.x,
@@ -50,6 +51,7 @@ export function RandomFormatSection({
 
             controller.addPositionKeyFrameNow(droneId, newPosition);
         });
+        controller.endBatching();
     };
 
     return (

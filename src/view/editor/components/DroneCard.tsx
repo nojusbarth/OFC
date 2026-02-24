@@ -8,6 +8,7 @@ import { IController } from "../../../controller/interface/IController";
 
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { selectGroupOfDrone } from "../../../controller/interface/ControllerUtils";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -125,7 +126,7 @@ export function DroneCard({
           onClick={(e) => onDroneClick(droneId, e.shiftKey)}
           onDoubleClick={(e) => {
             e.stopPropagation();
-            controller.selectGroupOfDrone(droneId);
+            selectGroupOfDrone(controller, droneId);
           }}
           className={`text-center position-relative
     ${

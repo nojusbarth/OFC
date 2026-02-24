@@ -31,21 +31,15 @@ export function OffsetSection({
   };
 
   const handleApplyOffset = () => {
+    controller.startBatching();
     selectedDrones.forEach((droneId) => {
-      const currentPosition = controller.getPositionAt(
-        droneId,
-        controller.getTimeController().getTime(),
-      );
+      const currentPosition = controller.getPosition(droneId);
 
       const newPosition = currentPosition.clone().add(offset);
 
-      const newFrame = new PositionKeyFrame(
-        newPosition,
-        controller.getTimeController().getTime(),
-      );
-
-      controller.addPositionKeyFrame(droneId, newFrame);
+      controller.addPositionKeyFrameNow(droneId, newPosition);
     });
+    controller.endBatching();
   };
 
   return (

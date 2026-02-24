@@ -13,7 +13,6 @@ import { Action } from "../../repository/entity/Action";
 import { IAction } from "../../repository/entity/IAction";
 import { IProjectRepository } from "../../repository/IProjectRepository";
 import { DroneGroupManager } from "./GroupManager";
-import { DroneGroup } from "../../repository/grouping/DroneGroup";
 
 /**
  * Implementiert IUndoableController, ein Decorator für IController
@@ -25,7 +24,9 @@ export class UndoableController implements IUndoableController {
   private idRemapping: Map<number, number> = new Map();
   private undoFlag: boolean = false; // indicates if we are currently performing an undo
   private redoFlag: boolean = false; // indicates if we are currently performing a redo
-  repository: IProjectRepository;
+  private batchedCount: number = 0; // counts the number of events in the current batch
+
+  private repository: IProjectRepository;
 
   constructor(
     controller: IController,
@@ -48,6 +49,16 @@ export class UndoableController implements IUndoableController {
         this.undoFlag = false;
         this.redoFlag = false;
       });
+  }
+
+  startBatching(): void {
+    this.controller.startBatching();
+    this.batchedCount = 0;
+  }
+   
+  endBatching(): void {
+    this._pushAction(ActionType.BATCH, { count: this.batchedCount });
+    this.controller.endBatching();
   }
 
   undo(): void {
@@ -147,12 +158,25 @@ export class UndoableController implements IUndoableController {
         this.selectDrone(id);
         break;
       }
+
+      case ActionType.BATCH: {
+        const count: number = action.getData().count;
+        this.startBatching();
+        const stack = this.undoFlag ? this.undoStack : this.redoStack;
+        for (let i = 0; i < count; i++) {
+          const batchAction = stack.popAction();
+          this._reverseAction(batchAction!);
+        }
+        this.endBatching();
+        break;
+      }
     }
     this.controller.getTimeController().setTime(action.getTime());
   }
 
   private _pushAction(type: ActionType, data: any): void {
     const action = new Action(data, this._currentTime(), type);
+    this.batchedCount++;
     if (this.undoFlag) {
       this.redoStack.addAction(action);
       return;
@@ -267,10 +291,6 @@ export class UndoableController implements IUndoableController {
     this.controller.addPositionKeyFrame(id, keyFrame);
   }
 
-  clearSelection(): void {
-    return this.controller.clearSelection();
-  }
-
   removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
     if (
       this._findKeyFrameAtTime(
@@ -327,10 +347,6 @@ export class UndoableController implements IUndoableController {
     this.controller.removeColorKeyFrame(id, keyFrame);
   }
 
-  selectGroupOfDrone(droneId: number): void {
-    this.controller.selectGroupOfDrone(droneId);
-  }
-
   getCollisions(): Map<number, Map<number, number>> {
     return this.controller.getCollisions();
   }
@@ -349,10 +365,6 @@ export class UndoableController implements IUndoableController {
 
   getDroneSelectEvent(): OFCEvent<number[]> {
     return this.controller.getDroneSelectEvent();
-  }
-
-  getGroupEvent(): OFCEvent<DroneGroup[]> {
-    return this.controller.getGroupEvent();
   }
 
   getGroupManager(): DroneGroupManager {

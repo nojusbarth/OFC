@@ -37,7 +37,7 @@ export function HorizontalFormatSection({
 
         const totalWidth = (count - 1) * spacing;
         const startX = center.x - totalWidth / 2;
-
+        controller.startBatching();
         selectedDrones.forEach((droneId, index) => {
             const newPosition = new Vector3(
                 startX + index * spacing,
@@ -47,6 +47,7 @@ export function HorizontalFormatSection({
 
             controller.addPositionKeyFrameNow(droneId, newPosition);
         });
+        controller.endBatching();
     };
 
     return (

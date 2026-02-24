@@ -21,6 +21,7 @@ import {
   arrayMove,
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
+import { clearAndSelectDrones, clearSelected } from "../../../controller/interface/ControllerUtils";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -80,7 +81,7 @@ export function DroneManagerComponent({
     const selectedDroneIds = controller.getSelectedDrones(); // aus State
     if (selectedDroneIds.length === 0) return;
 
-    controller.clearSelection(); // Auswahl zurücksetzen, da Drohnen jetzt in Gruppe sind
+    clearSelected(controller);
 
     const groupId = controller.getGroupManager().createGroup();
     controller.getGroupManager().addDronesToGroup(selectedDroneIds, groupId);
@@ -92,7 +93,7 @@ export function DroneManagerComponent({
 
     if (selectedDroneIds.length === 0) return;
 
-    controller.clearSelection(); // Auswahl zurücksetzen, da Drohnen jetzt nicht in Gruppe sind
+    clearSelected(controller);
 
     controller.getGroupManager().removeDronesFromGroup(selectedDroneIds);
   }, [controller]);
@@ -112,10 +113,7 @@ export function DroneManagerComponent({
             : [endIndex, startIndex];
 
         const range = orderedDrones.slice(from, to + 1);
-        controller.clearSelection();
-        range.forEach((id) => {
-          controller.selectDrone(id);
-        });
+        clearAndSelectDrones(controller, range);
 
         return;
       }
