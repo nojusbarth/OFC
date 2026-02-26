@@ -16,18 +16,18 @@ Generiert die Dokumentation
 
 ### Tastaturkürzel
 
-| Shortcut | Aktion |
-|----------|--------|
-| `Ctrl+S` | Projekt speichern |
-| `Ctrl+Z` | Rückgängig machen |
-| `Ctrl+Shift+Z` | Wiederherstellen |
-| `Ctrl+Shift+N` | Neue Drohne hinzufügen |
-| `Ctrl+A` | Alle Drohnen auswählen |
-| `Ctrl+E` | Wegpunktdaten exportieren |
-| `Ctrl+R` | Aufnahme starten/stoppen |
-| `Delete` | Ausgewählte Drohne(n) löschen |
-| `Escape` | Drohne(n) abwählen |
-| `J` / `Pfeiltaste Links` | Zeit um 1 Sekunde zurückspulen |
-| `L` / `Pfeiltaste Rechts` | Zeit um 1 Sekunde vorspulen |
-| `K` / `Leertaste` | Animation starten/stoppen |
-| `I` | Zum Anfang springen (Zeit = 0) |
+| Shortcut                  | Aktion                         |
+|---------------------------|--------------------------------|
+| `Ctrl+S`                  | Projekt speichern              |
+| `Ctrl+Z`                  | Rückgängig machen              |
+| `Ctrl+Shift+Z`            | Wiederherstellen               |
+| `Ctrl+Shift+N`            | Neue Drohne hinzufügen         |
+| `Ctrl+A`                  | Alle Drohnen auswählen         |
+| `Ctrl+E`                  | Wegpunktdaten exportieren      |
+| `Ctrl+R`                  | Aufnahme starten/stoppen       |
+| `Delete`                  | Ausgewählte Drohne(n) löschen  |
+| `Escape`                  | Drohne(n) abwählen             |
+| `J` / `Pfeiltaste Links`  | Zeit um 1 Sekunde zurückspulen |
+| `L` / `Pfeiltaste Rechts` | Zeit um 1 Sekunde vorspulen    |
+| `K` / `Leertaste`         | Animation starten/stoppen      |
+| `I`                       | Zum Anfang springen (Zeit = 0) |
