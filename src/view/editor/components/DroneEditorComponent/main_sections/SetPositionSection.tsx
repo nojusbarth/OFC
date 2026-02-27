@@ -33,9 +33,11 @@ export function SetPositionSection({
     };
 
     const handleAddPositionKeyframe = () => {
+        controller.startBatching();
         selectedDrones.forEach((droneId) => {
             controller.addPositionKeyFrameNow(droneId, position);
         });
+        controller.endBatching();
     };
 
     return (

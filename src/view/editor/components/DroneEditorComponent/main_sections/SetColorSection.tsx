@@ -30,9 +30,11 @@ export function SetColorSection({
     };
 
     const handleAddColorKeyframe = () => {
+        controller.startBatching();
         selectedDrones.forEach((droneId) => {
             controller.addColorKeyFrameNow(droneId, color);
         });
+        controller.endBatching();
     };
 
     return (
