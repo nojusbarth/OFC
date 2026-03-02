@@ -1,0 +1,28 @@
+{
+  "version": "1",
+  "settings": {
+    "endTime": 10,
+    "dayTime": 2,
+    "collisionRadius": 0.3
+  },
+  "drones": [
+    {
+      "waypoints": [
+        {
+          "time": 0,
+          "position": [0, 0, 0]
+        },
+        {
+          "time": 5,
+          "position": [1, 1, 1]
+        }
+      ],
+      "colors": [
+        {
+          "time": 0,
+          "color": [1, 1, 1]
+        }
+      ]
+    }
+  ]
+}

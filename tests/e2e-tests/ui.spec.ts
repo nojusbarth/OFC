@@ -1,4 +1,33 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
+import path from 'path';
+
+const fixturesDir = path.resolve(__dirname, './fixtures');
+
+async function selectStartpageFile(page: Page, fileName: string) {
+    const filePath = path.join(fixturesDir, fileName);
+    await page.locator('#fileInput').setInputFiles(filePath);
+    await expect(page.locator('#fileInput')).toHaveValue(new RegExp(fileName.replace('.', '\\.')));
+}
+
+test('test loading and saving file', async ({ page }) => {
+    await page.goto('http://localhost:3000/');
+    await selectStartpageFile(page, 'test_show.json');
+
+});
+
+test('test recording a show', async ({ page }) => {
+    await page.goto('http://localhost:3000/');
+    await selectStartpageFile(page, 'test_show.json');
+
+});
+
+test('test creating a show', async ({ page }) => {
+    await page.goto('http://localhost:3000/');
+
+
+});
+
+
 
 test('general functionality test', async ({ page }) => {
     await page.goto('http://localhost:3000/');
@@ -94,7 +123,6 @@ test('general functionality test', async ({ page }) => {
   await expect(page.getByText('0.0s').nth(0)).toBeVisible();
   await expect(page.getByText('ID: 1 • [5.0, 10.0, 2.0]')).toBeVisible();
 
-  await page.getByRole('textbox').click();
   await page.getByRole('textbox').fill('#FF00FF');
   await page.getByRole('button', { name: 'Keyframe hinzufügen' }).nth(1).click();
 
