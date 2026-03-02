@@ -10,6 +10,13 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 
 type GridPlane = "horizontal" | "vertical";
 
+/**
+ * Die GridFormatSection ermöglicht es dem Nutzer, die Positionen mehrerer Drohnen gleichzeitig in einem Rastermuster anzuordnen. 
+ * Der Nutzer kann den Mittelpunkt des Rasters, den Abstand zwischen den Drohnen in X- und Y-Richtung sowie die Ebene (horizontal oder vertikal) auswählen. 
+ * @param selectedDrones - Eine Liste der IDs der aktuell ausgewählten Drohnen, die formatiert werden sollen.
+ * @param controller - Ein Controller-Objekt, das Funktionen zum Ändern der Drohnenpositionen bereitstellt.
+ * @returns JSX-Komponente zur Formatierung der Drohnen in einem Rastermuster.
+ */
 export function GridFormatSection({
   selectedDrones,
   controller,

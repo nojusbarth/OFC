@@ -5,6 +5,12 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Diese Komponente kapselt den Einstieg in den Bildimport und öffnet bei Bedarf
+ * das zugehörige Modal.
+ * @param controller - Controller, der an den Import-Dialog weitergereicht wird.
+ * @returns JSX-Bereich mit Import-Button und Modal.
+ */
 export function ImageImportSection( {
     controller,
 }: {

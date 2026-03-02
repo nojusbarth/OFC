@@ -11,6 +11,15 @@ import { CSS } from "@dnd-kit/utilities";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Stellt eine einzelne Drohnenkarte dar, inklusive Auswahl, Gruppenanzeige,
+ * Drag-Handle und Löschaktion.
+ * @param droneId - Eindeutige ID der dargestellten Drohne.
+ * @param controller - Controller mit Zugriff auf Drohnenzustand und Aktionen.
+ * @param onDroneClick - Callback für Klick/Mehrfachauswahl auf die Karte.
+ * @param dragListeners - DnD-Listener für den Drag-Handle.
+ * @returns JSX-Element einer interaktiven Drohnenkarte.
+ */
 export function DroneCard({
   droneId,
   controller,
@@ -179,6 +188,11 @@ export function DroneCard({
 const MemoizedDroneCard = memo(DroneCard);
 
 //Drag and Drop Card
+/**
+ * Umhüllt `DroneCard` mit Sortierverhalten aus `@dnd-kit`.
+ * @param props - Props der zugrunde liegenden Drohnenkarte.
+ * @returns JSX-Wrapper mit DnD-Attributen für Sortierung.
+ */
 export function SortableDroneCard(props: any) {
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id: props.droneId });

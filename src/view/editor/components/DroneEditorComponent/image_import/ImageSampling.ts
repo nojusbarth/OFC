@@ -2,6 +2,15 @@ import type { PixelData } from "./ImageLoader";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Skaliert ein Bild per Nearest-Neighbor-Sampling auf die gewünschte Zielauflösung.
+ * @param sourceWidth - Breite des Quellbildes.
+ * @param sourceHeight - Höhe des Quellbildes.
+ * @param sourceData - RGBA-Pixeldaten des Quellbildes.
+ * @param targetWidth - Zielbreite.
+ * @param targetHeight - Zielhöhe.
+ * @returns Neu berechnete Pixeldaten in der Zielauflösung.
+ */
 export function resampleImageNearest(
   sourceWidth: number,
   sourceHeight: number,

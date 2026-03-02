@@ -5,6 +5,13 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+
+/**
+ * Die HorizontalFormatSection ermöglicht es dem Nutzer, die Positionen mehrerer Drohnen gleichzeitig in einer horizontalen Linie anzuordnen.
+ * @param selectedDrones - Eine Liste der IDs der aktuell ausgewählten Drohnen, die formatiert werden sollen.
+ * @param controller - Ein Controller-Objekt, das Funktionen zum Ändern der Drohnenpositionen bereitstellt. 
+ * @returns JSX-Komponente zur Formatierung der Drohnen in einer horizontalen Linie.
+ */
 export function HorizontalFormatSection({
     selectedDrones,
     controller,

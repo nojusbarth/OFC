@@ -7,6 +7,13 @@ import { FormatSection } from "../group_sections/FormatSection";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Diese Komponente bündelt Gruppen-Transformationen in Tabs für Offset,
+ * Rotation und Formatierung.
+ * @param selectedDrones - IDs der aktuell ausgewählten Drohnen.
+ * @param controller - Controller mit Zugriff auf Transformationsoperationen.
+ * @returns JSX-Karte mit tabbasierter Gruppenbearbeitung.
+ */
 export function GroupTransformSection({
   selectedDrones,
   controller,

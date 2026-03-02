@@ -7,6 +7,12 @@ import { RotationHelper } from "./RotationHelper";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Die RotationSection ermöglicht es dem Nutzer, die Positionen mehrerer Drohnen gleichzeitig um einen gemeinsamen Mittelpunkt zu rotieren.
+ * @param selectedDrones - Eine Liste der IDs der aktuell ausgewählten Drohnen, die rotiert werden sollen.
+ * @param controller - Ein Controller-Objekt, das Funktionen zum Ändern der Drohnenpositionen bereitstellt.
+ * @returns JSX-Komponente zur Eingabe von Rotationswinkeln und zur Anwendung dieser Rotation auf die Positionen der ausgewählten Drohnen.
+ */
 export function RotationSection({
     selectedDrones,
     controller,

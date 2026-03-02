@@ -6,6 +6,16 @@ import { KeyframeCard } from "./KeyframeCard";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Diese Komponente zeigt Positions- und Farb-Keyframes der aktuellen Auswahl an
+ * und bietet Aktionen zum Springen und Entfernen.
+ * @param positionKeyframes - Liste der Positions-Keyframes.
+ * @param colorKeyframes - Liste der Farb-Keyframes.
+ * @param getIdForKeyframe - Liefert die Drohnen-ID zu einem Keyframe.
+ * @param handleRemoveKeyframe - Entfernt einen ausgewählten Keyframe.
+ * @param handleJumpToTime - Springt zur Zeitmarke eines Keyframes.
+ * @returns JSX-Karte mit Keyframe-Listen oder leerem Hinweis.
+ */
 export function ShowKeyframesSection({
   positionKeyframes,
   colorKeyframes,

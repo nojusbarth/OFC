@@ -7,6 +7,11 @@ interface Props {
   image: PixelData;
 }
 
+/**
+ * Zeigt eine Pixelvorschau des aktuell gesampelten Bildes in einem Canvas an.
+ * @param image - Bilddaten, die dargestellt werden sollen.
+ * @returns JSX-Canvas mit der skalierten Bildvorschau.
+ */
 export function ImagePreview({ image }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 

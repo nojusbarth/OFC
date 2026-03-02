@@ -5,6 +5,13 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Diese Komponente verteilt ausgewählte Drohnen vertikal entlang der Y-Achse
+ * um einen konfigurierbaren Mittelpunkt mit frei wählbarem Abstand.
+ * @param selectedDrones - IDs der aktuell ausgewählten Drohnen.
+ * @param controller - Controller für das Schreiben von Positions-Keyframes.
+ * @returns JSX-Komponente zur Konfiguration und Anwendung einer vertikalen Formation.
+ */
 export function VerticalFormatSection({
     selectedDrones,
     controller,

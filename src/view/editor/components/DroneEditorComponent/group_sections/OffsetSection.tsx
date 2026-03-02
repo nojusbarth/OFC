@@ -9,6 +9,12 @@ import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFr
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Die OffsetSection ermöglicht es dem Nutzer, einen Versatz (Offset) anzugeben, der auf die aktuellen Positionen der ausgewählten Drohnen angewendet wird.
+ * @param selectedDrones - Eine Liste der IDs der aktuell ausgewählten Drohnen, auf die der Offset angewendet werden soll.
+ * @param controller - Ein Controller-Objekt, das Funktionen zum Ändern der Drohnenpositionen bereitstellt.
+ * @returns JSX-Komponente zur Eingabe eines Offsets und zur Anwendung dieses Offsets auf die Positionen der ausgewählten Drohnen.
+ */
 export function OffsetSection({
   selectedDrones,
   controller,

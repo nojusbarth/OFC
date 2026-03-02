@@ -1,11 +1,20 @@
 // Dieser Code ist teilweise KI generiert
 
+/**
+ * Repräsentiert rohe Pixeldaten eines Bildes.
+ */
 export interface PixelData {
   width: number;
   height: number;
   data: Uint8ClampedArray;
 }
 
+/**
+ * Lädt eine Bilddatei in einen Canvas und gibt die RGBA-Pixeldaten zurück.
+ * @param file - Die zu ladende Bilddatei.
+ * @returns Promise mit Breite, Höhe und Pixeldaten des Bildes.
+ * @throws Error - Falls kein Canvas-Kontext verfügbar ist.
+ */
 export async function loadImagePixels(file: File): Promise<PixelData> {
   const imageBitmap = await createImageBitmap(file);
 

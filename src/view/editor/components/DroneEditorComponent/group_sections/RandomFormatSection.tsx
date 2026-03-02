@@ -5,6 +5,12 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Die RandomFormatSection ermöglicht es dem Nutzer, die Positionen mehrerer Drohnen gleichzeitig zufällig um einen angegebenen Mittelpunkt und innerhalb bestimmter Bounds zu verteilen.
+ * @param selectedDrones - Eine Liste der IDs der aktuell ausgewählten Drohnen, die formatiert werden sollen.
+ * @param controller - Ein Controller-Objekt, das Funktionen zum Ändern der Drohnenpositionen bereitstellt.
+ * @returns JSX-Komponente zur Formatierung der Drohnen in einer zufälligen Anordnung um einen Mittelpunkt.
+ */
 export function RandomFormatSection({
     selectedDrones,
     controller,

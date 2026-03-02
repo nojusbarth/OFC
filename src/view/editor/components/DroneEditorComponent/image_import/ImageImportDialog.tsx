@@ -10,6 +10,12 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 
 
 
+/**
+ * Diese Komponente stellt den kompletten Ablauf für den Bildimport bereit,
+ * inklusive Vorschau, Auflösungsanpassung, Filterung und Erzeugung einer Formation.
+ * @param controller - Controller für das Erzeugen der Drohnenformation.
+ * @returns JSX-Dialoginhalt für den Bildimport.
+ */
 export function ImageImportDialog({
     controller,
 }: {

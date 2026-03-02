@@ -6,6 +6,15 @@ import { Card } from "react-bootstrap";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Rendert eine Liste von Keyframes in Kartenform für einen gegebenen Bereich.
+ * @param title - Überschrift des Keyframe-Abschnitts.
+ * @param keyframes - Aufzulistende Keyframes.
+ * @param getIdForKeyframe - Liefert die Drohnen-ID zu einem Keyframe.
+ * @param handleRemoveKeyframe - Entfernt einen ausgewählten Keyframe.
+ * @param handleJumpToTime - Springt zur Zeitmarke eines Keyframes.
+ * @returns JSX-Element mit allen Keyframe-Einträgen.
+ */
 export function KeyframeCard({
   title,
   keyframes,

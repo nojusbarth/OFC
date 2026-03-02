@@ -5,6 +5,15 @@ import { KeyframeEditorComponent, PositionInputComponent, AddKeyframeComponent }
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Diese Komponente setzt für alle ausgewählten Drohnen eine Positions-Keyframe
+ * am aktuellen Zeitpunkt.
+ * @param position - Aktuell konfigurierte Zielposition.
+ * @param setPosition - Setter zum Aktualisieren der Positionseingabe.
+ * @param selectedDrones - IDs der aktuell ausgewählten Drohnen.
+ * @param controller - Controller für das Anlegen von Positions-Keyframes.
+ * @returns JSX-Bereich zur Positionseingabe und Anwendung.
+ */
 export function SetPositionSection({
     position,
     setPosition,

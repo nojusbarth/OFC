@@ -9,7 +9,12 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 
 // Dieser Abschnitt ist teilweise KI generiert
 
-
+/**
+ * Diese Komponente bietet verschiedene Möglichkeiten, um die Positionen mehrerer Drohnen gleichzeitig zu formatieren.
+ * @param selectedDrones - Eine Liste der IDs der aktuell ausgewählten Drohnen, die formatiert werden sollen.
+ * @param controller - Ein Controller-Objekt, das Funktionen zum Ändern der Drohnenpositionen bereitstellt.
+ * @returns JSX-Komponente mit UI-Elementen zur Auswahl des Formatierungsmodus und zur Eingabe der notwendigen Parameter.
+ */
 export function FormatSection({
   selectedDrones,
   controller,

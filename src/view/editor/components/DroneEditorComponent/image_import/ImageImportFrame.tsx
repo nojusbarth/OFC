@@ -9,6 +9,13 @@ interface Props {
   controller: IUndoableController;
 }
 
+/**
+ * Diese Komponente rendert den Modal-Rahmen für den Bildimport.
+ * @param show - Steuert die Sichtbarkeit des Modals.
+ * @param onClose - Callback zum Schließen des Modals.
+ * @param controller - Controller, der an den Bildimport-Dialog weitergereicht wird.
+ * @returns JSX-Modal für den Bildimport oder `null`, wenn ausgeblendet.
+ */
 export function ImageImportFrame({ show, onClose, controller }: Props) {
   if (!show) return null;
 

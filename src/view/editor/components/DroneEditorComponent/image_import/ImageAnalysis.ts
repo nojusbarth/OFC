@@ -6,8 +6,21 @@ import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
+/**
+ * Definiert welche Hintergrundfarbe beim Bildimport ignoriert werden soll.
+ */
 export type IgnoreColor = "white" | "black" | "transparent";
 
+/**
+ * Erzeugt aus einem Bild eine Drohnenformation und legt Position- sowie Farb-Keyframes
+ * für den aktuellen Zeitpunkt an.
+ * @param controller - Controller für Drohnen- und Keyframe-Operationen.
+ * @param image - Eingelesene Bilddaten als Pixelraster.
+ * @param pixelSpacingX - Abstand zwischen Drohnen entlang der X-Achse.
+ * @param pixelSpacingY - Abstand zwischen Drohnen entlang der Y-Achse.
+ * @param ignoreColor - Hintergrundfarbe, die beim Erzeugen ausgelassen wird.
+ * @throws Error - Falls die maximal unterstützte Drohnenanzahl überschritten wird.
+ */
 export function generateDroneFormation(
   controller: IUndoableController,
   image: PixelData,
@@ -72,6 +85,12 @@ export function generateDroneFormation(
   controller.getGroupManager().addDronesToGroup(droneIds, groupId);
 }
 
+/**
+ * Zählt alle Pixel eines Bildes, die nicht der konfigurierten Ignorierfarbe entsprechen.
+ * @param image - Eingelesene Bilddaten als Pixelraster.
+ * @param ignoreColor - Hintergrundfarbe, die nicht mitgezählt werden soll.
+ * @returns Anzahl der gültigen Pixel.
+ */
 export function calculateValidPixelCount(
   image: PixelData,
   ignoreColor: IgnoreColor,
@@ -122,6 +141,13 @@ function isIgnoredPixel(
 
 const MAX_TOTAL_PIXELS = 2500;
 
+/**
+ * Begrenzt eine Zielauflösung so, dass die Gesamtanzahl an Pixeln das definierte
+ * Maximum nicht überschreitet.
+ * @param width - Gewünschte Zielbreite.
+ * @param height - Gewünschte Zielhöhe.
+ * @returns Korrigierte Breite und Höhe innerhalb des Limits.
+ */
 export function clampResolution(width: number, height: number) {
   width = Math.max(1, Math.floor(width));
   height = Math.max(1, Math.floor(height));
