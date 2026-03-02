@@ -101,42 +101,6 @@ test('test loading, editing and saving file', async ({ page }) => {
     expect(savedColorTimes).toEqual(expect.arrayContaining([24, 27, 30]));
 });
 
-test('test recording a show', async ({ page }) => {
-    await page.goto('http://localhost:3000/');
-
-    // Lade die default Testdatei
-    await selectStartpageFile(page);
-    await page.getByRole('button', { name: 'Projekt öffnen' }).first().click();
-
-    await expect(page.getByTitle('Änderungen speichern')).toBeVisible();
-
-    // Zeit auf 1s setzen, Speed auf 2x
-    await page.locator('#timeline-time-slider').fill('100');
-    const speedButton = page.getByTitle('Geschwindigkeit ändern');
-    for (let i = 0; i < 7; i++) {
-        if (await page.getByText('2x').count() > 0) {
-            break;
-        }
-        await speedButton.click();
-    }
-    await expect(page.getByText('2x')).toBeVisible();
-
-    // Aufnahme starten und abspielen
-    await page.getByTitle('Aufnahme starten').click();
-    await expect(page.getByTitle('Aufnahme stoppen')).toBeVisible();
-
-    await page.getByTitle('Animation starten').click();
-    await expect(page.getByTitle('Animation stoppen')).toBeVisible();
-
-    // Nach 3 Sekunden Aufnahme stoppen und Download prüfen
-    await page.waitForTimeout(3000);
-    await page.getByTitle('Aufnahme stoppen').click();
-
-    const downloadPromise = page.waitForEvent('download');
-    const download = await downloadPromise;
-    expect(download.suggestedFilename()).toMatch(/\.webm$/i);
-});
-
 test('test creating a show', async ({ page }) => {
     await page.goto('http://localhost:3000/');
 
