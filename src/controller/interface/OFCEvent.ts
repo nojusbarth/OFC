@@ -7,6 +7,8 @@ export type OFCObserver<T> = (value: T) => void;
 
 export type OFCBatchUpdater<T> = (values: T[], newValue: T) => void;
 
+export type OFCBatchPostProcessor<T> = (values: T[]) => T[];
+
 /**
  * Event-Emitter-Klasse, die das Observer-Muster implementiert.
  * Ermöglicht das Registrieren von Handlern, die benachrichtigt werden, wenn Ereignisse auftreten.
@@ -14,12 +16,8 @@ export type OFCBatchUpdater<T> = (values: T[], newValue: T) => void;
  */
 export class OFCEvent<T> {
     private observers: OFCObserver<T>[] = [];
-    private batchUpdater?: OFCBatchUpdater<T>;
+    private batchUpdater: OFCBatchUpdater<T> | undefined = undefined;
     private batchValues: T[] = [];
-
-    constructor(batchUpdater?: OFCBatchUpdater<T>) {
-        this.batchUpdater = batchUpdater;
-    }
 
     /**
      * Registriert einen Beobachter, um über Ereignisse benachrichtigt zu werden.
@@ -52,9 +50,10 @@ export class OFCEvent<T> {
     /**
      * Beendet die Stapelverarbeitung von Ereignissen und benachrichtigt alle Beobachter mit dem Stapel.
      */
-    endBatching(): void {
+    endBatching(postProcessor?: OFCBatchPostProcessor<T>) {
         this.batchUpdater = undefined;
-        for (const value of this.batchValues) {
+        const values = postProcessor ? postProcessor(this.batchValues) : this.batchValues;
+        for (const value of values) {
             this.notifyObservers(value);
         }
     }

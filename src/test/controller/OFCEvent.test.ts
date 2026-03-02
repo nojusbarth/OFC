@@ -40,3 +40,23 @@ it("Basic Event Emission Tests", () => {
     expect(handler2).not.toHaveBeenCalledWith(TEST_VALUE_4);
     expect(handler2).toHaveBeenCalledTimes(2);
 });
+
+it("Batching Tests", () => {
+    const ofcEvent = new OFCEvent<string>();
+    const handler = jest.fn();
+
+    ofcEvent.register(handler);
+    ofcEvent.startBatching((batch, value) => batch.push(value));
+
+    const TEST_VALUE_1 = "Batch Test Value 1";
+    const TEST_VALUE_2 = "Batch Test Value 2";
+    ofcEvent.notify(TEST_VALUE_1);
+    ofcEvent.notify(TEST_VALUE_2);
+
+    expect(handler).not.toHaveBeenCalled();
+
+    ofcEvent.endBatching();
+    expect(handler).toHaveBeenCalledWith(TEST_VALUE_1);
+    expect(handler).toHaveBeenCalledWith(TEST_VALUE_2);
+    expect(handler).toHaveBeenCalledTimes(2);
+});
