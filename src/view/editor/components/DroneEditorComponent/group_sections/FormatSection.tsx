@@ -5,7 +5,12 @@ import { HorizontalFormatSection } from "./HorizontalFormatSection";
 import { VerticalFormatSection } from "./VerticalFormatSection";
 import { GridFormatSection } from "./GridFormatSection";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
-export function GroupFormatSection({
+
+
+// Dieser Abschnitt ist teilweise KI generiert
+
+
+export function FormatSection({
   selectedDrones,
   controller,
 }: {

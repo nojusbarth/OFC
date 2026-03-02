@@ -3,9 +3,11 @@ import { Vector3 } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
 import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
-import { GroupRotationHelper } from "./GroupRotationHelper";
+import { RotationHelper } from "./RotationHelper";
 
-export function GroupRotationSection({
+// Dieser Abschnitt ist teilweise KI generiert
+
+export function RotationSection({
     selectedDrones,
     controller,
 }: {
@@ -33,7 +35,7 @@ export function GroupRotationSection({
         );
 
         const rotatedPositions =
-            GroupRotationHelper.rotatePositions(positions, rotation);
+            RotationHelper.rotatePositions(positions, rotation);
 
         selectedDrones.forEach((droneId, index) => {
             const newFrame = new PositionKeyFrame(

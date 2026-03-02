@@ -3,8 +3,9 @@ import { Vector3 } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController"; // deinen Pfad einsetzen
 import { KeyframeEditorComponent, PositionInputComponent, AddKeyframeComponent } from "../SharedComponents";
 
+// Dieser Abschnitt ist teilweise KI generiert
 
-export function PositionSection({
+export function SetPositionSection({
     position,
     setPosition,
     selectedDrones,

@@ -1,6 +1,8 @@
 import { Vector3, Euler, Matrix4 } from "three";
 
-export class GroupRotationHelper {
+// Dieser Abschnitt ist teilweise KI generiert
+
+export class RotationHelper {
   static calculateCenter(positions: Vector3[]): Vector3 {
     const center = new Vector3();
 

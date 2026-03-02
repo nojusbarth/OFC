@@ -1,9 +1,11 @@
 import { Card, Tabs, Tab } from "react-bootstrap";
 import { useState } from "react";
-import { GroupOffsetSection } from "../group_sections/GroupOffsetSection";
+import { OffsetSection } from "../group_sections/OffsetSection";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
-import { GroupRotationSection } from "../group_sections/GroupRotationSection";
-import { GroupFormatSection } from "../group_sections/GroupFormatSection";
+import { RotationSection } from "../group_sections/RotationSection";
+import { FormatSection } from "../group_sections/FormatSection";
+
+// Dieser Abschnitt ist teilweise KI generiert
 
 export function GroupTransformSection({
   selectedDrones,
@@ -31,21 +33,21 @@ export function GroupTransformSection({
 
       <Card.Body className="d-flex flex-column gap-3">
         {activeKey === "offset" && (
-          <GroupOffsetSection
+          <OffsetSection
             selectedDrones={selectedDrones}
             controller={controller}
           />
         )}
 
         {activeKey === "rotation" && (
-          <GroupRotationSection
+          <RotationSection
             selectedDrones={selectedDrones}
             controller={controller}
           />
         )}
 
         {activeKey === "format" && (
-          <GroupFormatSection selectedDrones={selectedDrones} controller={controller} />
+          <FormatSection selectedDrones={selectedDrones} controller={controller} />
         )}
       </Card.Body>
     </Card>

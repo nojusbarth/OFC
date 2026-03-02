@@ -6,6 +6,8 @@ import {
 } from "../SharedComponents";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 
+// Dieser Abschnitt ist teilweise KI generiert
+
 type GridPlane = "horizontal" | "vertical";
 
 export function GridFormatSection({

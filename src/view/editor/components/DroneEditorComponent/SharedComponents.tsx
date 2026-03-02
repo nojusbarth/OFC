@@ -2,6 +2,8 @@ import { Card } from "react-bootstrap";
 import { Form } from "react-bootstrap";
 
 
+// Dieser Abschnitt ist teilweise KI generiert
+
 export function TitleComponent({ title }: { title: string }) {
     return <h6 className="fw-bold text-uppercase text-xs">{title}</h6>;
 }

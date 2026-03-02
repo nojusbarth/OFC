@@ -9,6 +9,8 @@ import { IController } from "../../../controller/interface/IController";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 
+// Dieser Abschnitt ist teilweise KI generiert
+
 export function DroneCard({
   droneId,
   controller,

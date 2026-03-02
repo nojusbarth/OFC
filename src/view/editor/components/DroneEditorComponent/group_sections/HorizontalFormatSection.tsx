@@ -3,6 +3,8 @@ import { Vector3 } from "three";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 
+// Dieser Abschnitt ist teilweise KI generiert
+
 export function HorizontalFormatSection({
     selectedDrones,
     controller,

@@ -1,8 +1,10 @@
 import { Color } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
-import { KeyframeEditorComponent, AddKeyframeComponent } from ".././SharedComponents";
+import { KeyframeEditorComponent, AddKeyframeComponent } from "../SharedComponents";
 
-export function ColorSection({
+// Dieser Abschnitt ist teilweise KI generiert
+
+export function SetColorSection({
     color,
     setColor,
     selectedDrones,

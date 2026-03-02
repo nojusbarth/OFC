@@ -22,6 +22,8 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 
+// Dieser Abschnitt ist teilweise KI generiert
+
 /**
  * Erstellt eine Drone Manager Komponente auf der der Nutzer eine Übersicht
  * über die aktuellen Drohnen hat und diese manipulieren kann
@@ -152,27 +154,29 @@ export function DroneManagerComponent({
       className="d-flex flex-column h-100 w-100 
     rounded-0 border-2 border-secondary border-start-0 border-end-0 border-bottom-0"
     >
-      <Card.Header className="d-flex justify-content-between align-items-center border-bottom">
+      <Card.Header className="d-flex align-items-center border-bottom">
         <span className="fw-bold">Drohnen ({allDrones.length})</span>
-        <button
-          className="btn btn-primary btn-sm d-flex gap-2"
-          title={toolTipps.DRONE_ADD}
-          onClick={onAddDrone}
-        >
-          <i className="bi bi-plus" />
-          Hinzufügen
-        </button>
+        <div className="d-flex gap-2 ms-auto">
+          <button
+            className="btn btn-primary btn-sm d-flex gap-2"
+            title={toolTipps.DRONE_ADD}
+            onClick={onAddDrone}
+          >
+            <i className="bi bi-plus" />
+            Hinzufügen
+          </button>
 
-        <button className="btn btn-sm btn-secondary" onClick={onGroupCreate}>
-          Gruppieren
-        </button>
+          <button className="btn btn-sm btn-secondary" onClick={onGroupCreate}>
+            Gruppieren
+          </button>
 
-        <button
-          className="btn btn-sm btn-outline-danger"
-          onClick={onGroupRemove}
-        >
-          Gruppe auflösen
-        </button>
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={onGroupRemove}
+          >
+            Gruppe auflösen
+          </button>
+        </div>
       </Card.Header>
 
       <Card.Body className="d-flex flex-column overflow-y-auto p-3">

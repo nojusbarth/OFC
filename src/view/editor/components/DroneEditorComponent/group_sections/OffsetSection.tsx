@@ -7,7 +7,9 @@ import {
 } from "../SharedComponents";
 import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
 
-export function GroupOffsetSection({
+// Dieser Abschnitt ist teilweise KI generiert
+
+export function OffsetSection({
   selectedDrones,
   controller,
 }: {

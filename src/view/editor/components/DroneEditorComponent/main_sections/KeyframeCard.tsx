@@ -4,7 +4,9 @@ import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFr
 import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
 import { Card } from "react-bootstrap";
 
-export function KeyframeGroup({
+// Dieser Abschnitt ist teilweise KI generiert
+
+export function KeyframeCard({
   title,
   keyframes,
   getIdForKeyframe,

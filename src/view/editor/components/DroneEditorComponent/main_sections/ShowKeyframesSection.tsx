@@ -2,9 +2,11 @@ import { Card } from "react-bootstrap";
 import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
 import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
 import { TitleComponent } from "../SharedComponents";
-import { KeyframeGroup } from "./KeyframeGroup";
+import { KeyframeCard } from "./KeyframeCard";
 
-export function KeyframeSection({
+// Dieser Abschnitt ist teilweise KI generiert
+
+export function ShowKeyframesSection({
   positionKeyframes,
   colorKeyframes,
   getIdForKeyframe,
@@ -33,7 +35,7 @@ export function KeyframeSection({
       {hasKeyframes ? (
         <>
           {positionKeyframes.length > 0 && (
-            <KeyframeGroup
+            <KeyframeCard
               title="Position Keyframes"
               keyframes={positionKeyframes}
               getIdForKeyframe={getIdForKeyframe}
@@ -43,7 +45,7 @@ export function KeyframeSection({
           )}
 
           {colorKeyframes.length > 0 && (
-            <KeyframeGroup
+            <KeyframeCard
               title="Color Keyframes"
               keyframes={colorKeyframes}
               getIdForKeyframe={getIdForKeyframe}

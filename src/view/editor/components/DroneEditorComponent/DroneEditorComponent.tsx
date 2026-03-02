@@ -6,9 +6,9 @@ import { Card } from "react-bootstrap";
 import { IUndoableController } from "../../../../controller/interface/IUndoableController";
 import { toolTipps } from "../../config";
 import { ITimeController } from "../../../../controller/interface/ITimeController";
-import { KeyframeSection } from "./main_sections/KeyframeSection";
-import { ColorSection } from "././main_sections/ColorSection";
-import { PositionSection } from "./main_sections/PositionSection";
+import { ShowKeyframesSection } from "./main_sections/ShowKeyframesSection";
+import { SetColorSection } from "./main_sections/SetColorSection";
+import { SetPositionSection } from "./main_sections/SetPositionSection";
 import { GroupTransformSection } from "./main_sections/GroupTransformSection";
 import { ImageImportSection } from "./main_sections/ImageImportSection";
 
@@ -172,7 +172,7 @@ export function DroneEditorComponent({
         )}
 
         {selectedDrones.length == 1 && (
-          <PositionSection
+          <SetPositionSection
             position={position}
             setPosition={setPosition}
             selectedDrones={selectedDrones}
@@ -189,7 +189,7 @@ export function DroneEditorComponent({
 
         {selectedDrones.length > 0 && (
           <>
-            <ColorSection
+            <SetColorSection
               color={color}
               setColor={setColor}
               selectedDrones={selectedDrones}
@@ -197,7 +197,7 @@ export function DroneEditorComponent({
             />
 
             {selectedDrones.length === 1 && (
-              <KeyframeSection
+              <ShowKeyframesSection
                 positionKeyframes={positionKeyframes}
                 colorKeyframes={colorKeyframes}
                 getIdForKeyframe={getIdForKeyframe}
