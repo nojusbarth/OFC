@@ -3,32 +3,6 @@ import path from 'path';
 
 const fixturesDir = path.resolve(__dirname, './fixtures');
 
-async function gotoApp(page: Page) {
-    await page.addInitScript(() => {
-        const disableOverlay = () => {
-            const overlay = document.getElementById('webpack-dev-server-client-overlay') as HTMLElement | null;
-            if (overlay) {
-                overlay.style.pointerEvents = 'none';
-                overlay.style.display = 'none';
-            }
-
-            document.querySelectorAll('iframe#webpack-dev-server-client-overlay').forEach((element) => {
-                const iframe = element as HTMLElement;
-                iframe.style.pointerEvents = 'none';
-                iframe.style.display = 'none';
-            });
-        };
-
-        disableOverlay();
-        new MutationObserver(disableOverlay).observe(document.documentElement, {
-            childList: true,
-            subtree: true,
-        });
-    });
-
-    await page.goto('http://localhost:3000/');
-}
-
 // Hilfsfunktion zum Auswählen einer Datei auf der Startseite
 async function selectStartpageFile(page: Page, fileName: string = 'test_show.json') {
     const filePath = path.join(fixturesDir, fileName);
@@ -63,7 +37,7 @@ async function addColorKeyframeAtTime(
 }
 
 test('test loading, editing and saving file', async ({ page }) => {
-    await gotoApp(page);
+    await page.goto('http://localhost:3000/');
 
     // Lade die default Testdatei
     await selectStartpageFile(page);
@@ -128,7 +102,7 @@ test('test loading, editing and saving file', async ({ page }) => {
 });
 
 test('test recording a show', async ({ page }) => {
-    await gotoApp(page);
+    await page.goto('http://localhost:3000/');
 
     // Lade die default Testdatei
     await selectStartpageFile(page);
@@ -155,15 +129,16 @@ test('test recording a show', async ({ page }) => {
     await expect(page.getByTitle('Animation stoppen')).toBeVisible();
 
     // Nach 3 Sekunden Aufnahme stoppen und Download prüfen
-    const downloadPromise = page.waitForEvent('download');
     await page.waitForTimeout(3000);
     await page.getByTitle('Aufnahme stoppen').click();
+
+    const downloadPromise = page.waitForEvent('download');
     const download = await downloadPromise;
     expect(download.suggestedFilename()).toMatch(/\.webm$/i);
 });
 
 test('test creating a show', async ({ page }) => {
-    await gotoApp(page);
+    await page.goto('http://localhost:3000/');
 
     // Überprüfe, ob die Startseite korrekt geladen wurde
     await expect(page.getByRole('heading', { name: 'Olympian Flight Control' })).toBeVisible();
