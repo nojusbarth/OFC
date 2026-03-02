@@ -1,14 +1,16 @@
-import { SampledImage } from "./ImageSampling";
+import { PixelData } from "./ImageLoader";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 import { Color, Vector3 } from "three";
 import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
 import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
 
+// Dieser Abschnitt ist teilweise KI generiert
+
 export type IgnoreColor = "white" | "black" | "transparent";
 
 export function generateDroneFormation(
   controller: IUndoableController,
-  image: SampledImage,
+  image: PixelData,
   pixelSpacingX: number,
   pixelSpacingY: number,
   ignoreColor: IgnoreColor,
@@ -32,6 +34,8 @@ export function generateDroneFormation(
   if (validPixelCount + currentDroneCount >= MAX_DRONES) {
     throw new Error(`Maximale Drohnenanzahl von ${MAX_DRONES} überschritten.`);
   }
+
+  // HIER MUSS NOCH OPTIMIERT WERDEN
 
   const droneIds: number[] = [];
   for (let y = 0; y < height; y++) {
@@ -69,7 +73,7 @@ export function generateDroneFormation(
 }
 
 export function calculateValidPixelCount(
-  image: SampledImage,
+  image: PixelData,
   ignoreColor: IgnoreColor,
 ): number {
   const { width, height, data } = image;

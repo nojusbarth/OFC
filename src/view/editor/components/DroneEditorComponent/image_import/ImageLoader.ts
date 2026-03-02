@@ -1,10 +1,12 @@
-export interface LoadedImage {
+// Dieser Code ist teilweise KI generiert
+
+export interface PixelData {
   width: number;
   height: number;
-  rawData: Uint8ClampedArray;
+  data: Uint8ClampedArray;
 }
 
-export async function loadImagePixels(file: File): Promise<LoadedImage> {
+export async function loadImagePixels(file: File): Promise<PixelData> {
   const imageBitmap = await createImageBitmap(file);
 
   const canvas = document.createElement("canvas");
@@ -25,6 +27,6 @@ export async function loadImagePixels(file: File): Promise<LoadedImage> {
   return {
     width: canvas.width,
     height: canvas.height,
-    rawData: new Uint8ClampedArray(data), // ← extra safe copy
+    data: new Uint8ClampedArray(data),
   };
 }

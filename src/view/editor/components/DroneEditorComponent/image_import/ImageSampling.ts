@@ -1,8 +1,6 @@
-export interface SampledImage {
-  width: number;
-  height: number;
-  data: Uint8ClampedArray;
-}
+import type { PixelData } from "./ImageLoader";
+
+// Dieser Abschnitt ist teilweise KI generiert
 
 export function resampleImageNearest(
   sourceWidth: number,
@@ -10,7 +8,7 @@ export function resampleImageNearest(
   sourceData: Uint8ClampedArray,
   targetWidth: number,
   targetHeight: number,
-): SampledImage {
+): PixelData {
   const targetData = new Uint8ClampedArray(targetWidth * targetHeight * 4);
 
   const xRatio = sourceWidth / targetWidth;

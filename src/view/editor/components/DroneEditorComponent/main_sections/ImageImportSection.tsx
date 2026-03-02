@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { KeyframeEditorComponent } from "../SharedComponents";
-import { ImageVideoImportModal } from "../file_import/ImageVideoImportModal";
+import { ImageImportFrame } from "../image_import/ImageImportFrame";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 
-export function ImageVideoImportSection( {
+// Dieser Abschnitt ist teilweise KI generiert
+
+export function ImageImportSection( {
     controller,
 }: {
     controller: IUndoableController;
@@ -12,7 +14,7 @@ export function ImageVideoImportSection( {
 
     return (
         <>
-            <KeyframeEditorComponent title="Bild / Video Formation">
+            <KeyframeEditorComponent title="Bild Formation">
                 <button
                     className="btn btn-primary"
                     onClick={() => setShowModal(true)}
@@ -21,7 +23,7 @@ export function ImageVideoImportSection( {
                 </button>
             </KeyframeEditorComponent>
 
-            <ImageVideoImportModal
+            <ImageImportFrame
                 controller={controller}
                 show={showModal}
                 onClose={() => setShowModal(false)}

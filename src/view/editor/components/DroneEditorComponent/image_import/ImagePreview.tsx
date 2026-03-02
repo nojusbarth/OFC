@@ -1,11 +1,13 @@
 import { useEffect, useRef } from "react";
-import { SampledImage } from "./ImageSampling";
+import { PixelData } from "./ImageLoader";
+
+// Dieser Abschnitt ist teilweise KI generiert
 
 interface Props {
-  image: SampledImage;
+  image: PixelData;
 }
 
-export function PixelPreviewCanvas({ image }: Props) {
+export function ImagePreview({ image }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {

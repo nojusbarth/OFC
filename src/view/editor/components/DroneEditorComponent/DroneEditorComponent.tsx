@@ -10,7 +10,7 @@ import { KeyframeSection } from "./main_sections/KeyframeSection";
 import { ColorSection } from "././main_sections/ColorSection";
 import { PositionSection } from "./main_sections/PositionSection";
 import { GroupTransformSection } from "./main_sections/GroupTransformSection";
-import { ImageVideoImportSection } from "./main_sections/ImageVideoImportSection";
+import { ImageImportSection } from "./main_sections/ImageImportSection";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -168,7 +168,7 @@ export function DroneEditorComponent({
       <Card.Body className="d-flex flex-column overflow-y-auto p-3 gap-3">
 
         {selectedDrones.length === 0 && (
-          <ImageVideoImportSection controller={controller} />
+          <ImageImportSection controller={controller} />
         )}
 
         {selectedDrones.length == 1 && (

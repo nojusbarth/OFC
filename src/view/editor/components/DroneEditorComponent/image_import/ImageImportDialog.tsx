@@ -1,12 +1,16 @@
 import { useRef, useState, useEffect, useMemo } from "react";
-import { loadImagePixels } from "./ImageLoader";
+import { loadImagePixels, PixelData } from "./ImageLoader";
 import { resampleImageNearest } from "./ImageSampling";
-import { PixelPreviewCanvas } from "./PixelPreviewCanvas";
-import { calculateValidPixelCount, clampResolution, generateDroneFormation } from "./ImageAnalysis";
+import { ImagePreview } from "./ImagePreview";
+import { calculateValidPixelCount, clampResolution, generateDroneFormation, IgnoreColor } from "./ImageAnalysis";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
-type IgnoreColor = "white" | "black" | "transparent";
 
-export function ImageImportTab({
+
+// Dieser Abschnitt ist teilweise KI generiert
+
+
+
+export function ImageImportDialog({
     controller,
 }: {
     controller: IUndoableController;
@@ -15,13 +19,8 @@ export function ImageImportTab({
 
   const [fileName, setFileName] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [rawImage, setRawImage] = useState<{
-    width: number;
-    height: number;
-    data: Uint8ClampedArray;
-  } | null>(null);
+  const [rawImage, setRawImage] = useState<PixelData | null>(null);
 
-  // Neue UI States
   const [targetWidth, setTargetWidth] = useState<number>(50);
   const [targetHeight, setTargetHeight] = useState<number>(50);
   const [ignoreColor, setIgnoreColor] = useState<IgnoreColor>("white");
@@ -40,11 +39,7 @@ export function ImageImportTab({
 
     const result = await loadImagePixels(file);
 
-    setRawImage({
-      width: result.width,
-      height: result.height,
-      data: result.rawData,
-    });
+    setRawImage(result);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -133,7 +128,7 @@ export function ImageImportTab({
           style={{ cursor: "pointer" }}
           onClick={openFileDialog}
         >
-          <PixelPreviewCanvas image={sampledImage} />
+          <ImagePreview image={sampledImage} />
 
           <div className="mt-3 fw-semibold">{fileName}</div>
 
