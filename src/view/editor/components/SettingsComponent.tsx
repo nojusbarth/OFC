@@ -134,6 +134,7 @@ export function SettingsComponent({
                         iconClass={"bi-shield-check"}
                     >
                         <input
+                            id="collision-distance-input"
                             type="number"
                             className="form-control"
                             value={collisionRadius * 2}
@@ -154,6 +155,7 @@ export function SettingsComponent({
                         iconClass={"bi-clock"}
                     >
                         <input
+                            id="end-time-input"
                             type="number"
                             className="form-control"
                             value={endTime}

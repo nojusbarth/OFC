@@ -227,6 +227,7 @@ export function DroneEditorComponent({
                                     LED-Farbe wählen
                                 </Form.Label>
                                 <input
+                                    id="drone-color-input"
                                     type="color"
                                     value={`#${color.getHexString()}`}
                                     onChange={(e) =>
@@ -442,10 +443,12 @@ function PositionInputComponent({
     currentValue: number;
     onChangePosition: (value: number) => void;
 }) {
+    const axis = title.toLowerCase();
     return (
         <Form.Group>
             <Form.Label className="small">{title}</Form.Label>
             <Form.Control
+                id={`drone-position-${axis}-input`}
                 type="number"
                 step="0.1"
                 size="sm"

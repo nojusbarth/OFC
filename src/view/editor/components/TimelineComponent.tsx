@@ -155,6 +155,7 @@ export function TimelineComponent({
 
                 {/* Slider */}
                 <input
+                    id="timeline-time-slider"
                     title={toolTipps.TIME_SET}
                     type="range"
                     className="form-range flex-grow-1"
