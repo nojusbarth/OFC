@@ -1,0 +1,26 @@
+{
+  "drones": [
+    {
+      "waypoints": [
+        {
+          "time": 0,
+          "position": [
+            0,
+            0,
+            0
+          ]
+        }
+      ],
+      "colors": [
+        {
+          "time": 0,
+          "color": [
+            0,
+            0,
+            0
+          ]
+        }
+      ]
+    }
+  ]
+}
