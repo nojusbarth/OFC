@@ -75,10 +75,10 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: process.env.CI
-      ? 'npx serve -s build -l 3000'
+      ? 'CI=false npm run build && npx serve -s build -l 3000'
       : 'npm run start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: process.env.CI ? 300 * 1000 : 120 * 1000,
-},
+    timeout: 120 * 1000,
+  },
 });
