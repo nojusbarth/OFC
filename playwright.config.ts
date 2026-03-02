@@ -35,15 +35,15 @@ export default defineConfig({
 
   /* Configure projects for major browsers */
   projects: [
-    // {
-    //   name: 'chromium',
-    //   use: { ...devices['Desktop Chrome'] },
-    // },
+     {
+       name: 'chromium',
+       use: { ...devices['Desktop Chrome'] },
+     },
 
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
+    //{
+    //  name: 'firefox',
+    //  use: { ...devices['Desktop Firefox'] },
+    //},
 
     // {
     //   name: 'webkit',
@@ -75,10 +75,10 @@ export default defineConfig({
   /* Run your local dev server before starting the tests */
   webServer: {
     command: process.env.CI
-      ? 'CI=false npm run build && npx serve -s build -l 3000'
+      ? 'npx serve -s build -l 3000'
       : 'npm run start',
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
-  },
+    timeout: process.env.CI ? 300 * 1000 : 120 * 1000,
+},
 });
