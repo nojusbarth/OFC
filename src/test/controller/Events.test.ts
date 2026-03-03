@@ -4,6 +4,11 @@ import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
 import { ColorKeyFrame } from "../../repository/entity/ColorKeyFrame";
 import { makeBasicController } from "./testHelper";
 // Tests von KI generiert
+
+async function flushCollisionQueue(): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 describe("Controller Event Emission Tests", () => {
     let controller: IController;
 
@@ -253,18 +258,19 @@ describe("Controller Event Emission Tests", () => {
     // ============================================================================
 
     describe("getCollisionEvent - Collision Detection Events", () => {
-        it("should not emit collisionEvent when adding a position keyframe not causing a collision", () => {
+        it("should not emit collisionEvent when adding a position keyframe not causing a collision", async () => {
             const droneId = controller.addDrone();
             const keyFrame = new PositionKeyFrame(new Vector3(1, 2, 3), 0);
             const handler = jest.fn();
 
             controller.getCollisionEvent().register(handler);
             controller.addPositionKeyFrame(droneId, keyFrame);
+            await flushCollisionQueue();
 
             expect(handler).not.toHaveBeenCalled();
         });
 
-        it("should emit collisionEvent when collision is detected", () => {
+        it("should emit collisionEvent when collision is detected", async () => {
             controller.getSettings().setCollisionRadius(5);
             const droneId1 = controller.addDrone();
             const droneId2 = controller.addDrone();
@@ -279,11 +285,12 @@ describe("Controller Event Emission Tests", () => {
                 droneId2,
                 new PositionKeyFrame(new Vector3(1, 0, 0), 0)
             );
+            await flushCollisionQueue();
 
             expect(handler).toHaveBeenCalled();
         });
 
-        it("should emit collisionEvent when collision is resolved", () => {
+        it("should emit collisionEvent when collision is resolved", async () => {
             controller.getSettings().setCollisionRadius(5);
             const droneId1 = controller.addDrone();
             const droneId2 = controller.addDrone();
@@ -302,11 +309,12 @@ describe("Controller Event Emission Tests", () => {
                 droneId2,
                 new PositionKeyFrame(new Vector3(100, 100, 100), 1)
             );
+            await flushCollisionQueue();
 
             expect(handler).toHaveBeenCalled();
         });
 
-        it("should not emit collisionEvent when collision state does not change", () => {
+        it("should not emit collisionEvent when collision state does not change", async () => {
             const droneId = controller.addDrone();
             const keyFrame = new PositionKeyFrame(new Vector3(5, 5, 5), 0);
             controller.addPositionKeyFrame(droneId, keyFrame);
@@ -317,6 +325,7 @@ describe("Controller Event Emission Tests", () => {
                 droneId,
                 new PositionKeyFrame(new Vector3(6, 6, 6), 1)
             );
+            await flushCollisionQueue();
 
             expect(handler).not.toHaveBeenCalled();
         });
@@ -341,7 +350,7 @@ describe("Controller Event Emission Tests", () => {
             expect(selectHandler).toHaveBeenCalled();
         });
 
-        it("should emit droneChanged and collision events when modifying a drone", () => {
+        it("should emit droneChanged and collision events when modifying a drone", async () => {
             controller.getSettings().setCollisionRadius(5);
             const droneId1 = controller.addDrone();
             const droneId2 = controller.addDrone();
@@ -364,6 +373,7 @@ describe("Controller Event Emission Tests", () => {
                 droneId1,
                 new PositionKeyFrame(new Vector3(100, 100, 100), 1)
             );
+            await flushCollisionQueue();
 
             expect(changedHandler).toHaveBeenCalledWith(droneId1);
             expect(collisionHandler).toHaveBeenCalled();
@@ -385,7 +395,7 @@ describe("Controller Event Emission Tests", () => {
             expect(controller.getSelectedDrones()).not.toContain(droneId);
         });
 
-        it("should emit all events during complex workflow", () => {
+        it("should emit all events during complex workflow", async () => {
             const droneHandler = jest.fn();
             const selectHandler = jest.fn();
             const changedHandler = jest.fn();
@@ -404,6 +414,7 @@ describe("Controller Event Emission Tests", () => {
                 droneId1,
                 new PositionKeyFrame(new Vector3(0, 0, 0), 0)
             );
+            await flushCollisionQueue();
 
             expect(droneHandler).toHaveBeenCalled();
             expect(selectHandler).toHaveBeenCalled();

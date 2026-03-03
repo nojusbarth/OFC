@@ -8,11 +8,11 @@ import { OFCEvent } from "../interface/OFCEvent";
 import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
 import { TimeController } from "./TimeController";
 import { Drone } from "./Drone";
-import { checkCollisions } from "./CollisionHandler";
 import { Project } from "./Project";
 import { IProjectRepository } from "../../repository/IProjectRepository";
 import { IDrone } from "../../repository/entity/IDrone";
 import { DroneGroupManager } from "./GroupManager";
+import { checkCollisions } from "./CollisionHandlerInterface";
 
 /**
  * Implementiert IController
@@ -30,9 +30,9 @@ export class Controller implements IController {
     new OFCEvent();
   private droneSelectEvent: OFCEvent<number[]> = new OFCEvent();
   private collisionState: Map<number, Map<number, number>> = new Map();
-  private _collissionCheckEvent: OFCEvent<IDrone> = new OFCEvent();
   private batching: boolean = false;
   private preBatchDronesSnapshot: number[] = [];
+  private collisionQueue: IDrone[] = [];
 
   constructor(settings: ISettings, repository: IProjectRepository) {
     this.settings = settings;
@@ -50,9 +50,16 @@ export class Controller implements IController {
       this.recalculateCollisions();
       this.collisionEvent.notify(new Map(this.collisionState));
     });
-    this._collissionCheckEvent.register((drone) => {
-      this._checkCollisions(drone);
-    });
+  }
+
+  private queueCollisionCheck(drone: IDrone): void {
+    if (this.collisionQueue.includes(drone)) {
+      return;
+    }
+    this.collisionQueue.push(drone);
+    if (this.collisionQueue.length === 1 && !this.batching) {
+      this._checkCollisions();
+    }
   }
 
   startBatching(): void {
@@ -66,7 +73,6 @@ export class Controller implements IController {
       }
     };
     const last = <T>(list: T[], value: T) => list[0] = value;
-    this._collissionCheckEvent.startBatching(noDuplicates);
     this.droneChangedEvent.startBatching(noDuplicates);
     this.dronesEvent.startBatching(last);
     this.collisionEvent.startBatching(last);
@@ -78,15 +84,15 @@ export class Controller implements IController {
     if (!this.batching) {
       throw new Error("Not batching!");
     }
-    this.batching = false;
     this.dronesEvent.endBatching();
     this.droneChangedEvent.endBatching((ids) => {
       const changeableDrones = new Set(this.preBatchDronesSnapshot).intersection(new Set(this.getDrones()));
       return ids.filter(id => changeableDrones.has(id));
     });
-    this._collissionCheckEvent.endBatching();
     this.collisionEvent.endBatching();
+    this._checkCollisions();
     this.droneSelectEvent.endBatching();
+    this.batching = false;
   }
 
   getSettings(): ISettings {
@@ -102,17 +108,9 @@ export class Controller implements IController {
   }
 
   private recalculateCollisions(): void {
-    this.collisionState = new Map();
-    const drones = this.repository.getAllDrones();
-    for (const drone of drones) {
-      const result = checkCollisions(
-        drone,
-        drones,
-        this.settings.getCollisionRadius(),
-      );
-      if (result.size > 0) {
-        this.collisionState.set(drone.getId(), result);
-      }
+    this.collisionQueue = Array.from(this.repository.getAllDrones());
+    if (!this.batching) {
+      this._checkCollisions();
     }
   }
 
@@ -121,7 +119,7 @@ export class Controller implements IController {
     const drone = new Drone(id);
     this.repository.addDrone(drone);
     this.dronesEvent.notify(this.getDrones());
-    this._collissionCheckEvent.notify(drone);
+    this.queueCollisionCheck(drone);
     return id;
   }
 
@@ -188,14 +186,14 @@ export class Controller implements IController {
     const drone = this._getDrone(id);
     drone.insertPositionKeyFrame(keyFrame);
     this.droneChangedEvent.notify(id);
-    this._collissionCheckEvent.notify(drone);
+    this.queueCollisionCheck(drone);
   }
 
   removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
     const drone = this._getDrone(id);
     drone.removePositionKeyFrame(keyFrame);
     this.droneChangedEvent.notify(id);
-    this._collissionCheckEvent.notify(drone);
+    this.queueCollisionCheck(drone);
   }
 
   getColorKeyFrames(id: number): ColorKeyFrame[] {
@@ -235,26 +233,38 @@ export class Controller implements IController {
     return this.collisionState;
   }
 
-  private _checkCollisions(drone: IDrone): void {
-    const collisions = checkCollisions(
-      drone,
-      this.repository.getAllDrones(),
-      this.settings.getCollisionRadius(),
-    );
-    this._mergeCollisions(drone.getId(), collisions);
+  private async _checkCollisions(): Promise<void> {
+    this.collisionEvent.startBatching((l, v) => l[0] = v);
+    while (this.collisionQueue.length > 0) {
+      console.log(`Checking collisions... (${this.collisionQueue.length} drones left)`);
+      const drone = this.collisionQueue.shift()!;
+      const collisions = await checkCollisions(
+        drone,
+        this.repository.getAllDrones(),
+        this.settings.getCollisionRadius(),
+      );
+      this._mergeCollisions(drone.getId(), collisions);
+    }
+    this.collisionEvent.endBatching();
   }
 
   private _mergeCollisions(drone: number, collisions: Map<number, number>) {
     if (collisions.size === 0 && !this.collisionState.has(drone)) {
       return;
     }
+    const allDrones = new Set(this.getDrones());
+    if (!allDrones.has(drone)) {
+      // Drone was removed while we were calculating, ignore results
+      return;
+    }
+
     if (collisions.size === 0) {
       this.collisionState.delete(drone);
     } else {
       this.collisionState.set(drone, collisions);
     }
     for (const id of this.getDrones()) {
-      if (id !== drone) {
+      if (id !== drone && allDrones.has(id)) {
         const state = this.collisionState.get(id) ?? new Map();
         if (collisions.has(id)) {
           state.set(drone, collisions.get(id)!);
