@@ -63,5 +63,11 @@
   },
   "jest-junit": {
     "outputName": "junit.xml"
+  },
+  "jest": {
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "\\.tsx$"
+    ]
   }
 }
