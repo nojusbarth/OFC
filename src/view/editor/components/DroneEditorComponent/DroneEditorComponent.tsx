@@ -196,7 +196,7 @@ export function DroneEditorComponent({
               controller={controller}
             />
 
-            {selectedDrones.length === 1 && (
+            {selectedDrones.length > 0 && (
               <ShowKeyframesSection
                 positionKeyframes={positionKeyframes}
                 colorKeyframes={colorKeyframes}
