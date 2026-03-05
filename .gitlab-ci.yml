@@ -28,6 +28,7 @@ e2e-test:
     image: mcr.microsoft.com/playwright:v1.58.2-noble
     script:
         - npm ci
+        - CI=false npm run build
         - PLAYWRIGHT_JUNIT_OUTPUT_DIR=. PLAYWRIGHT_JUNIT_OUTPUT_NAME=junit-e2e.xml npx playwright test --reporter=junit,html
     artifacts:
         when: always
