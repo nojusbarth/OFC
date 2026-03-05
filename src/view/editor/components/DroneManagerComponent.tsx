@@ -184,6 +184,7 @@ function DroneCard({
             <div
                 ref={ref}
                 className="col drone-manager drone-card"
+                id={`drone-manager-card-${droneId}`}
                 title={
                     isSelected
                         ? toolTipps.DRONE_UNSELECT
