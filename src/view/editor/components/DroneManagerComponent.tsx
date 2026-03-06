@@ -68,7 +68,18 @@ export function DroneManagerComponent({
 
   // Update Drag und Drop Reihenfolge, wenn sich die Drohnenliste ändert
   useEffect(() => {
-    setOrderedDrones(allDrones);
+    setOrderedDrones((previousOrder) => {
+      const incomingIds = new Set(allDrones);
+
+      // Behalte die bestehende DnD-Reihenfolge für weiterhin vorhandene Drohnen.
+      const keptOrder = previousOrder.filter((id) => incomingIds.has(id));
+      const keptIds = new Set(keptOrder);
+
+      // Hänge neu hinzugekommene Drohnen hinten an.
+      const appendedIds = allDrones.filter((id) => !keptIds.has(id));
+
+      return [...keptOrder, ...appendedIds];
+    });
   }, [allDrones]);
 
   /* ---------- Click Handlers ---------- */
