@@ -2,6 +2,8 @@ import { Vector3, Color } from "three";
 import { makeUndoableController } from "../controller/testHelper";
 import { IUndoableController } from "../../controller/interface/IUndoableController";
 import { IProjectRepository } from "../../repository/IProjectRepository";
+// Tests von KI generiert
+
 
 /**
  * UI + Controller Integration Tests
@@ -9,18 +11,18 @@ import { IProjectRepository } from "../../repository/IProjectRepository";
  */
 
 describe("Drone Management - UI + Controller Integration", () => {
-  let controller: IUndoableController;
-  let repository: IProjectRepository;
+    let controller: IUndoableController;
+    let repository: IProjectRepository;
 
-  beforeEach(() => {
-    // Suppress console logs during tests
-    jest.spyOn(console, "log").mockImplementation(() => {});
-    [controller, repository] = makeUndoableController();
-  });
+    beforeEach(() => {
+        // Suppress console logs during tests
+        jest.spyOn(console, "log").mockImplementation(() => { });
+        [controller, repository] = makeUndoableController();
+    });
 
-  afterEach(() => {
-    jest.restoreAllMocks();
-  });
+    afterEach(() => {
+        jest.restoreAllMocks();
+    });
 
     describe("Adding and Removing Drones", () => {
         it("should add drone when user action is triggered", () => {
