@@ -12,294 +12,362 @@ import { ActionType } from "../../repository/entity/ActionType";
 import { Action } from "../../repository/entity/Action";
 import { IAction } from "../../repository/entity/IAction";
 import { IProjectRepository } from "../../repository/IProjectRepository";
+import { DroneGroupManager } from "./GroupManager";
 
 /**
  * Implementiert IUndoableController, ein Decorator für IController
  */
 export class UndoableController implements IUndoableController {
-    private controller: IController;
-    private undoStack: IUndoRepository;
-    private redoStack: IUndoRepository;
-    private idRemapping: Map<number, number> = new Map();
-    private undoFlag: boolean = false; // indicates if we are currently performing an undo
-    private redoFlag: boolean = false; // indicates if we are currently performing a redo
-    repository: IProjectRepository;
+  private controller: IController;
+  private undoStack: IUndoRepository;
+  private redoStack: IUndoRepository;
+  private idRemapping: Map<number, number> = new Map();
+  private undoFlag: boolean = false; // indicates if we are currently performing an undo
+  private redoFlag: boolean = false; // indicates if we are currently performing a redo
+  private batchedCount: number = 0; // counts the number of events in the current batch
 
-    constructor(controller: IController, repository: IProjectRepository, undoStack: IUndoRepository, redoStack: IUndoRepository) {
-        this.controller = controller;
-        this.repository = repository;
-        this.undoStack = undoStack;
-        this.redoStack = redoStack;
+  private repository: IProjectRepository;
 
-        this.controller.getProject().getProjectLoadedEvent().register(() => {
-            this.idRemapping.clear();
-            while (this.undoStack.popAction()) { }
-            while (this.redoStack.popAction()) { }
-            this.undoFlag = false;
-            this.redoFlag = false;
-        });
-    }
+  constructor(
+    controller: IController,
+    repository: IProjectRepository,
+    undoStack: IUndoRepository,
+    redoStack: IUndoRepository,
+  ) {
+    this.controller = controller;
+    this.repository = repository;
+    this.undoStack = undoStack;
+    this.redoStack = redoStack;
 
-    undo(): void {
-        const action = this.undoStack.popAction();
-        if (!action) return;
-
-        this.undoFlag = true;
-        this._reverseAction(action);
+    this.controller
+      .getProject()
+      .getProjectLoadedEvent()
+      .register(() => {
+        this.idRemapping.clear();
+        while (this.undoStack.popAction()) {}
+        while (this.redoStack.popAction()) {}
         this.undoFlag = false;
-    }
-
-    redo(): void {
-        const action = this.redoStack.popAction();
-        if (!action) return;
-
-        this.redoFlag = true;
-        this._reverseAction(action);
         this.redoFlag = false;
-    }
+      });
+  }
 
-    private _reverseAction(action: IAction): void {
+  startBatching(): void {
+    this.controller.startBatching();
+    this.batchedCount = 0;
+  }
+   
+  endBatching(): void {
+    this._pushAction(ActionType.BATCH, { count: this.batchedCount });
+    this.controller.endBatching();
+  }
 
-        switch (action.getType()) {
-            case ActionType.ADD_DRONE: {
-                const id = action.getData().id;
-                this.removeDrone(id);
-                break;
-            }
+  undo(): void {
+    const action = this.undoStack.popAction();
+    if (!action) return;
 
-            case ActionType.REMOVE_DRONE: {
-                const drone = action.getData().drone;
-                const selected = action.getData().selected;
-                this.repository.addDrone(drone);
-                this.getDronesEvent().notify(this.getDrones());
-                if (selected) {
-                    this.controller.selectDrone(drone.getId());
-                }
-                this._pushAction(ActionType.ADD_DRONE, { id: drone.getId() });
-                break;
-            }
+    this.undoFlag = true;
+    this._reverseAction(action);
+    this.undoFlag = false;
+  }
 
-            case ActionType.ADD_POSITION_KEYFRAME: {
-                const id = action.getData().id;
-                const previousKeyFrame = action.getData().previousKeyFrame;
-                if (previousKeyFrame) {
-                    this.addPositionKeyFrame(id, previousKeyFrame);
-                } else {
-                    const keyFrame = this._findKeyFrameAtTime(
-                        this.controller.getPositionKeyFrames(id),
-                        action.getTime());
-                    if (keyFrame) {
-                        this.removePositionKeyFrame(id, keyFrame);
-                    }
-                }
-                break;
-            }
+  redo(): void {
+    const action = this.redoStack.popAction();
+    if (!action) return;
 
-            case ActionType.REMOVE_POSITION_KEYFRAME: {
-                const id = action.getData().id;
-                const keyFrame: PositionKeyFrame = action.getData().keyFrame;
-                this.addPositionKeyFrame(id, keyFrame);
-                break;
-            }
+    this.redoFlag = true;
+    this._reverseAction(action);
+    this.redoFlag = false;
+  }
 
-            case ActionType.ADD_COLOR_KEYFRAME: {
-                const id = action.getData().id;
-                const previousKeyFrame = action.getData().previousKeyFrame;
-                if (previousKeyFrame) {
-                    this.addColorKeyFrame(id, previousKeyFrame);
-                } else {
-                    const keyFrame = this._findKeyFrameAtTime(
-                        this.controller.getColorKeyFrames(id),
-                        action.getTime());
-                    if (keyFrame) {
-                        this.removeColorKeyFrame(id, keyFrame);
-                    }
-                }
-                break;
-            }
+  private _reverseAction(action: IAction): void {
+    switch (action.getType()) {
+      case ActionType.ADD_DRONE: {
+        const id = action.getData().id;
+        this.removeDrone(id);
+        break;
+      }
 
-            case ActionType.REMOVE_COLOR_KEYFRAME: {
-                const id = action.getData().id;
-                const keyFrame: ColorKeyFrame = action.getData().keyFrame;
-                this.addColorKeyFrame(id, keyFrame);
-                break;
-            }
-
-            case ActionType.SELECT_DRONE: {
-                const id = action.getData().id;
-                this.unselectDrone(id);
-                break;
-            }
-
-            case ActionType.UNSELECT_DRONE: {
-                const id = action.getData().id;
-                this.selectDrone(id);
-                break;
-            }
+      case ActionType.REMOVE_DRONE: {
+        const drone = action.getData().drone;
+        const selected = action.getData().selected;
+        this.repository.addDrone(drone);
+        this.getDronesEvent().notify(this.getDrones());
+        if (selected) {
+          this.controller.selectDrone(drone.getId());
         }
-        this.controller.getTimeController().setTime(action.getTime());
-    }
+        this._pushAction(ActionType.ADD_DRONE, { id: drone.getId() });
+        break;
+      }
 
-    private _pushAction(type: ActionType, data: any): void {
-        const action = new Action(data, this._currentTime(), type);
-        if (this.undoFlag) {
-            this.redoStack.addAction(action);
-            return;
+      case ActionType.ADD_POSITION_KEYFRAME: {
+        const id = action.getData().id;
+        const previousKeyFrame = action.getData().previousKeyFrame;
+        if (previousKeyFrame) {
+          this.addPositionKeyFrame(id, previousKeyFrame);
+        } else {
+          const keyFrame = this._findKeyFrameAtTime(
+            this.controller.getPositionKeyFrames(id),
+            action.getTime(),
+          );
+          if (keyFrame) {
+            this.removePositionKeyFrame(id, keyFrame);
+          }
         }
+        break;
+      }
 
-        this.undoStack.addAction(action);
-        if (!this.redoFlag) {
-            while (this.redoStack.popAction()) { }
+      case ActionType.REMOVE_POSITION_KEYFRAME: {
+        const id = action.getData().id;
+        const keyFrame: PositionKeyFrame = action.getData().keyFrame;
+        this.addPositionKeyFrame(id, keyFrame);
+        break;
+      }
+
+      case ActionType.ADD_COLOR_KEYFRAME: {
+        const id = action.getData().id;
+        const previousKeyFrame = action.getData().previousKeyFrame;
+        if (previousKeyFrame) {
+          this.addColorKeyFrame(id, previousKeyFrame);
+        } else {
+          const keyFrame = this._findKeyFrameAtTime(
+            this.controller.getColorKeyFrames(id),
+            action.getTime(),
+          );
+          if (keyFrame) {
+            this.removeColorKeyFrame(id, keyFrame);
+          }
         }
-    }
+        break;
+      }
 
-    private _currentTime(): number {
-        return this.controller.getTimeController().getTime();
-    }
+      case ActionType.REMOVE_COLOR_KEYFRAME: {
+        const id = action.getData().id;
+        const keyFrame: ColorKeyFrame = action.getData().keyFrame;
+        this.addColorKeyFrame(id, keyFrame);
+        break;
+      }
 
-    private _findKeyFrameAtTime<KeyFrame extends PositionKeyFrame | ColorKeyFrame>(keyFrames: KeyFrame[], time: number): KeyFrame | null {
-        for (const keyFrame of keyFrames) {
-            if (keyFrame.getTime() === time) {
-                return keyFrame;
-            }
+      case ActionType.SELECT_DRONE: {
+        const id = action.getData().id;
+        this.unselectDrone(id);
+        break;
+      }
+
+      case ActionType.UNSELECT_DRONE: {
+        const id = action.getData().id;
+        this.selectDrone(id);
+        break;
+      }
+
+      case ActionType.BATCH: {
+        const count: number = action.getData().count;
+        this.startBatching();
+        const stack = this.undoFlag ? this.undoStack : this.redoStack;
+        for (let i = 0; i < count; i++) {
+          const batchAction = stack.popAction();
+          this._reverseAction(batchAction!);
         }
-        return null;
+        this.endBatching();
+        break;
+      }
+    }
+    this.controller.getTimeController().setTime(action.getTime());
+  }
+
+  private _pushAction(type: ActionType, data: any): void {
+    const action = new Action(data, this._currentTime(), type);
+    this.batchedCount++;
+    if (this.undoFlag) {
+      this.redoStack.addAction(action);
+      return;
     }
 
-    getSettings(): ISettings {
-        return this.controller.getSettings();
+    this.undoStack.addAction(action);
+    if (!this.redoFlag) {
+      while (this.redoStack.popAction()) {}
     }
+  }
 
-    getTimeController(): ITimeController {
-        return this.controller.getTimeController();
+  private _currentTime(): number {
+    return this.controller.getTimeController().getTime();
+  }
+
+  private _findKeyFrameAtTime<
+    KeyFrame extends PositionKeyFrame | ColorKeyFrame,
+  >(keyFrames: KeyFrame[], time: number): KeyFrame | null {
+    for (const keyFrame of keyFrames) {
+      if (keyFrame.getTime() === time) {
+        return keyFrame;
+      }
     }
+    return null;
+  }
 
-    getProject(): IProject {
-        return this.controller.getProject();
+  getSettings(): ISettings {
+    return this.controller.getSettings();
+  }
+
+  getTimeController(): ITimeController {
+    return this.controller.getTimeController();
+  }
+
+  getProject(): IProject {
+    return this.controller.getProject();
+  }
+
+  addDrone(): number {
+    const id = this.controller.addDrone();
+    this._pushAction(ActionType.ADD_DRONE, { id });
+    return id;
+  }
+
+  removeDrone(id: number): void {
+    const drone = this.repository.getDroneById(id);
+    if (drone) {
+      const selected = this.controller.getSelectedDrones().includes(id);
+      this._pushAction(ActionType.REMOVE_DRONE, { drone, selected });
     }
+    this.controller.removeDrone(id);
+  }
 
-    addDrone(): number {
-        const id = this.controller.addDrone();
-        this._pushAction(ActionType.ADD_DRONE, { id });
-        return id;
+  getDrones(): number[] {
+    return this.controller.getDrones();
+  }
+
+  selectDrone(id: number): void {
+    const previousSize = this.controller.getSelectedDrones().length;
+    this.controller.selectDrone(id);
+    const newSize = this.controller.getSelectedDrones().length;
+    if (previousSize !== newSize) {
+      this._pushAction(ActionType.SELECT_DRONE, { id });
     }
+  }
 
-    removeDrone(id: number): void {
-        const drone = this.repository.getDroneById(id);
-        if (drone) {
-            const selected = this.controller.getSelectedDrones().includes(id);
-            this._pushAction(ActionType.REMOVE_DRONE, { drone, selected });
-        }
-        this.controller.removeDrone(id);
+  unselectDrone(id: number): void {
+    const previousSize = this.controller.getSelectedDrones().length;
+    this.controller.unselectDrone(id);
+    const newSize = this.controller.getSelectedDrones().length;
+    if (previousSize !== newSize) {
+      this._pushAction(ActionType.UNSELECT_DRONE, { id });
     }
+  }
+  getSelectedDrones(): number[] {
+    return this.controller.getSelectedDrones();
+  }
 
-    getDrones(): number[] {
-        return this.controller.getDrones();
+  getPositionKeyFrames(id: number): PositionKeyFrame[] {
+    return this.controller.getPositionKeyFrames(id);
+  }
+
+  getPosition(id: number): Vector3 {
+    return this.controller.getPosition(id);
+  }
+
+  getPositionAt(id: number, time: number): Vector3 {
+    return this.controller.getPositionAt(id, time);
+  }
+
+  addPositionKeyFrameNow(id: number, position: Vector3): void {
+    this.addPositionKeyFrame(
+      id,
+      new PositionKeyFrame(
+        position,
+        this.controller.getTimeController().getTime(),
+      ),
+    );
+  }
+
+  addPositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
+    const keyFrames = this.controller.getPositionKeyFrames(id);
+    const previousKeyFrame = this._findKeyFrameAtTime(
+      keyFrames,
+      keyFrame.getTime(),
+    );
+
+    this._pushAction(ActionType.ADD_POSITION_KEYFRAME, {
+      id,
+      previousKeyFrame,
+    });
+    this.controller.addPositionKeyFrame(id, keyFrame);
+  }
+
+  removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
+    if (
+      this._findKeyFrameAtTime(
+        this.controller.getPositionKeyFrames(id),
+        keyFrame.getTime(),
+      ) !== null
+    ) {
+      // only undo if keyframe existed
+      this._pushAction(ActionType.REMOVE_POSITION_KEYFRAME, { id, keyFrame });
     }
+    this.controller.removePositionKeyFrame(id, keyFrame);
+  }
 
-    selectDrone(id: number): void {
-        const previousSize = this.controller.getSelectedDrones().length;
-        this.controller.selectDrone(id);
-        const newSize = this.controller.getSelectedDrones().length;
-        if (previousSize !== newSize) {
-            this._pushAction(ActionType.SELECT_DRONE, { id });
-        }
+  getColorKeyFrames(id: number): ColorKeyFrame[] {
+    return this.controller.getColorKeyFrames(id);
+  }
+
+  getColor(id: number): Color {
+    return this.controller.getColor(id);
+  }
+
+  getColorAt(id: number, time: number): Color {
+    return this.controller.getColorAt(id, time);
+  }
+
+  addColorKeyFrameNow(id: number, color: Color): void {
+    this.addColorKeyFrame(
+      id,
+      new ColorKeyFrame(color, this.controller.getTimeController().getTime()),
+    );
+  }
+
+  addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
+    const keyFrames = this.controller.getColorKeyFrames(id);
+    const previousKeyFrame = this._findKeyFrameAtTime(
+      keyFrames,
+      this._currentTime(),
+    );
+
+    this._pushAction(ActionType.ADD_COLOR_KEYFRAME, { id, previousKeyFrame });
+    this.controller.addColorKeyFrame(id, keyFrame);
+  }
+
+  removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
+    if (
+      this._findKeyFrameAtTime(
+        this.controller.getColorKeyFrames(id),
+        keyFrame.getTime(),
+      ) !== null
+    ) {
+      // only undo if keyframe existed
+      this._pushAction(ActionType.REMOVE_COLOR_KEYFRAME, { id, keyFrame });
     }
+    this.controller.removeColorKeyFrame(id, keyFrame);
+  }
 
-    unselectDrone(id: number): void {
-        const previousSize = this.controller.getSelectedDrones().length;
-        this.controller.unselectDrone(id);
-        const newSize = this.controller.getSelectedDrones().length;
-        if (previousSize !== newSize) {
-            this._pushAction(ActionType.UNSELECT_DRONE, { id });
-        }
-    }
-    getSelectedDrones(): number[] {
-        return this.controller.getSelectedDrones();
-    }
+  getCollisions(): Map<number, Map<number, number>> {
+    return this.controller.getCollisions();
+  }
 
-    getPositionKeyFrames(id: number): PositionKeyFrame[] {
-        return this.controller.getPositionKeyFrames(id);
-    }
+  getDroneChangedEvent(): OFCEvent<number> {
+    return this.controller.getDroneChangedEvent();
+  }
 
-    getPosition(id: number): Vector3 {
-        return this.controller.getPosition(id);
-    }
+  getDronesEvent(): OFCEvent<number[]> {
+    return this.controller.getDronesEvent();
+  }
 
-    getPositionAt(id: number, time: number): Vector3 {
-        return this.controller.getPositionAt(id, time);
-    }
+  getCollisionEvent(): OFCEvent<Map<number, Map<number, number>>> {
+    return this.controller.getCollisionEvent();
+  }
 
-    addPositionKeyFrameNow(id: number, position: Vector3): void {
-        this.addPositionKeyFrame(id, new PositionKeyFrame(position, this.controller.getTimeController().getTime()));
-    }
+  getDroneSelectEvent(): OFCEvent<number[]> {
+    return this.controller.getDroneSelectEvent();
+  }
 
-    addPositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
-        const keyFrames = this.controller.getPositionKeyFrames(id);
-        const previousKeyFrame = this._findKeyFrameAtTime(keyFrames, keyFrame.getTime());
-
-        this._pushAction(ActionType.ADD_POSITION_KEYFRAME, { id, previousKeyFrame });
-        this.controller.addPositionKeyFrame(id, keyFrame);
-    }
-
-    removePositionKeyFrame(id: number, keyFrame: PositionKeyFrame): void {
-        if (this._findKeyFrameAtTime(this.controller.getPositionKeyFrames(id), keyFrame.getTime()) !== null) {
-            // only undo if keyframe existed
-            this._pushAction(ActionType.REMOVE_POSITION_KEYFRAME, { id, keyFrame });
-        }
-        this.controller.removePositionKeyFrame(id, keyFrame);
-    }
-
-
-    getColorKeyFrames(id: number): ColorKeyFrame[] {
-        return this.controller.getColorKeyFrames(id);
-    }
-
-    getColor(id: number): Color {
-        return this.controller.getColor(id);
-    }
-
-    getColorAt(id: number, time: number): Color {
-        return this.controller.getColorAt(id, time);
-    }
-
-    addColorKeyFrameNow(id: number, color: Color): void {
-        this.addColorKeyFrame(id, new ColorKeyFrame(color, this.controller.getTimeController().getTime()));
-    }
-
-    addColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
-        const keyFrames = this.controller.getColorKeyFrames(id);
-        const previousKeyFrame = this._findKeyFrameAtTime(keyFrames, this._currentTime());
-
-        this._pushAction(ActionType.ADD_COLOR_KEYFRAME, { id, previousKeyFrame });
-        this.controller.addColorKeyFrame(id, keyFrame);
-    }
-
-    removeColorKeyFrame(id: number, keyFrame: ColorKeyFrame): void {
-        if (this._findKeyFrameAtTime(this.controller.getColorKeyFrames(id), keyFrame.getTime()) !== null) {
-            // only undo if keyframe existed
-            this._pushAction(ActionType.REMOVE_COLOR_KEYFRAME, { id, keyFrame });
-        }
-        this.controller.removeColorKeyFrame(id, keyFrame);
-    }
-
-    getCollisions(): Map<number, Map<number, number>> {
-        return this.controller.getCollisions();
-    }
-
-    getDroneChangedEvent(): OFCEvent<number> {
-        return this.controller.getDroneChangedEvent();
-    }
-
-    getDronesEvent(): OFCEvent<number[]> {
-        return this.controller.getDronesEvent();
-    }
-
-    getCollisionEvent(): OFCEvent<Map<number, Map<number, number>>> {
-        return this.controller.getCollisionEvent();
-    }
-
-    getDroneSelectEvent(): OFCEvent<number[]> {
-        return this.controller.getDroneSelectEvent();
-    }
+  getGroupManager(): DroneGroupManager {
+    return this.controller.getGroupManager();
+  }
 }

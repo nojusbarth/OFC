@@ -1,5 +1,7 @@
 import { useEffect } from "react";
 import { IUndoableController } from "../controller/interface/IUndoableController";
+import { clear } from "console";
+import { clearAndSelectDrones, clearSelected } from "../controller/interface/ControllerUtils";
 
 /**
  * Verwaltet Tastaturkürzel für den gegebenen Controller und reagiert auf Benutzer-Eingaben
@@ -35,9 +37,7 @@ export function KeyboardShortcuts({
       }
       if (event.ctrlKey && event.key === "a") {
         event.preventDefault();
-        controller
-          .getDrones()
-          .forEach((drone) => controller.selectDrone(drone));
+        clearAndSelectDrones(controller, controller.getDrones());
         return;
       }
       if (event.ctrlKey && event.key === "e") {
@@ -58,14 +58,14 @@ export function KeyboardShortcuts({
       let newTime;
       switch (event.key) {
         case "Delete":
+          controller.startBatching();
           controller
             .getSelectedDrones()
             .forEach((drone) => controller.removeDrone(drone));
+          controller.endBatching();
           break;
         case "Escape":
-          controller
-            .getSelectedDrones()
-            .forEach((drone) => controller.unselectDrone(drone));
+          clearSelected(controller);
           break;
         case "j":
         case "ArrowLeft":

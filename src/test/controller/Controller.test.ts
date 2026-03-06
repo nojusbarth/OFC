@@ -1,6 +1,10 @@
 import { Vector3 } from "three";
 import { makeBasicController } from "./testHelper";
 
+async function flushCollisionQueue(): Promise<void> {
+    await new Promise((resolve) => setTimeout(resolve, 0));
+}
+
 it("Controller - add/remove drone", () => {
     const [controller, repository] = makeBasicController();
 
@@ -19,7 +23,7 @@ it("Controller - remove drone invalid id", () => {
     expect(() => controller.removeDrone(999)).toThrowError();
 });
 
-it("Controller - test collision detection on add", () => {
+it("Controller - test collision detection on add", async () => {
     const [controller, repository] = makeBasicController();
     controller.getSettings().setCollisionRadius(5);
 
@@ -38,10 +42,11 @@ it("Controller - test collision detection on add", () => {
     });
 
     controller.addPositionKeyFrameNow(drone2Id, new Vector3(3, 0, 0));
+    await flushCollisionQueue();
     expect(collisionDetected).toBe(true);
 });
 
-it("Controller - collision detection on remove", () => {
+it("Controller - collision detection on remove", async () => {
     const [controller, repository] = makeBasicController();
     repository.setCollisionRadius(2);
     repository.setMaxTime(10);
@@ -57,20 +62,24 @@ it("Controller - collision detection on remove", () => {
 
     controller.addPositionKeyFrameNow(drone1Id, new Vector3(0, 0, 0));
     controller.addPositionKeyFrameNow(drone2Id, new Vector3(10, 0, 0));
+    await flushCollisionQueue();
     expect(collisionDetected).toBe(false);
 
     controller.getTimeController().setTime(10);
     controller.addPositionKeyFrameNow(drone1Id, new Vector3(0, 10, 0));
     controller.addPositionKeyFrameNow(drone2Id, new Vector3(10, 10, 0));
+    await flushCollisionQueue();
     expect(collisionDetected).toBe(false);
 
 
     controller.getTimeController().setTime(5);
     controller.addPositionKeyFrameNow(drone2Id, controller.getPosition(drone1Id));
+    await flushCollisionQueue();
     expect(collisionDetected).toBe(true);
 
     // reset for removal test
     controller.removePositionKeyFrame(drone2Id, controller.getPositionKeyFrames(drone2Id)[1]);
+    await flushCollisionQueue();
 
     expect(collisionDetected).toBe(false);
 });
