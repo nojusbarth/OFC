@@ -83,3 +83,29 @@ it("Controller - collision detection on remove", async () => {
 
     expect(collisionDetected).toBe(false);
 });
+
+it("Controller - batching", async () => {
+    const [controller, repository] = makeBasicController();
+    controller.getSettings().setCollisionRadius(5);
+
+    const drone1Id = controller.addDrone();
+    const drone2Id = controller.addDrone();
+
+    const collisionFn = jest.fn();
+    controller.getCollisionEvent().register(collisionFn);
+    expect(collisionFn).toHaveBeenCalledTimes(0);
+
+    controller.startBatching();
+    controller.addPositionKeyFrameNow(drone1Id, new Vector3(0, 0, 0));
+    controller.addPositionKeyFrameNow(drone2Id, new Vector3(3, 0, 0));
+    expect(collisionFn).toHaveBeenCalledTimes(0);
+
+    controller.endBatching();
+    await flushCollisionQueue();
+    expect(collisionFn).toHaveBeenCalled();
+    const collision = collisionFn.mock.calls[0][0] as Map<number, Set<number>>;
+    expect(collision.get(drone2Id)?.size).toEqual(1);
+    expect(collision.get(drone2Id)?.keys().next().value).toEqual(drone1Id);
+    expect(collision.get(drone1Id)?.size).toEqual(1);
+    expect(collision.get(drone1Id)?.keys().next().value).toEqual(drone2Id);
+});
