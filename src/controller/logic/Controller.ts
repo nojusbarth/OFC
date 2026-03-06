@@ -45,6 +45,7 @@ export class Controller implements IController {
       this.timeController.stopAnimation();
       this.timeController.setTime(0);
       this.timeController.setAnimationSpeed(1);
+      this.groupManager.clearGroups();
     });
     this.settings.getCollisionRadiusChangedEvent().register(() => {
       this.recalculateCollisions();
