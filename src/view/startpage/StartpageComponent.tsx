@@ -66,6 +66,10 @@ export function StartpageComponent({ controller, toggleStartpage }: { controller
         <img className="mb-3" style={{ width: "100%"}} src="/ofc.png" alt="Olympian Flight Control (OFC)"/>
         <div className="card shadow-sm mb-5" style={{ maxWidth: "500px", width: "100%" }}>
           <div className="card-body">
+            <h2 className="text-center logo-subtitle mb-3">
+              Olympian Flight Control
+            </h2>
+            <hr/>
             <form>
               <div className="mb-3">
                 <input className="form-control" type="file" id="fileInput" onChange={onFileChange} />
