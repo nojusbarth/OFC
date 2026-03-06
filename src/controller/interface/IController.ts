@@ -187,9 +187,21 @@ export interface IController {
    */
   getDroneSelectEvent(): OFCEvent<number[]>;
 
+  /**
+   * Ruft den Drohnengruppenmanager ab, der die Gruppierung von Drohnen verwaltet.
+   * @returns Der Drohnengruppenmanager, der Gruppenzuordnungen und abfragen ermöglicht
+   */
   getGroupManager(): DroneGroupManager;
 
+  /**
+   * Beginnt eine Batch-Operation, um mehrere Änderungen zu gruppieren.
+   * Während einer Batch-Operation werden keine Ereignisse ausgelöst, bis endBatching() aufgerufen wird.
+   * Dies ermöglicht es, mehrere Änderungen vorzunehmen, ohne dass die Benutzeroberfläche oder andere Listener mehrfach aktualisiert werden müssen.
+   */
   startBatching(): void;
 
+  /**
+   * Beendet eine Batch-Operation und löst alle während der Batch-Operation aufgetretenen Ereignisse aus.
+   */
   endBatching(): void;
 }
