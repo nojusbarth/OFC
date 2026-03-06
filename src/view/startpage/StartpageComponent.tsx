@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import { IController } from "../../controller/interface/IController";
-import { PopupComponent } from "./PopupComponent";
-import { Result } from "../../repository/Result";
+import React, {useState} from "react";
+import {IController} from "../../controller/interface/IController";
+import {PopupComponent} from "./PopupComponent";
+import {Result} from "../../repository/Result";
 import "./StartpageComponent.css";
 
 
@@ -62,38 +62,40 @@ export function StartpageComponent({ controller, toggleStartpage }: { controller
 
   return (
     <div className="bg-gradients d-flex align-items-center justify-content-center">
-      <div className="card shadow-sm" style={{ maxWidth: "500px", width: "100%" }}>
-        <div className="card-body">
+      <div className="flex-column align-items-center justify-content-center">
+        <img className="mb-3" style={{ width: "100%"}} src="/ofc.png" alt="Olympian Flight Control (OFC)"/>
+        <div className="card shadow-sm mb-5" style={{ maxWidth: "500px", width: "100%" }}>
+          <div className="card-body">
+            <h2 className="text-center logo-subtitle mb-3">
+              Olympian Flight Control
+            </h2>
+            <hr/>
+            <form>
+              <div className="mb-3">
+                <input className="form-control" type="file" id="fileInput" onChange={onFileChange} />
+              </div>
+              {showPopup && (
+                  <PopupComponent message={message} messageType={messageType} />
+              )}
 
-          <h2 className="text-center logo-subtitle mb-3">
-            Olympian Flight Control
-          </h2>
-          <form>
-            <hr />
-            <div className="mb-3">
-              <input className="form-control" type="file" id="fileInput" onChange={onFileChange} />
-            </div>
-            {showPopup && (
-              <PopupComponent message={message} messageType={messageType} />
-            )}
+              <button type="button" className="btn btn-primary shadow-sm w-100 mb-2" onClick={onOpenProject}
+                      disabled={!file}>
+                <i className="bi bi-folder me-2" />
+                Projekt öffnen
+              </button>
+              <button type="button" className="btn btn-outline-primary shadow-sm w-100" onClick={onOpenLastProject}
+                      disabled={!controller.getProject().canLoadLastProject()}>
+                <i className="bi bi-arrow-clockwise me-2" />
+                Zuletzt geöffnetes Projekt öffnen
+              </button>
 
-            <button type="button" className="btn btn-primary shadow-sm w-100 mb-2" onClick={onOpenProject}
-              disabled={!file}>
-              <i className="bi bi-folder me-2" />
-              Projekt öffnen
-            </button>
-            <button type="button" className="btn btn-outline-primary shadow-sm w-100" onClick={onOpenLastProject}
-              disabled={!controller.getProject().canLoadLastProject()}>
-              <i className="bi bi-arrow-clockwise me-2" />
-              Zuletzt geöffnetes Projekt öffnen
-            </button>
-
-            <hr />
-            <button type="button" className="btn btn-primary shadow-sm w-100" onClick={onCreateProject}>
-              <i className="bi bi-file-earmark-plus me-2" />
-              Projekt erstellen
-            </button>
-          </form>
+              <hr />
+              <button type="button" className="btn btn-primary shadow-sm w-100" onClick={onCreateProject}>
+                <i className="bi bi-file-earmark-plus me-2" />
+                Projekt erstellen
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
