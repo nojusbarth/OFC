@@ -1,5 +1,7 @@
 import { Page } from '@playwright/test';
 import path from 'path';
+// Tests von KI generiert
+
 
 /**
  * Helper class providing utility functions for E2E tests

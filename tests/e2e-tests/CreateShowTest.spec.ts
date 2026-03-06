@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { TestHelper } from './TestHelper';
+// Tests von KI generiert
 
 test('test creating a show', async ({ page }) => {
     const helper = new TestHelper();
