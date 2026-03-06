@@ -23,8 +23,6 @@
  *    - Unit-Tests können nicht validieren, ob die visuelle
  *      Darstellung korrekt ist
  *
- * Das Mocken dieser Abhängigkeiten würde zu extrem fragilen Tests
- * führen, die eher die Mocks als die tatsächliche Funktionalität testen.
  */
 
 describe("Graphics Components", () => {
