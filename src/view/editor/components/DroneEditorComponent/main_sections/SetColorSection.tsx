@@ -1,6 +1,9 @@
 import { Color } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
-import { KeyframeEditorComponent, AddKeyframeComponent } from "../SharedComponents";
+import {
+  KeyframeEditorComponent,
+  AddKeyframeComponent,
+} from "../SharedComponents";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -14,50 +17,46 @@ import { KeyframeEditorComponent, AddKeyframeComponent } from "../SharedComponen
  * @returns JSX-Bereich zur Farbauswahl und Anwendung.
  */
 export function SetColorSection({
-    color,
-    setColor,
-    selectedDrones,
-    controller,
+  color,
+  setColor,
+  selectedDrones,
+  controller,
 }: {
-    color: Color;
-    setColor: (color: Color) => void;
-    selectedDrones: number[];
-    controller: IUndoableController;
+  color: Color;
+  setColor: (color: Color) => void;
+  selectedDrones: number[];
+  controller: IUndoableController;
 }) {
+  const handleColorChange = (hexColor: string) => {
+    setColor(new Color(hexColor));
+  };
 
-    const handleColorChange = (hexColor: string) => {
-        setColor(new Color(hexColor));
-    };
+  const handleAddColorKeyframe = () => {
+    controller.startBatching();
+    selectedDrones.forEach((droneId) => {
+      controller.addColorKeyFrameNow(droneId, color);
+    });
+    controller.endBatching();
+  };
 
-    const handleAddColorKeyframe = () => {
-        controller.startBatching();
-        selectedDrones.forEach((droneId) => {
-            controller.addColorKeyFrameNow(droneId, color);
-        });
-        controller.endBatching();
-    };
+  return (
+    <KeyframeEditorComponent title="Farbe Setzen">
+      <div>
+        <label className="small">LED-Farbe wählen</label>
+        <input
+          id="drone-color-input"
+          type="color"
+          value={`#${color.getHexString()}`}
+          onChange={(e) => handleColorChange(e.target.value)}
+          style={{
+            cursor: "pointer",
+            height: "40px",
+            width: "100%",
+          }}
+        />
+      </div>
 
-    return (
-        <KeyframeEditorComponent title="Farbe Setzen">
-            <div>
-                <label className="small">LED-Farbe wählen</label>
-                <input
-                    type="color"
-                    value={`#${color.getHexString()}`}
-                    onChange={(e) =>
-                        handleColorChange(e.target.value)
-                    }
-                    style={{
-                        cursor: "pointer",
-                        height: "40px",
-                        width: "100%",
-                    }}
-                />
-            </div>
-
-            <AddKeyframeComponent
-                onClick={handleAddColorKeyframe}
-            />
-        </KeyframeEditorComponent>
-    );
+      <AddKeyframeComponent onClick={handleAddColorKeyframe} />
+    </KeyframeEditorComponent>
+  );
 }

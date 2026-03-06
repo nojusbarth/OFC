@@ -45,27 +45,31 @@ export function KeyframeEditorComponent({
  * @returns JSX-Element mit beschriftetem Eingabefeld für die Position.
  */
 export function PositionInputComponent({
-  title,
-  currentValue,
-  onChangePosition,
+    title,
+    currentValue,
+    onChangePosition,
 }: {
-  title: string;
-  currentValue: number;
-  onChangePosition: (value: number) => void;
+    title: string;
+    currentValue: number;
+    onChangePosition: (value: number) => void;
 }) {
-  return (
-    <Form.Group>
-      <Form.Label className="small">{title}</Form.Label>
-      <Form.Control
-        type="number"
-        step="0.1"
-        size="sm"
-        value={currentValue}
-        onChange={(e) => onChangePosition(parseFloat(e.target.value) || 0)}
-        className="border-secondary"
-      />
-    </Form.Group>
-  );
+    const axis = title.toLowerCase();
+    return (
+        <Form.Group>
+            <Form.Label className="small">{title}</Form.Label>
+            <Form.Control
+                id={`drone-position-${axis}-input`}
+                type="number"
+                step="0.1"
+                size="sm"
+                value={currentValue}
+                onChange={(e) =>
+                    onChangePosition(parseFloat(e.target.value) || 0)
+                }
+                className="border-secondary"
+            />
+        </Form.Group>
+    );
 }
 
 /**
