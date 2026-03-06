@@ -34,4 +34,8 @@ export const enum ActionType {
      * Eine Drohne wird nicht mehr ausgewählt.
      */
     UNSELECT_DRONE = 'UNSELECT_DRONE',
+    /**
+     * Eine Menge von Aktionen wird als Batch ausgeführt.
+     */
+    BATCH = 'BATCH',
 }
