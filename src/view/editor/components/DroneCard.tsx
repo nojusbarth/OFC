@@ -115,6 +115,7 @@ export function DroneCard({
       <div
         ref={ref}
         className="col drone-manager drone-card"
+        id={`drone-manager-card-${droneId}`}
         style={{
           backgroundColor: groupColor,
           borderRadius: "12px",
