@@ -143,3 +143,20 @@ it("UndoableController: add/remove color keyframe", () => {
     undoableController.redo();
     expect(undoableController.getColorKeyFrames(droneId).length).toBe(0);
 });
+
+it("UndoableController: batch operations", () => {
+    const [undoableController, _repository] = makeUndoableController();
+
+    undoableController.startBatching();
+    const drone1Id = undoableController.addDrone();
+    const drone2Id = undoableController.addDrone();
+    undoableController.endBatching();
+    
+    expect(undoableController.getDrones()).toContain(drone1Id);
+    expect(undoableController.getDrones()).toContain(drone2Id);
+    undoableController.undo();
+    expect(undoableController.getDrones().length).toBe(0);
+    undoableController.redo();
+    expect(undoableController.getDrones()).toContain(drone1Id);
+    expect(undoableController.getDrones()).toContain(drone2Id); 
+});

@@ -33,6 +33,7 @@ export class Controller implements IController {
   private batching: boolean = false;
   private preBatchDronesSnapshot: number[] = [];
   private collisionQueue: IDrone[] = [];
+  private checkingCollisions: boolean = false;
 
   constructor(settings: ISettings, repository: IProjectRepository) {
     this.settings = settings;
@@ -235,6 +236,10 @@ export class Controller implements IController {
   }
 
   private async _checkCollisions(): Promise<void> {
+    if (this.checkingCollisions) {
+      return;
+    }
+    this.checkingCollisions = true;
     this.collisionEvent.startBatching((l, v) => l[0] = v);
     while (this.collisionQueue.length > 0) {
       console.log(`Checking collisions... (${this.collisionQueue.length} drones left)`);
@@ -247,6 +252,7 @@ export class Controller implements IController {
       this._mergeCollisions(drone.getId(), collisions);
     }
     this.collisionEvent.endBatching();
+    this.checkingCollisions = false;
   }
 
   private _mergeCollisions(drone: number, collisions: Map<number, number>) {

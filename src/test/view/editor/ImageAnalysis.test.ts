@@ -8,7 +8,6 @@ import { PixelData } from "../../../view/editor/components/DroneEditorComponent/
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 import { PositionKeyFrame } from "../../../repository/entity/PositionKeyFrame";
 import { ColorKeyFrame } from "../../../repository/entity/ColorKeyFrame";
-import { start } from "repl";
 
 // Dieser Abschnitt ist teilweise KI generiert
 

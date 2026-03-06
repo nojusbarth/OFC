@@ -21,7 +21,6 @@ export class UndoableController implements IUndoableController {
   private controller: IController;
   private undoStack: IUndoRepository;
   private redoStack: IUndoRepository;
-  private idRemapping: Map<number, number> = new Map();
   private undoFlag: boolean = false; // indicates if we are currently performing an undo
   private redoFlag: boolean = false; // indicates if we are currently performing a redo
   private batchedCount: number = 0; // counts the number of events in the current batch
@@ -43,7 +42,6 @@ export class UndoableController implements IUndoableController {
       .getProject()
       .getProjectLoadedEvent()
       .register(() => {
-        this.idRemapping.clear();
         while (this.undoStack.popAction()) {}
         while (this.redoStack.popAction()) {}
         this.undoFlag = false;
