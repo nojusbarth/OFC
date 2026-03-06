@@ -68,7 +68,13 @@ async function getCollisionWorker(): Promise<Worker | null> {
     }
 
     try {
-        collisionWorker = bindWorker(new Worker(new URL("./CollisionHandler.worker.ts", window.location.href), { type: "module" }));
+        try {
+            const {loadCollisionWorker} = await import("./CollisionWorkerLoader");
+            collisionWorker = bindWorker(loadCollisionWorker());
+        } catch {
+            // Fallback for test environments where import.meta is not available
+            collisionWorker = bindWorker(new Worker("./CollisionHandler.worker.ts", { type: "module" }));
+        }
     } catch {
         collisionWorker = null;
     }
