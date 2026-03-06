@@ -89,4 +89,10 @@ export class DroneGroupManager {
   public getGroupEvent(): OFCEvent<DroneGroup[]> {
     return this.groupEvent;
   }
+
+  public clearGroups(): void {  
+    this.groups.clear();
+    this.droneToGroup.clear();
+    this.groupEvent.notify(this.getAllGroups());
+  }
 }
