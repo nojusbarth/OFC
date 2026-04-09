@@ -7,10 +7,10 @@ import { IUndoableController } from "../../../../controller/interface/IUndoableC
 import { toolTipps } from "../../config";
 import { ITimeController } from "../../../../controller/interface/ITimeController";
 import { ShowKeyframesSection } from "./main_sections/ShowKeyframesSection";
-import { SetColorSection } from "./main_sections/SetColorSection";
 import { SetPositionSection } from "./main_sections/SetPositionSection";
 import { GroupTransformSection } from "./main_sections/GroupTransformSection";
 import { ImageImportSection } from "./main_sections/ImageImportSection";
+import { RootColorSection } from "./color_sections/RootColorSection";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -189,9 +189,7 @@ export function DroneEditorComponent({
 
         {selectedDrones.length > 0 && (
           <>
-            <SetColorSection
-              color={color}
-              setColor={setColor}
+            <RootColorSection
               selectedDrones={selectedDrones}
               controller={controller}
             />
