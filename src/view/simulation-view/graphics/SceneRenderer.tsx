@@ -34,11 +34,14 @@ import {
  * @param props.onReady - Callback, der die WebGLRenderer-Instanz zurückgibt, sobald sie verfügbar ist
  * @returns JSX.Element der Szene
  */
-export function SceneRenderer({ droneStore, pathStore, lightStore, onReady }: {
+export function SceneRenderer({ 
+  droneStore, pathStore, lightStore, onReady, onDroneClick, onDroneDoubleClick }: {
   droneStore: DroneStateStore;
   pathStore: PathStateStore;
   lightStore: LightStateStore;
   onReady?: (gl: THREE.WebGLRenderer) => void;
+  onDroneClick?: (droneId: number) => void;
+  onDroneDoubleClick?: (droneId: number) => void;
 }) {
 
   const [droneFrame, setDroneFrame] = useState(defaultDroneFrame);
@@ -217,7 +220,7 @@ export function SceneRenderer({ droneStore, pathStore, lightStore, onReady }: {
       </mesh>
 
       {/* Drohnen & Pfad */}
-      <DroneView frame={droneFrame} />
+      <DroneView frame={droneFrame} onDroneClick={onDroneClick} onDroneDoubleClick={onDroneDoubleClick} />
       <PathView frame={pathFrame} />
     </>
   );

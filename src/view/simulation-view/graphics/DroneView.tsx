@@ -15,7 +15,15 @@ import { useThree } from '@react-three/fiber'
  * @param props.frame - DroneFrame, der die Positionen, Farben und optionalen Outline-Farben der Drohnen enthält
  * @returns JSX-Elemente für die Drohnen in der Szene
  */
-export function DroneView({ frame }: { frame: DroneFrame }) {
+export function DroneView({ 
+  frame,
+  onDroneClick,
+  onDroneDoubleClick
+}: { 
+  frame: DroneFrame; 
+  onDroneClick?: (droneId: number) => void 
+  onDroneDoubleClick?: (droneId: number) => void
+}) {
   const droneEntries = Array.from(frame.dronePositions.entries())
 
   return (
@@ -47,7 +55,15 @@ export function DroneView({ frame }: { frame: DroneFrame }) {
             )}
 
             {/* Drone */}
-            <mesh>
+            <mesh onPointerDown={(e) => {
+              e.stopPropagation();
+              onDroneClick?.(droneId);}}
+
+              onDoubleClick={(e) => {
+                e.stopPropagation();
+                onDroneDoubleClick?.(droneId);
+              }}>
+
               <sphereGeometry args={[radius, dim[1], dim[2]]} />
               <meshStandardMaterial
                 color={color}

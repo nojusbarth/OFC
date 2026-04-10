@@ -6,6 +6,8 @@ import { SimulationView } from "./SimulationView";
 import { SceneRenderer } from "./graphics/SceneRenderer";
 import { IController } from "../../controller/interface/IController";
 import * as THREE from "three";
+import { InteractionController } from "../../controller/logic/InteractionController";
+import { InteractionCallback } from "./InteractionCallback";
 
 
 /**
@@ -90,6 +92,13 @@ export function initSimulation(controller : IController) {
   );
 
 
+  //Callback UI -> Controller
+
+  const interactionController = new InteractionController(controller);
+
+  const interactionCallbacks = new InteractionCallback(interactionController);
+
+
 
   const Scene: FC = () => (
     <SceneRenderer
@@ -101,6 +110,8 @@ export function initSimulation(controller : IController) {
         
         simulation.notifyFrameChange();
       }}
+      onDroneClick={(droneId: number) => interactionCallbacks.onDroneClick(droneId)}
+      onDroneDoubleClick={(droneId: number) => interactionCallbacks.onDroneDoubleClick(droneId)}
     />
   );
 
