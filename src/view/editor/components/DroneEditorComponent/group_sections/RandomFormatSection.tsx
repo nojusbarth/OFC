@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
@@ -26,6 +26,33 @@ export function RandomFormatSection({
         new Vector3(1, 1, 1)
     );
 
+    const pseudoRandom = (seed: number) => {
+        const value = Math.sin(seed * 12.9898) * 43758.5453;
+        return value - Math.floor(value);
+    };
+
+    const updateGhostPreview = () => {
+        const ghostController = controller.getGhostController();
+
+        if (selectedDrones.length === 0) {
+            ghostController.resetGhosts();
+            return;
+        }
+
+        const positionMap = new Map<number, Vector3>();
+        selectedDrones.forEach((droneId) => {
+            const randomOffset = new Vector3(
+                (pseudoRandom(droneId * 3 + 1) * 2 - 1) * bounds.x,
+                (pseudoRandom(droneId * 3 + 2) * 2 - 1) * bounds.y,
+                (pseudoRandom(droneId * 3 + 3) * 2 - 1) * bounds.z,
+            );
+
+            positionMap.set(droneId, center.clone().add(randomOffset));
+        });
+
+        ghostController.setGhostPositions(positionMap);
+    };
+
     const handleCenterChange = (axis: "x" | "y" | "z", value: number) => {
         const newCenter = center.clone();
         newCenter[axis] = value;
@@ -37,6 +64,16 @@ export function RandomFormatSection({
         newBounds[axis] = Math.max(0, value); // keine negativen Bounds
         setBounds(newBounds);
     };
+
+    useEffect(() => {
+        updateGhostPreview();
+    }, [selectedDrones, center, bounds]);
+
+    useEffect(() => {
+        return () => {
+            controller.getGhostController().resetGhosts();
+        };
+    }, [controller]);
 
     const handleApply = () => {
         controller.startBatching();
@@ -52,6 +89,7 @@ export function RandomFormatSection({
             controller.addPositionKeyFrameNow(droneId, newPosition);
         });
         controller.endBatching();
+        controller.getGhostController().resetGhosts();
     };
 
     return (

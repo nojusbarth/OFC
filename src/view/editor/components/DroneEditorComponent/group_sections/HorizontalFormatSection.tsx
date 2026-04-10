@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
@@ -31,6 +31,39 @@ export function HorizontalFormatSection({
         setCenter(newCenter);
     };
 
+    const updateGhostPreview = () => {
+        const ghostController = controller.getGhostController();
+
+        if (selectedDrones.length === 0) {
+            ghostController.resetGhosts();
+            return;
+        }
+
+        const count = selectedDrones.length;
+        const totalWidth = (count - 1) * spacing;
+        const startX = center.x - totalWidth / 2;
+
+        const positionMap = new Map<number, Vector3>();
+        selectedDrones.forEach((droneId, index) => {
+            positionMap.set(
+                droneId,
+                new Vector3(startX + index * spacing, center.y, center.z),
+            );
+        });
+
+        ghostController.setGhostPositions(positionMap);
+    };
+
+    useEffect(() => {
+        updateGhostPreview();
+    }, [selectedDrones, center, spacing]);
+
+    useEffect(() => {
+        return () => {
+            controller.getGhostController().resetGhosts();
+        };
+    }, [controller]);
+
     const handleApply = () => {
         const count = selectedDrones.length;
         if (count === 0) return;
@@ -48,6 +81,7 @@ export function HorizontalFormatSection({
             controller.addPositionKeyFrameNow(droneId, newPosition);
         });
         controller.endBatching();
+        controller.getGhostController().resetGhosts();
     };
 
     return (

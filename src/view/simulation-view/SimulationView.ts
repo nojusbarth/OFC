@@ -13,12 +13,14 @@ import { ISimulationView } from "./ISimulationView";
 import { IController } from "../../controller/interface/IController";
 import { DayTime } from "../../repository/entity/DayTime";
 import { PositionKeyFrame } from "../../repository/entity/PositionKeyFrame";
+import { GhostStateStore } from "./state/GhostStateStore";
+import { GhostFrame } from "./state/GhostFrame";
 
 export class SimulationView implements ISimulationView {
   private droneStore?: DroneStateStore;
   private pathStore?: PathStateStore;
   private lightStore?: LightStateStore;
-
+  private ghostStore?: GhostStateStore;
   private controller: IController;
 
   private timeManager: TimeManager;
@@ -36,11 +38,13 @@ export class SimulationView implements ISimulationView {
    */
   constructor(
     drone: DroneStateStore,
+    ghost: GhostStateStore,
     path: PathStateStore,
     light: LightStateStore,
     controller: IController,
   ) {
     this.droneStore = drone;
+    this.ghostStore = ghost;
     this.pathStore = path;
     this.lightStore = light;
 
@@ -56,6 +60,7 @@ export class SimulationView implements ISimulationView {
     var currentDroneFrame: DroneFrame = this.requestDroneFrame(
       this.timeManager.getCurrentEditorTime(),
     );
+    var currentGhostFrame: GhostFrame = this.requestGhostFrame();
     var allPathFrames: PathFrame = this.requestKeyFrames();
     var currentPathFrame: PathFrame = new PathFrame();
     var currentLightFrame: LightFrame = new LightFrame();
@@ -80,6 +85,11 @@ export class SimulationView implements ISimulationView {
       draft.droneColors = currentDroneFrame.droneColors;
       draft.dronePositions = currentDroneFrame.dronePositions;
       draft.outlineColors = currentDroneFrame.outlineColors;
+    });
+
+    this.ghostStore?.update((draft) => {
+      draft.ghostPositions = currentGhostFrame.ghostPositions;
+      draft.ghostColors = currentGhostFrame.ghostColors;
     });
 
     this.pathStore?.update((draft) => {
@@ -121,6 +131,27 @@ export class SimulationView implements ISimulationView {
     this.timeManager.setSimulationTime(time);
 
     this.drawChanges();
+  }
+
+  private requestGhostFrame(): GhostFrame {
+    let ghostPositions: Map<number, Vector3> = this.controller
+      .getGhostController()
+      .getGhosts();
+    let ghostColors: Map<number, string> = new Map();
+
+    ghostPositions.keys().forEach((ghostId) => {
+      if (this.controller.getDrones().includes(ghostId)) {
+        ghostColors.set(
+          ghostId,
+          `#${this.controller.getColor(ghostId).getHexString()}`,
+        );
+      }
+    });
+
+    return {
+      ghostPositions: this.controller.getGhostController().getGhosts(),
+      ghostColors: ghostColors,
+    };
   }
 
   private requestDroneFrame(time: number): DroneFrame {

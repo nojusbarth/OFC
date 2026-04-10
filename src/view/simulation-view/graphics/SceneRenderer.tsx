@@ -22,7 +22,10 @@ import {
   planeConfig,
   lightFrames,
   cameraFOV,
+  defaultGhostFrame,
 } from "../config";
+import { GhostView } from "./GhostView";
+import { GhostStateStore } from "../state/GhostStateStore";
 
 
 /**
@@ -35,8 +38,9 @@ import {
  * @returns JSX.Element der Szene
  */
 export function SceneRenderer({ 
-  droneStore, pathStore, lightStore, onReady, onDroneClick, onDroneDoubleClick }: {
+  droneStore, ghostStore, pathStore, lightStore, onReady, onDroneClick, onDroneDoubleClick }: {
   droneStore: DroneStateStore;
+  ghostStore: GhostStateStore;
   pathStore: PathStateStore;
   lightStore: LightStateStore;
   onReady?: (gl: THREE.WebGLRenderer) => void;
@@ -45,6 +49,7 @@ export function SceneRenderer({
 }) {
 
   const [droneFrame, setDroneFrame] = useState(defaultDroneFrame);
+  const [ghostFrame, setGhostFrame] = useState(defaultGhostFrame);
   const [pathFrame, setPathFrame] = useState(defaultPathFrame);
   const [lightFrame, setLightFrame] = useState(defaultLightFrame);
 
@@ -66,9 +71,10 @@ export function SceneRenderer({
     droneStore.bindState(setDroneFrame);
     pathStore.bindState(setPathFrame);
     lightStore.bindState(setLightFrame);
+    ghostStore.bindState(setGhostFrame);
 
     onReady?.(gl);
-  }, [gl, onReady, droneStore, pathStore, lightStore]);
+  }, [gl, onReady, droneStore, pathStore, lightStore, ghostStore]);
 
   /* ---------------- Kamera & Controls ---------------- */
   useFrame(() => {
@@ -221,6 +227,7 @@ export function SceneRenderer({
 
       {/* Drohnen & Pfad */}
       <DroneView frame={droneFrame} onDroneClick={onDroneClick} onDroneDoubleClick={onDroneDoubleClick} />
+      <GhostView frame={ghostFrame} />
       <PathView frame={pathFrame} />
     </>
   );

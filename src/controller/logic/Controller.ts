@@ -13,6 +13,8 @@ import { IProjectRepository } from "../../repository/IProjectRepository";
 import { IDrone } from "../../repository/entity/IDrone";
 import { DroneGroupManager } from "./GroupManager";
 import { checkCollisions } from "./CollisionHandlerInterface";
+import { IGhostController } from "../interface/IGhostController";
+import { GhostController } from "./GhostController";
 
 /**
  * Implementiert IController
@@ -20,6 +22,7 @@ import { checkCollisions } from "./CollisionHandlerInterface";
 export class Controller implements IController {
   private settings: ISettings;
   private timeController: ITimeController;
+  private ghostController: IGhostController;
   private project: IProject;
   private repository: IProjectRepository;
   private groupManager: DroneGroupManager = new DroneGroupManager();
@@ -40,6 +43,7 @@ export class Controller implements IController {
     this.project = new Project(repository);
     this.repository = repository;
     this.timeController = new TimeController(settings);
+    this.ghostController = new GhostController();
     this.project.getProjectLoadedEvent().register(() => {
       this.selectedDrones = [];
       this.recalculateCollisions();
@@ -47,6 +51,9 @@ export class Controller implements IController {
       this.timeController.setTime(0);
       this.timeController.setAnimationSpeed(1);
       this.groupManager.clearGroups();
+
+      //WIRFT EVENT, DAS DIREKT ANS ALTE SIMVIEW GEHT -> CRASH, DA NOCH ALTE DRONES DA SIND
+      this.ghostController.resetGhosts(false);
     });
     this.settings.getCollisionRadiusChangedEvent().register(() => {
       this.recalculateCollisions();
@@ -74,7 +81,7 @@ export class Controller implements IController {
         list.push(value);
       }
     };
-    const last = <T>(list: T[], value: T) => list[0] = value;
+    const last = <T>(list: T[], value: T) => (list[0] = value);
     this.droneChangedEvent.startBatching(noDuplicates);
     this.dronesEvent.startBatching(last);
     this.collisionEvent.startBatching(last);
@@ -88,8 +95,11 @@ export class Controller implements IController {
     }
     this.dronesEvent.endBatching();
     this.droneChangedEvent.endBatching((ids) => {
-      const changeableDrones = new Set(this.preBatchDronesSnapshot).intersection(new Set(this.getDrones()));
-      return ids.filter(id => changeableDrones.has(id));
+      const changeableDrones = new Set(
+        this.preBatchDronesSnapshot,
+      ).intersection(new Set(this.getDrones()));
+      const filteredIds = ids.filter((id) => changeableDrones.has(id));
+      return filteredIds.length > 0 ? [filteredIds[0]] : [];
     });
     this.collisionEvent.endBatching();
     this._checkCollisions();
@@ -103,6 +113,10 @@ export class Controller implements IController {
 
   getTimeController(): ITimeController {
     return this.timeController;
+  }
+
+  getGhostController(): IGhostController {
+    return this.ghostController;
   }
 
   getProject(): IProject {
@@ -240,9 +254,11 @@ export class Controller implements IController {
       return;
     }
     this.checkingCollisions = true;
-    this.collisionEvent.startBatching((l, v) => l[0] = v);
+    this.collisionEvent.startBatching((l, v) => (l[0] = v));
     while (this.collisionQueue.length > 0) {
-      console.log(`Checking collisions... (${this.collisionQueue.length} drones left)`);
+      console.log(
+        `Checking collisions... (${this.collisionQueue.length} drones left)`,
+      );
       const drone = this.collisionQueue.shift()!;
       const collisions = await checkCollisions(
         drone,

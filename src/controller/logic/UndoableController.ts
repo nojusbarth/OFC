@@ -13,6 +13,7 @@ import { Action } from "../../repository/entity/Action";
 import { IAction } from "../../repository/entity/IAction";
 import { IProjectRepository } from "../../repository/IProjectRepository";
 import { DroneGroupManager } from "./GroupManager";
+import type { IGhostController } from "../interface/IGhostController";
 
 /**
  * Implementiert IUndoableController, ein Decorator für IController
@@ -53,7 +54,7 @@ export class UndoableController implements IUndoableController {
     this.controller.startBatching();
     this.batchedCount = 0;
   }
-   
+
   endBatching(): void {
     this._pushAction(ActionType.BATCH, { count: this.batchedCount });
     this.controller.endBatching();
@@ -211,6 +212,10 @@ export class UndoableController implements IUndoableController {
 
   getProject(): IProject {
     return this.controller.getProject();
+  }
+
+  getGhostController(): IGhostController {
+    return this.controller.getGhostController();
   }
 
   addDrone(): number {

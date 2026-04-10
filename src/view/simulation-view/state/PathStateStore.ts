@@ -1,6 +1,55 @@
 import { PathFrame } from "./PathFrame";
 import React from "react";
 
+function areStringMapsEqual(
+  a: Map<number, string>,
+  b: Map<number, string>,
+): boolean {
+  if (a.size !== b.size) return false;
+
+  for (const [id, aValue] of a) {
+    if (b.get(id) !== aValue) return false;
+  }
+
+  return true;
+}
+
+function areVectorArraysEqual(
+  a: { x: number; y: number; z: number }[],
+  b: { x: number; y: number; z: number }[],
+): boolean {
+  if (a.length !== b.length) return false;
+
+  for (let i = 0; i < a.length; i++) {
+    const aPoint = a[i];
+    const bPoint = b[i];
+    if (
+      aPoint.x !== bPoint.x ||
+      aPoint.y !== bPoint.y ||
+      aPoint.z !== bPoint.z
+    ) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function arePathPositionMapsEqual(
+  a: Map<number, { x: number; y: number; z: number }[]>,
+  b: Map<number, { x: number; y: number; z: number }[]>,
+): boolean {
+  if (a.size !== b.size) return false;
+
+  for (const [id, aPoints] of a) {
+    const bPoints = b.get(id);
+    if (!bPoints) return false;
+    if (!areVectorArraysEqual(aPoints, bPoints)) return false;
+  }
+
+  return true;
+}
+
 /**
  * Kapselt den State der Pfade der Drohnen in der Simulation und bietet Methoden zum Aktualisieren dieses States.
  */
@@ -42,7 +91,12 @@ export class PathStateStore {
       };
 
       mutator(draft);
-      return draft;
+
+      const isSame =
+        arePathPositionMapsEqual(prev.pathPositions, draft.pathPositions) &&
+        areStringMapsEqual(prev.pathColors, draft.pathColors);
+
+      return isSame ? prev : draft;
     });
   }
 }

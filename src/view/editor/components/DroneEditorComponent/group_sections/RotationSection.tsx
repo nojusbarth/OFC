@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
-import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
 import { RotationHelper } from "./RotationHelper";
 
 // Dieser Abschnitt ist teilweise KI generiert
@@ -31,20 +30,55 @@ export function RotationSection({
         setRotation(newRotation);
     };
 
-    const handleApplyRotation = () => {
+    const updateGhostPreview = () => {
+        const ghostController = controller.getGhostController();
 
-        // aktuelle Positionen holen
+        if (selectedDrones.length === 0) {
+            ghostController.resetGhosts();
+            return;
+        }
+
         const positions = selectedDrones.map((id) =>
             controller.getPosition(id).clone()
         );
+        const rotatedPositions = RotationHelper.rotatePositions(
+            positions,
+            rotation,
+        );
 
-        const rotatedPositions =
-            RotationHelper.rotatePositions(positions, rotation);
+        const positionMap = new Map<number, Vector3>();
+        selectedDrones.forEach((droneId, index) => {
+            positionMap.set(droneId, rotatedPositions[index]);
+        });
+
+        ghostController.setGhostPositions(positionMap);
+    };
+
+    useEffect(() => {
+        updateGhostPreview();
+    }, [selectedDrones, rotation]);
+
+    useEffect(() => {
+        return () => {
+            controller.getGhostController().resetGhosts();
+        };
+    }, [controller]);
+
+    const handleApplyRotation = () => {
+        const positions = selectedDrones.map((id) =>
+            controller.getPosition(id).clone()
+        );
+        const rotatedPositions = RotationHelper.rotatePositions(
+            positions,
+            rotation,
+        );
+
         controller.startBatching();
         selectedDrones.forEach((droneId, index) => {
             controller.addPositionKeyFrameNow(droneId, rotatedPositions[index]);
         });
         controller.endBatching();
+        controller.getGhostController().resetGhosts();
 
     };
 

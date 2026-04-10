@@ -2,6 +2,7 @@ import { Vector3 } from "three";
 import { LightFrame } from "./state/LightFrame";
 import { DroneFrame } from "./state/DroneFrame";
 import { PathFrame } from "./state/PathFrame";
+import { GhostFrame } from "./state/GhostFrame";
 
 /**
  * Im folgenden werden wichtige Szenenkonstanten konfiguriert
@@ -75,6 +76,11 @@ export const defaultDroneFrame: DroneFrame = {
   dronePositions: new Map(),
   droneColors: new Map(),
   outlineColors: new Map(),
+};
+
+export const defaultGhostFrame: GhostFrame = {
+  ghostPositions: new Map(),
+  ghostColors: new Map(),
 };
 
 export const defaultPathFrame: PathFrame = {

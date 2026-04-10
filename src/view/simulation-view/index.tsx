@@ -8,6 +8,7 @@ import { IController } from "../../controller/interface/IController";
 import * as THREE from "three";
 import { InteractionController } from "../../controller/logic/InteractionController";
 import { InteractionCallback } from "./InteractionCallback";
+import { GhostStateStore } from "./state/GhostStateStore";
 
 
 /**
@@ -23,6 +24,7 @@ export function initSimulation(controller : IController) {
 
       simulation = new SimulationView(
         droneStore,
+        ghostStore,
         pathStore,
         lightStore,
         controller
@@ -36,6 +38,11 @@ export function initSimulation(controller : IController) {
   controller.getDronesEvent().register((drones) => {
     console.log("Drones changed event ", drones);  
   
+    simulation.notifyFrameChange();
+  });
+
+  controller.getGhostController().getGhostChangeEvent().register(() => {
+    console.log("Ghosts changed event ");
     simulation.notifyFrameChange();
   });
 
@@ -81,11 +88,13 @@ export function initSimulation(controller : IController) {
 
 
   const droneStore = new DroneStateStore();
+  const ghostStore = new GhostStateStore();
   const pathStore = new PathStateStore();
   const lightStore = new LightStateStore();
 
   var simulation = new SimulationView(
     droneStore,
+    ghostStore,
     pathStore,
     lightStore,
     controller
@@ -103,6 +112,7 @@ export function initSimulation(controller : IController) {
   const Scene: FC = () => (
     <SceneRenderer
       droneStore={droneStore}
+      ghostStore={ghostStore}
       pathStore={pathStore}
       lightStore={lightStore}
       onReady={(gl: THREE.WebGLRenderer) => {

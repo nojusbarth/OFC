@@ -1,11 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 import {
   KeyframeEditorComponent,
   PositionInputComponent,
 } from "../SharedComponents";
-import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -24,11 +23,38 @@ export function OffsetSection({
 }) {
   const [offset, setOffset] = useState<Vector3>(new Vector3(0, 0, 0));
 
+  const updateGhostPreview = (previewOffset: Vector3) => {
+    const ghostController = controller.getGhostController();
+
+    // Kein aktives Preview fuer leere Auswahl oder Null-Offset.
+    if (selectedDrones.length === 0 || previewOffset.lengthSq() === 0) {
+      ghostController.resetGhosts();
+      return;
+    }
+
+    let positionMap = new Map<number, Vector3>();
+    selectedDrones.forEach((droneId) => {
+      const currentPosition = controller.getPosition(droneId);
+      const previewPosition = currentPosition.clone().add(previewOffset);
+      positionMap.set(droneId, previewPosition);
+    });
+
+    ghostController.setGhostPositions(positionMap);
+  };
+
   const handleOffsetChange = (axis: "x" | "y" | "z", value: number) => {
     const newOffset = offset.clone();
     newOffset[axis] = value;
     setOffset(newOffset);
+    updateGhostPreview(newOffset);
   };
+
+  useEffect(() => {
+    updateGhostPreview(offset);
+    return () => {
+      controller.getGhostController().resetGhosts();
+    };
+  }, [selectedDrones]);
 
   const handleApplyOffset = () => {
     controller.startBatching();
@@ -40,6 +66,7 @@ export function OffsetSection({
       controller.addPositionKeyFrameNow(droneId, newPosition);
     });
     controller.endBatching();
+    controller.getGhostController().resetGhosts();
   };
 
   return (

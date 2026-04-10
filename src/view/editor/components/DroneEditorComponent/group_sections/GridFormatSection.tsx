@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import {
   KeyframeEditorComponent,
@@ -36,6 +36,68 @@ export function GridFormatSection({
     newCenter[axis] = value;
     setCenter(newCenter);
   };
+
+  const updateGhostPreview = () => {
+    const ghostController = controller.getGhostController();
+
+    if (selectedDrones.length === 0) {
+      ghostController.resetGhosts();
+      return;
+    }
+
+    const count = selectedDrones.length;
+    const cols = Math.ceil(Math.sqrt(count));
+    const rows = Math.ceil(count / cols);
+
+    const totalWidth = (cols - 1) * spacingX;
+    const totalHeight = (rows - 1) * spacingY;
+
+    const positionMap = new Map<number, Vector3>();
+
+    selectedDrones.forEach((droneId, index) => {
+      const row = Math.floor(index / cols);
+      const col = index % cols;
+
+      if (plane === "horizontal") {
+        const startX = center.x - totalWidth / 2;
+        const startZ = center.z - totalHeight / 2;
+
+        positionMap.set(
+          droneId,
+          new Vector3(
+            startX + col * spacingX,
+            center.y,
+            startZ + row * spacingY,
+          ),
+        );
+        return;
+      }
+
+      const startX = center.x - totalWidth / 2;
+      const startY = center.y - totalHeight / 2;
+
+      positionMap.set(
+        droneId,
+        new Vector3(
+          startX + col * spacingX,
+          startY + row * spacingY,
+          center.z,
+        ),
+      );
+    });
+
+    ghostController.setGhostPositions(positionMap);
+  };
+
+  useEffect(() => {
+    updateGhostPreview();
+  }, [selectedDrones, center, spacingX, spacingY, plane]);
+
+  useEffect(() => {
+    return () => {
+      controller.getGhostController().resetGhosts();
+    };
+  }, [controller]);
 
   const handleApply = () => {
     const count = selectedDrones.length;
@@ -77,6 +139,7 @@ export function GridFormatSection({
       controller.addPositionKeyFrameNow(droneId, newPosition);
     });
     controller.endBatching();
+    controller.getGhostController().resetGhosts();
   };
 
   return (

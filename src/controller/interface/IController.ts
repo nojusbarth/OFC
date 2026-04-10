@@ -7,6 +7,7 @@ import type { IProject } from "./IProject";
 import type { OFCEvent } from "./OFCEvent";
 import { DroneGroupManager } from "../logic/GroupManager";
 import { DroneGroup } from "../../repository/grouping/DroneGroup";
+import { IGhostController } from "./IGhostController";
 // Kommentare von KI verfasst
 /**
  * Hauptcontroller-Schnittstelle zur Verwaltung von Drohnenvorgängen.
@@ -18,6 +19,8 @@ export interface IController {
    * @returns Die Einstellungsinstanz
    */
   getSettings(): ISettings;
+
+  getGhostController(): IGhostController;
 
   /**
    * Ruft den Zeitkontroller für die Wiedergabekontrolle ab.
