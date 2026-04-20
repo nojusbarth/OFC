@@ -85,6 +85,7 @@ export class SimulationView implements ISimulationView {
       draft.droneColors = currentDroneFrame.droneColors;
       draft.dronePositions = currentDroneFrame.dronePositions;
       draft.outlineColors = currentDroneFrame.outlineColors;
+      draft.outlineAnimated = currentDroneFrame.outlineAnimated;
     });
 
     this.ghostStore?.update((draft) => {
@@ -173,6 +174,7 @@ export class SimulationView implements ISimulationView {
       dronePositions: dronePositions,
       droneColors: droneColors,
       outlineColors: outlineColors,
+      outlineAnimated: true,
     };
   }
 

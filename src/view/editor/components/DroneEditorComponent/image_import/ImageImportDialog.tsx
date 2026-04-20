@@ -2,7 +2,13 @@ import { useRef, useState, useEffect, useMemo } from "react";
 import { loadImagePixels, PixelData } from "./ImageLoader";
 import { resampleImageNearest } from "./ImageSampling";
 import { ImagePreview } from "./ImagePreview";
-import { calculateValidPixelCount, clampResolution, generateDroneFormation, IgnoreColor } from "./ImageAnalysis";
+import {
+  calculateValidPixelCount,
+  clampResolution,
+  generateDroneFormationForNew,
+  generateDroneFormationForSelected,
+  IgnoreColor,
+} from "./ImageAnalysis";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 
 
@@ -26,6 +32,12 @@ export function ImageImportDialog({
   const [fileName, setFileName] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [rawImage, setRawImage] = useState<PixelData | null>(null);
+  const [selectedDroneCount, setSelectedDroneCount] = useState<number>(
+    controller.getSelectedDrones().length,
+  );
+  const [consentDialogType, setConsentDialogType] = useState<
+    "tooFew" | "tooMany" | null
+  >(null);
 
   const [targetWidth, setTargetWidth] = useState<number>(50);
   const [targetHeight, setTargetHeight] = useState<number>(50);
@@ -70,6 +82,18 @@ export function ImageImportDialog({
     };
   }, [previewUrl]);
 
+  useEffect(() => {
+    const updateSelectedDroneCount = (selectedDrones: number[]) => {
+      setSelectedDroneCount(selectedDrones.length);
+    };
+
+    controller.getDroneSelectEvent().register(updateSelectedDroneCount);
+
+    return () => {
+      controller.getDroneSelectEvent().remove(updateSelectedDroneCount);
+    };
+  }, [controller]);
+
   const sampledImage = useMemo(() => {
     if (!rawImage) return null;
 
@@ -94,6 +118,49 @@ export function ImageImportDialog({
 
     return calculateValidPixelCount(sampledImage, ignoreColor);
   }, [sampledImage, ignoreColor]);
+
+  const openSelectedConsentDialog = () => {
+    if (!sampledImage) {
+      return;
+    }
+
+    if (selectedDroneCount < validPixelCount) {
+      setConsentDialogType("tooFew");
+      return;
+    }
+
+    if (selectedDroneCount > validPixelCount) {
+      setConsentDialogType("tooMany");
+      return;
+    }
+
+    handleSelectedFormation();
+  };
+
+  const closeConsentDialog = () => {
+    setConsentDialogType(null);
+  };
+
+  const handleSelectedFormation = () => {
+    if (!sampledImage) {
+      return;
+    }
+
+    try {
+      generateDroneFormationForSelected(
+        controller,
+        sampledImage,
+        pixelSpacingX,
+        pixelSpacingY,
+        ignoreColor,
+      );
+      closeConsentDialog();
+    } catch (error) {
+      alert(
+        error instanceof Error ? error.message : "Unbekannter Fehler",
+      );
+    }
+  };
 
   return (
     <div className="d-flex flex-column align-items-center py-4">
@@ -290,29 +357,100 @@ export function ImageImportDialog({
             Dieses Projekt unterstützt maximal <strong>3000 Drohnen</strong>.
           </div>
 
-          <div className="mt-4">
-            <button
-              className="btn btn-success"
-              onClick={() => {
-                try {
-                  generateDroneFormation(
-                    controller,
-                    sampledImage,
-                    pixelSpacingX,
-                    pixelSpacingY,
-                    ignoreColor,
-                  );
-                } catch (error) {
-                  alert(
-                    error instanceof Error
-                      ? error.message
-                      : "Unbekannter Fehler",
-                  );
-                }
-              }}
-            >
-              Formation erzeugen
-            </button>
+          <div className="mt-4 d-flex flex-column gap-3">
+            <div className="text-muted small">
+              Ausgewählte Drohnen: {selectedDroneCount}
+            </div>
+
+            <div className="d-flex flex-wrap justify-content-center gap-2">
+              <button
+                className="btn btn-success"
+                onClick={() => {
+                  try {
+                    generateDroneFormationForNew(
+                      controller,
+                      sampledImage,
+                      pixelSpacingX,
+                      pixelSpacingY,
+                      ignoreColor,
+                    );
+                  } catch (error) {
+                    alert(
+                      error instanceof Error
+                        ? error.message
+                        : "Unbekannter Fehler",
+                    );
+                  }
+                }}
+              >
+                Create from New
+              </button>
+
+              <button
+                className="btn btn-outline-success"
+                type="button"
+                onClick={openSelectedConsentDialog}
+              >
+                Create from Selected
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {consentDialogType && (
+        <div
+          className="modal fade show d-block"
+          tabIndex={-1}
+          role="dialog"
+          aria-modal="true"
+          style={{ backgroundColor: "rgba(0,0,0,0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Bestätigung erforderlich</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={closeConsentDialog}
+                />
+              </div>
+
+              <div className="modal-body">
+                {consentDialogType === "tooFew" && (
+                  <p className="mb-0">
+                    Es fehlen {validPixelCount - selectedDroneCount} Drohnen.
+                    Sollen diese erstellt werden?
+                  </p>
+                )}
+
+                {consentDialogType === "tooMany" && (
+                  <p className="mb-0">
+                    {selectedDroneCount - validPixelCount} Drohnen sind zu viel
+                    ausgewählt. Trotzdem fortfahren?
+                  </p>
+                )}
+              </div>
+
+              <div className="modal-footer justify-content-center">
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary"
+                  onClick={closeConsentDialog}
+                >
+                  Cancel
+                </button>
+
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSelectedFormation}
+                >
+                  {consentDialogType === "tooFew" ? "Create" : "Yes"}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

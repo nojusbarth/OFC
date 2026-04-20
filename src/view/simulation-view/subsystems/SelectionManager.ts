@@ -1,3 +1,4 @@
+import { maxDronesAnimated } from "../config";
 import { DroneFrame } from "../state/DroneFrame";
 import { PathFrame } from "../state/PathFrame";
 
@@ -54,6 +55,10 @@ export class SelectionManager {
         this.colorRing[1],
       ]);
     });
+
+    if (this.selectedIds.length > maxDronesAnimated) {
+      currentDroneFrame.outlineAnimated = false;
+    }
 
     return currentDroneFrame;
   }

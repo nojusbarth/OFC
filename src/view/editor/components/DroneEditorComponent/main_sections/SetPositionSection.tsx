@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import { Vector3 } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController"; // deinen Pfad einsetzen
 import { KeyframeEditorComponent, PositionInputComponent, AddKeyframeComponent } from "../SharedComponents";
@@ -32,12 +33,39 @@ export function SetPositionSection({
         setPosition(newPosition);
     };
 
+    const updateGhostPreview = () => {
+        const ghostController = controller.getGhostController();
+
+        if (selectedDrones.length === 0) {
+            ghostController.resetGhosts();
+            return;
+        }
+
+        const positionMap = new Map<number, Vector3>();
+        selectedDrones.forEach((droneId) => {
+            positionMap.set(droneId, position.clone());
+        });
+
+        ghostController.setGhostPositions(positionMap);
+    };
+
+    useEffect(() => {
+        updateGhostPreview();
+    }, [selectedDrones, position]);
+
+    useEffect(() => {
+        return () => {
+            controller.getGhostController().resetGhosts();
+        };
+    }, [controller]);
+
     const handleAddPositionKeyframe = () => {
         controller.startBatching();
         selectedDrones.forEach((droneId) => {
             controller.addPositionKeyFrameNow(droneId, position);
         });
         controller.endBatching();
+        controller.getGhostController().resetGhosts();
     };
 
     return (

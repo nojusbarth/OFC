@@ -76,6 +76,7 @@ export const defaultDroneFrame: DroneFrame = {
   dronePositions: new Map(),
   droneColors: new Map(),
   outlineColors: new Map(),
+  outlineAnimated: true,
 };
 
 export const defaultGhostFrame: GhostFrame = {
@@ -112,3 +113,5 @@ export const zebraRingConfig = {
   opacity: 0.9,
   dashOffsetSpeed: 0.01,
 };
+
+export const maxDronesAnimated = 15;

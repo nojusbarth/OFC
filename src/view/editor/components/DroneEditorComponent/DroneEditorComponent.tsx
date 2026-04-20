@@ -167,9 +167,9 @@ export function DroneEditorComponent({
       {/* Content */}
       <Card.Body className="d-flex flex-column overflow-y-auto p-3 gap-3">
 
-        {selectedDrones.length === 0 && (
-          <ImageImportSection controller={controller} />
-        )}
+
+        <ImageImportSection controller={controller} />
+        
 
         {selectedDrones.length == 1 && (
           <SetPositionSection

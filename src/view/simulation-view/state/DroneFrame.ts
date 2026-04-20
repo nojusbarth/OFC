@@ -8,4 +8,5 @@ export class DroneFrame {
   dronePositions: Map<number, Vector3> = new Map();
   droneColors: Map<number, string> = new Map();
   outlineColors: Map<number, [string, string] | null> = new Map();
+  outlineAnimated: boolean = true;
 }

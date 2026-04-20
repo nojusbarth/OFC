@@ -54,6 +54,12 @@ export function SceneRenderer({
   const [lightFrame, setLightFrame] = useState(defaultLightFrame);
 
   const { camera, gl, scene } = useThree();
+  const perfRef = useRef({
+    frames: 0,
+    totalDeltaMs: 0,
+    totalCpuMs: 0,
+    maxCpuMs: 0,
+  });
   //inital null, da sie erst nach dem ersten Rendern gesetzt wird. Alle Zugriffe müssen auf current geprüft werden.
   const controlsRef = useRef<any>(null);
 
@@ -77,7 +83,8 @@ export function SceneRenderer({
   }, [gl, onReady, droneStore, pathStore, lightStore, ghostStore]);
 
   /* ---------------- Kamera & Controls ---------------- */
-  useFrame(() => {
+  useFrame((state, delta) => {
+    const frameStart = performance.now();
     /**
      * OrbitControls arbeiten mit ZWEI zentralen Größen:
      *
@@ -119,6 +126,36 @@ export function SceneRenderer({
         sceneBounds.minZ,
         Math.min(sceneBounds.maxZ, controlsRef.current.target.z),
       );
+    }
+
+    const cpuMs = performance.now() - frameStart;
+    const perf = perfRef.current;
+
+    perf.frames += 1;
+    perf.totalDeltaMs += delta * 1000;
+    perf.totalCpuMs += cpuMs;
+    perf.maxCpuMs = Math.max(perf.maxCpuMs, cpuMs);
+
+    // Intervall-Logging fuer den gesamten Canvas-Renderzyklus
+    if (perf.frames >= 120) {
+      const avgFrameMs = perf.totalDeltaMs / perf.frames;
+      const avgCpuMs = perf.totalCpuMs / perf.frames;
+
+      console.log("[Canvas Perf]", {
+        avgFrameMs: Number(avgFrameMs.toFixed(2)),
+        avgCpuMs: Number(avgCpuMs.toFixed(2)),
+        maxCpuMs: Number(perf.maxCpuMs.toFixed(2)),
+        approxFps: Number((1000 / avgFrameMs).toFixed(1)),
+        drawCalls: state.gl.info.render.calls,
+        triangles: state.gl.info.render.triangles,
+        lines: state.gl.info.render.lines,
+        points: state.gl.info.render.points,
+      });
+
+      perf.frames = 0;
+      perf.totalDeltaMs = 0;
+      perf.totalCpuMs = 0;
+      perf.maxCpuMs = 0;
     }
   });
 
