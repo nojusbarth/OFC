@@ -3,7 +3,7 @@ import { DroneFrame } from "../state/DroneFrame";
 
 import { droneConfig, zebraRingConfig } from "../config";
 import { useFrame } from '@react-three/fiber'
-import { useRef, useMemo, useState } from 'react'
+import { useRef, useMemo } from 'react'
 import * as THREE from 'three'
 import { Line } from '@react-three/drei'
 import { useThree } from '@react-three/fiber'
@@ -27,7 +27,18 @@ export function DroneView({
   onDroneDoubleClick?: (droneId: number) => void;
 }) {
   const droneEntries = Array.from(frame.dronePositions.entries());
-  const shouldAnimateOutline = frame.outlineAnimated !== false;
+  const drawDetails = frame.drawDetails;
+  const outlinedDrones = useMemo(
+    () =>
+      droneEntries
+        .map(([droneId, position]) => {
+          const outlineColors = frame.outlineColors.get(droneId) ?? null;
+          if (!outlineColors) return null;
+          return { position, color: outlineColors[0] };
+        })
+        .filter((value): value is { position: THREE.Vector3; color: string } => value !== null),
+    [droneEntries, frame.outlineColors],
+  );
   const { camera } = useThree();
 
   const ringsRef = useRef<Map<string, RingRuntime>>(new Map());
@@ -38,18 +49,11 @@ export function DroneView({
     return () => ringsRef.current.delete(runtime.id);
   }, []);
 
-  useFrame(({ clock }) => {
-    const t = clock.elapsedTime;
-    const frameSkip = 2; // optional: nur jedes 2. Frame animieren
-    const animateThisFrame = Math.floor(t * 60) % frameSkip === 0;
-
+  useFrame(() => {
     for (const ring of ringsRef.current.values()) {
       if (!ring.anchor || !ring.lineA || !ring.lineB) continue;
 
-      if (shouldAnimateOutline && animateThisFrame) {
-        ring.lineA.material.dashOffset -= zebraRingConfig.dashOffsetSpeed;
-        ring.lineB.material.dashOffset -= zebraRingConfig.dashOffsetSpeed;
-      }
+
 
       ring.anchor.getWorldPosition(worldPos.current);
       const distance = camera.position.distanceTo(worldPos.current);
@@ -57,6 +61,11 @@ export function DroneView({
         0.5,
         zebraRingConfig.lineWidth * (5 / Math.max(distance, 0.001))
       );
+
+      if (drawDetails) {
+        ring.lineA.material.dashOffset -= zebraRingConfig.dashOffsetSpeed;
+        ring.lineB.material.dashOffset -= zebraRingConfig.dashOffsetSpeed;
+      }
 
       // nur bei merklicher Änderung updaten -> kein React setState nötig
       if (Math.abs(scaledWidth - ring.lastWidth) > 0.05) {
@@ -66,6 +75,8 @@ export function DroneView({
       }
     }
   });
+
+  
 
   return (
     <>
@@ -78,7 +89,7 @@ export function DroneView({
 
         return (
           <group key={droneId} position={[position.x, position.y, position.z]}>
-            {showOutline && (
+            {drawDetails && showOutline && (
               <>
                 <ZebraRing
                   ringId={`${droneId}-0`}
@@ -128,7 +139,89 @@ export function DroneView({
           </group>
         );
       })}
+
+      {!drawDetails && outlinedDrones.length > 0 && (
+        <SimpleRingInstances
+          outlinedDrones={outlinedDrones}
+          ringRadius={droneConfig.dimensions[0] * 1.35}
+        />
+      )}
     </>
+  );
+}
+
+function SimpleRingInstances({
+  outlinedDrones,
+  ringRadius,
+}: {
+  outlinedDrones: Array<{ position: THREE.Vector3; color: string }>;
+  ringRadius: number;
+}) {
+  const ringRef = useRef<THREE.InstancedMesh>(null);
+  const tempObject = useRef(new THREE.Object3D());
+  const tempColor = useRef(new THREE.Color());
+  const ringTube = Math.max(ringRadius * 0.06, 0.01);
+
+  const orientations = useMemo(
+    () => {
+      // torusGeometry startet in der XY-Ebene (Normalenrichtung Z)
+      // Wir erzeugen explizit Ringe fuer Z-, Y- und X-Achse.
+      const zRing = new THREE.Quaternion();
+      const yRing = new THREE.Quaternion().setFromAxisAngle(
+        new THREE.Vector3(1, 0, 0),
+        Math.PI / 2,
+      );
+      const xRing = new THREE.Quaternion().setFromAxisAngle(
+        new THREE.Vector3(0, 1, 0),
+        Math.PI / 2,
+      );
+      return [zRing, yRing, xRing];
+    },
+    [],
+  );
+
+  useEffect(() => {
+    const mesh = ringRef.current;
+    if (!mesh) return;
+
+    let instanceIndex = 0;
+
+    for (const outlinedDrone of outlinedDrones) {
+      for (const orientation of orientations) {
+        tempObject.current.position.copy(outlinedDrone.position);
+        tempObject.current.quaternion.copy(orientation);
+        tempObject.current.updateMatrix();
+        mesh.setMatrixAt(instanceIndex, tempObject.current.matrix);
+
+        tempColor.current.set(outlinedDrone.color);
+        mesh.setColorAt(instanceIndex, tempColor.current);
+
+        instanceIndex += 1;
+      }
+    }
+
+    mesh.instanceMatrix.needsUpdate = true;
+    if (mesh.instanceColor) {
+      mesh.instanceColor.needsUpdate = true;
+    }
+    mesh.computeBoundingSphere();
+    mesh.computeBoundingBox();
+  }, [outlinedDrones, orientations]);
+
+  return (
+    <instancedMesh
+      ref={ringRef}
+      args={[undefined, undefined, outlinedDrones.length * 3]}
+      frustumCulled={false}
+      raycast={() => undefined}
+    >
+      <torusGeometry args={[ringRadius, ringTube, 8, 24]} />
+      <meshBasicMaterial
+        vertexColors
+        transparent
+        opacity={zebraRingConfig.opacity}
+      />
+    </instancedMesh>
   );
 }
 

@@ -1,5 +1,5 @@
 
-import React, { useRef } from "react";
+import React, { useMemo, useRef } from "react";
 import { Line } from "@react-three/drei";
 import { PathFrame } from "../state/PathFrame";
 import * as THREE from 'three';
@@ -14,6 +14,12 @@ import { pathConfig } from "../config";
  * @returns JSX-Elemente für die Pfade in der Szene
  */
 export function PathView({ frame }: { frame: PathFrame }) {
+  const shouldAnimateLines = frame.lineAnimated;
+
+  if (!shouldAnimateLines) {
+    return <BatchedPaths frame={frame} />
+  }
+
   return (
     <>
       {Array.from(frame.pathPositions.entries()).map(([id, points]) => {
@@ -28,8 +34,70 @@ export function PathView({ frame }: { frame: PathFrame }) {
             color={color}
           />
         )
+
       })}
     </>
+  )
+}
+
+function BatchedPaths({ frame }: { frame: PathFrame }) {
+  const { positions, colors } = useMemo(() => {
+    const positionArray: number[] = []
+    const colorArray: number[] = []
+    const tempColor = new THREE.Color()
+
+    for (const [id, points] of frame.pathPositions.entries()) {
+      if (points.length < 2) continue
+
+      const color = frame.pathColors.get(id) ?? '#ffffff'
+      tempColor.set(color)
+
+      for (let i = 1; i < points.length; i++) {
+        const a = points[i - 1]
+        const b = points[i]
+
+        positionArray.push(a.x, a.y, a.z, b.x, b.y, b.z)
+        colorArray.push(
+          tempColor.r,
+          tempColor.g,
+          tempColor.b,
+          tempColor.r,
+          tempColor.g,
+          tempColor.b,
+        )
+      }
+    }
+
+    return {
+      positions: new Float32Array(positionArray),
+      colors: new Float32Array(colorArray),
+    }
+  }, [frame.pathPositions, frame.pathColors])
+
+  if (positions.length === 0) return null
+
+  return (
+    <lineSegments>
+      <bufferGeometry>
+        <bufferAttribute
+          attach="attributes-position"
+          args={[positions, 3]}
+          count={positions.length / 3}
+          itemSize={3}
+        />
+        <bufferAttribute
+          attach="attributes-color"
+          args={[colors, 3]}
+          count={colors.length / 3}
+          itemSize={3}
+        />
+      </bufferGeometry>
+      <lineBasicMaterial
+        vertexColors
+        transparent
+        opacity={pathConfig.opacity}
+      />
+    </lineSegments>
   )
 }
 

@@ -39,6 +39,10 @@ export class SelectionManager {
       currentPathFrame.pathColors.set(id, this.colorPath);
     });
 
+    if (this.selectedIds.length > maxDronesAnimated) {
+      currentPathFrame.lineAnimated = false;
+    }
+
     return currentPathFrame;
   }
 
@@ -57,7 +61,7 @@ export class SelectionManager {
     });
 
     if (this.selectedIds.length > maxDronesAnimated) {
-      currentDroneFrame.outlineAnimated = false;
+      currentDroneFrame.drawDetails = false;
     }
 
     return currentDroneFrame;

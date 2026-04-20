@@ -88,13 +88,15 @@ export class PathStateStore {
           ]),
         ),
         pathColors: new Map(prev.pathColors),
+        lineAnimated: prev.lineAnimated,
       };
 
       mutator(draft);
 
       const isSame =
         arePathPositionMapsEqual(prev.pathPositions, draft.pathPositions) &&
-        areStringMapsEqual(prev.pathColors, draft.pathColors);
+        areStringMapsEqual(prev.pathColors, draft.pathColors) &&
+        prev.lineAnimated === draft.lineAnimated;
 
       return isSame ? prev : draft;
     });

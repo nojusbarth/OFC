@@ -89,7 +89,7 @@ export class DroneStateStore {
         dronePositions: new Map(prev.dronePositions),
         droneColors: new Map(prev.droneColors),
         outlineColors: new Map(prev.outlineColors),
-        outlineAnimated: prev.outlineAnimated,
+        drawDetails: prev.drawDetails,
       };
 
       mutator(draft);
@@ -98,7 +98,7 @@ export class DroneStateStore {
         areVectorMapsEqual(prev.dronePositions, draft.dronePositions) &&
         areStringMapsEqual(prev.droneColors, draft.droneColors) &&
         areOutlineMapsEqual(prev.outlineColors, draft.outlineColors) &&
-        prev.outlineAnimated === draft.outlineAnimated;
+        prev.drawDetails === draft.drawDetails;
 
       return isSame ? prev : draft;
     });

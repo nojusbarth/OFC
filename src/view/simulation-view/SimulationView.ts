@@ -85,7 +85,7 @@ export class SimulationView implements ISimulationView {
       draft.droneColors = currentDroneFrame.droneColors;
       draft.dronePositions = currentDroneFrame.dronePositions;
       draft.outlineColors = currentDroneFrame.outlineColors;
-      draft.outlineAnimated = currentDroneFrame.outlineAnimated;
+      draft.drawDetails = currentDroneFrame.drawDetails;
     });
 
     this.ghostStore?.update((draft) => {
@@ -96,6 +96,7 @@ export class SimulationView implements ISimulationView {
     this.pathStore?.update((draft) => {
       draft.pathColors = currentPathFrame.pathColors;
       draft.pathPositions = currentPathFrame.pathPositions;
+      draft.lineAnimated = currentPathFrame.lineAnimated;
     });
 
     this.lightStore?.update((draft) => {
@@ -174,7 +175,7 @@ export class SimulationView implements ISimulationView {
       dronePositions: dronePositions,
       droneColors: droneColors,
       outlineColors: outlineColors,
-      outlineAnimated: true,
+      drawDetails: true,
     };
   }
 
@@ -201,6 +202,7 @@ export class SimulationView implements ISimulationView {
     return {
       pathPositions: pathPositions,
       pathColors: pathColors,
+      lineAnimated: true,
     };
   }
 

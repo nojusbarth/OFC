@@ -76,7 +76,7 @@ export const defaultDroneFrame: DroneFrame = {
   dronePositions: new Map(),
   droneColors: new Map(),
   outlineColors: new Map(),
-  outlineAnimated: true,
+  drawDetails: true,
 };
 
 export const defaultGhostFrame: GhostFrame = {
@@ -87,6 +87,7 @@ export const defaultGhostFrame: GhostFrame = {
 export const defaultPathFrame: PathFrame = {
   pathPositions: new Map(),
   pathColors: new Map(),
+  lineAnimated: true,
 };
 
 /* ---------------- Drohnen & Pfad Properties ---------------- */
