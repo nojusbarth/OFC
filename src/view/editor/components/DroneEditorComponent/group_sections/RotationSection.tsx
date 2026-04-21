@@ -3,6 +3,7 @@ import { Vector3 } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
 import { RotationHelper } from "./RotationHelper";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -19,6 +20,7 @@ export function RotationSection({
     selectedDrones: number[];
     controller: IUndoableController;
 }) {
+    const { t } = useTranslation();
 
     const [rotation, setRotation] = useState<Vector3>(
         new Vector3(0, 0, 0)
@@ -83,13 +85,13 @@ export function RotationSection({
     };
 
     return (
-        <KeyframeEditorComponent title="Rotation angeben">
+        <KeyframeEditorComponent title={t("editor.group.rotationTitle")}>
             <div className="d-flex flex-column gap-3">
 
                 <div className="d-flex align-items-center gap-2">
 
                     <PositionInputComponent
-                        title="X Rot"
+                        title={t("editor.group.rotationX")}
                         currentValue={rotation.x}
                         onChangePosition={(value) =>
                             handleRotationChange("x", value)
@@ -97,7 +99,7 @@ export function RotationSection({
                     />
 
                     <PositionInputComponent
-                        title="Y Rot"
+                        title={t("editor.group.rotationY")}
                         currentValue={rotation.y}
                         onChangePosition={(value) =>
                             handleRotationChange("y", value)
@@ -105,7 +107,7 @@ export function RotationSection({
                     />
 
                     <PositionInputComponent
-                        title="Z Rot"
+                        title={t("editor.group.rotationZ")}
                         currentValue={rotation.z}
                         onChangePosition={(value) =>
                             handleRotationChange("z", value)
@@ -118,7 +120,7 @@ export function RotationSection({
                         className="btn btn-primary"
                         onClick={handleApplyRotation}
                     >
-                        Anwenden
+                        {t("common.apply")}
                     </button>
                 </div>
 

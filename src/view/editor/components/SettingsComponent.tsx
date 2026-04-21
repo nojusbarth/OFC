@@ -6,6 +6,7 @@ import { IUndoableController } from "../../../controller/interface/IUndoableCont
 import { IProject } from "../../../controller/interface/IProject";
 import { toolTipps } from "../config";
 import { DayTimeCalculatorModal } from "./DayTimeCalculatorModal";
+import { useTranslation } from "react-i18next";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -22,6 +23,7 @@ export function SettingsComponent({
     controller: IUndoableController;
     toggleStartpage: () => void;
 }) {
+    const { t } = useTranslation();
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
     const project: IProject = controller.getProject();
@@ -69,14 +71,14 @@ export function SettingsComponent({
       rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0"
         >
             <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
-                <span className="fw-bold">Einstellungen</span>
+                <span className="fw-bold">{t("editor.settings.title")}</span>
                 <button
-                    title={toolTipps.PROJECT_SAVE}
+                    title={t(toolTipps.PROJECT_SAVE)}
                     className="btn btn-primary btn-sm d-flex gap-2"
                     onClick={onSaveSettings}
                 >
                     <i className="bi bi-floppy" />
-                    Speichern
+                    {t("common.save")}
                 </button>
             </Card.Header>
 
@@ -87,10 +89,10 @@ export function SettingsComponent({
                 onResult={onChangeDayTime}
             />
             <Card.Body className="d-flex flex-column flex-grow-1 overflow-y-auto gap-4">
-                <GroupComponent title={"Projekt"} iconClass={"bi-globe"}>
+                <GroupComponent title={t("editor.settings.groups.project")} iconClass={"bi-globe"}>
                     <AttributeComponent
-                        title={"Tageszeit"}
-                        description={"Beleuchtung im 3D-Viewport"}
+                        title={t("editor.settings.daytime.title")}
+                        description={t("editor.settings.daytime.description")}
                         iconClass={"bi-sun"}
                     >
                         <div className="d-flex flex-wrap gap-2 w-100">
@@ -98,21 +100,21 @@ export function SettingsComponent({
                                 currentDayTime={dayTime}
                                 buttonDayTime={DayTime.NOON}
                                 iconClass={"bi-sun"}
-                                text={"Tag"}
+                                text={t("dayTime.values.noon")}
                                 onChangeDayTime={onChangeDayTime}
                             />
                             <DayTimeButtonComponent
                                 currentDayTime={dayTime}
                                 buttonDayTime={DayTime.SUNSET}
                                 iconClass={"bi-sunset"}
-                                text={"Dämmerung"}
+                                text={t("dayTime.values.sunset")}
                                 onChangeDayTime={onChangeDayTime}
                             />
                             <DayTimeButtonComponent
                                 currentDayTime={dayTime}
                                 buttonDayTime={DayTime.NIGHT}
                                 iconClass={"bi-moon-stars"}
-                                text={"Nacht"}
+                                text={t("dayTime.values.night")}
                                 onChangeDayTime={onChangeDayTime}
                             />
 
@@ -123,14 +125,14 @@ export function SettingsComponent({
                                 }}
                             >
                                 <i className={`bi bi-calculator-fill mb-1`} />
-                                Berechnen
+                                {t("editor.settings.daytime.calculate")}
                             </button>
                         </div>
                     </AttributeComponent>
 
                     <AttributeComponent
-                        title={"Sicherheitsabstand"}
-                        description={"Mindestabstand zwischen Drohnen"}
+                        title={t("editor.settings.safetyDistance.title")}
+                        description={t("editor.settings.safetyDistance.description")}
                         iconClass={"bi-shield-check"}
                     >
                         <input
@@ -146,12 +148,12 @@ export function SettingsComponent({
                                 );
                             }}
                         />
-                        <span className="text-muted">Meter</span>
+                        <span className="text-muted">{t("units.meters")}</span>
                     </AttributeComponent>
 
                     <AttributeComponent
-                        title={"Endzeit"}
-                        description={"Gesamtdauer der Animation"}
+                        title={t("editor.settings.endTime.title")}
+                        description={t("editor.settings.endTime.description")}
                         iconClass={"bi-clock"}
                     >
                         <input
@@ -165,25 +167,25 @@ export function SettingsComponent({
                                 onChangeEndTime(parseInt(e.target.value));
                             }}
                         />
-                        <span className="text-muted">Sekunden</span>
+                        <span className="text-muted">{t("units.seconds")}</span>
                     </AttributeComponent>
                 </GroupComponent>
 
-                <GroupComponent title={"Export"} iconClass={"bi-download"}>
+                <GroupComponent title={t("editor.settings.groups.export")} iconClass={"bi-download"}>
                     <AttributeComponent
-                        title={"Waypoint-Export"}
-                        description={"Exportiere als Waypoint-at-Time Format"}
+                        title={t("editor.settings.export.waypointTitle")}
+                        description={t("editor.settings.export.waypointDescription")}
                         iconClass={"bi-file-earmark-text"}
                     >
                         <button
                             className="btn btn-outline-primary w-100 mt-2"
-                            title={toolTipps.PROJECT_WAYPOINT_EXPORT}
+                            title={t(toolTipps.PROJECT_WAYPOINT_EXPORT)}
                             onClick={() => {
                                 project.exportWayPointData();
                             }}
                         >
                             <i className="bi bi-file-earmark-arrow-down me-2"></i>
-                            Waypoints exportieren
+                            {t("editor.settings.export.exportWaypoints")}
                         </button>
                     </AttributeComponent>
                 </GroupComponent>

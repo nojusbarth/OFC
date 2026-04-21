@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -19,6 +20,7 @@ export function HorizontalFormatSection({
     selectedDrones: number[];
     controller: IUndoableController;
 }) {
+    const { t } = useTranslation();
     const [center, setCenter] = useState<Vector3>(
         new Vector3(0, 0, 0)
     );
@@ -85,31 +87,31 @@ export function HorizontalFormatSection({
     };
 
     return (
-        <KeyframeEditorComponent title="Horizontal Formation">
+        <KeyframeEditorComponent title={t("editor.group.horizontalFormation")}>
 
             {/* Center */}
             <div className="mb-3">
                 <div className="text-muted small mb-2">
-                    Mittelpunkt
+                    {t("editor.group.center")}
                 </div>
 
                 <div className="d-flex gap-2">
                     <PositionInputComponent
-                        title="X"
+                        title={t("axes.x")}
                         currentValue={center.x}
                         onChangePosition={(v) =>
                             handleCenterChange("x", v)
                         }
                     />
                     <PositionInputComponent
-                        title="Y"
+                        title={t("axes.y")}
                         currentValue={center.y}
                         onChangePosition={(v) =>
                             handleCenterChange("y", v)
                         }
                     />
                     <PositionInputComponent
-                        title="Z"
+                        title={t("axes.z")}
                         currentValue={center.z}
                         onChangePosition={(v) =>
                             handleCenterChange("z", v)
@@ -121,11 +123,11 @@ export function HorizontalFormatSection({
             {/* Spacing */}
             <div className="mb-3">
                 <div className="text-muted small mb-2">
-                    Abstand (X-Achse)
+                    {t("editor.group.spacingXAxis")}
                 </div>
 
                 <PositionInputComponent
-                    title="Abstand"
+                    title={t("editor.group.spacing")}
                     currentValue={spacing}
                     onChangePosition={(v) =>
                         setSpacing(Math.max(0, v))
@@ -138,7 +140,7 @@ export function HorizontalFormatSection({
                 onClick={handleApply}
                 disabled={selectedDrones.length === 0}
             >
-                Anwenden
+                {t("common.apply")}
             </button>
 
         </KeyframeEditorComponent>

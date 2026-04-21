@@ -3,6 +3,7 @@ import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
 import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFrame";
 import { TitleComponent } from "../SharedComponents";
 import { KeyframeCard } from "./KeyframeCard";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -35,18 +36,19 @@ export function ShowKeyframesSection({
     keyframe: PositionKeyFrame | ColorKeyFrame,
   ) => void;
 }) {
+  const { t } = useTranslation();
   const hasKeyframes =
     positionKeyframes.length > 0 || colorKeyframes.length > 0;
 
   return (
     <Card className="p-3">
-      <TitleComponent title="Drohnen Keyframes" />
+      <TitleComponent title={t("editor.keyframes.droneKeyframes")} />
 
       {hasKeyframes ? (
         <>
           {positionKeyframes.length > 0 && (
             <KeyframeCard
-              title="Position Keyframes"
+              title={t("editor.keyframes.positionKeyframes")}
               keyframes={positionKeyframes}
               getIdForKeyframe={getIdForKeyframe}
               handleRemoveKeyframe={handleRemoveKeyframe}
@@ -56,7 +58,7 @@ export function ShowKeyframesSection({
 
           {colorKeyframes.length > 0 && (
             <KeyframeCard
-              title="Color Keyframes"
+              title={t("editor.keyframes.colorKeyframes")}
               keyframes={colorKeyframes}
               getIdForKeyframe={getIdForKeyframe}
               handleRemoveKeyframe={handleRemoveKeyframe}
@@ -66,7 +68,7 @@ export function ShowKeyframesSection({
         </>
       ) : (
         <p className="text-muted small mb-0">
-          Keine Keyframes vorhanden
+          {t("editor.keyframes.none")}
         </p>
       )}
     </Card>

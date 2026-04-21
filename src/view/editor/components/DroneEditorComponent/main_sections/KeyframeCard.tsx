@@ -3,6 +3,7 @@ import { PositionKeyFrame } from "../../../../../repository/entity/PositionKeyFr
 
 import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
 import { Card } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -22,6 +23,7 @@ export function KeyframeCard({
   handleRemoveKeyframe,
   handleJumpToTime,
 }: any) {
+  const { t } = useTranslation();
   return (
     <div className="mb-3">
       <div className="text-muted small mb-2">{title}</div>
@@ -33,6 +35,8 @@ export function KeyframeCard({
           handleRemoveKeyframe={handleRemoveKeyframe}
           handleJumpToTime={handleJumpToTime}
           getIdForKeyframe={getIdForKeyframe}
+          noIdLabel={t("editor.keyframes.noId")}
+          deleteLabel={t("common.delete")}
         />
       ))}
     </div>
@@ -45,6 +49,8 @@ function KeyframeComponent({
   handleRemoveKeyframe,
   handleJumpToTime,
   getIdForKeyframe,
+  noIdLabel,
+  deleteLabel,
 }: {
   keyframe: PositionKeyFrame | ColorKeyFrame;
   handleRemoveKeyframe: (keyframe: PositionKeyFrame | ColorKeyFrame) => void;
@@ -52,6 +58,8 @@ function KeyframeComponent({
   getIdForKeyframe: (
     keyframe: PositionKeyFrame | ColorKeyFrame,
   ) => number | undefined;
+  noIdLabel: string;
+  deleteLabel: string;
 }) {
   return (
     <Card className="mb-2">
@@ -81,7 +89,7 @@ function KeyframeComponent({
             <div className="small text-muted">
               {getIdForKeyframe(keyframe) !== undefined
                 ? "ID: " + getIdForKeyframe(keyframe)
-                : "Keine ID"}{" "}
+                : noIdLabel}{" "}
               •{" "}
               {keyframe instanceof ColorKeyFrame && (
                 <>
@@ -106,7 +114,7 @@ function KeyframeComponent({
           onClick={() => {
             handleRemoveKeyframe(keyframe);
           }}
-          title="Löschen"
+          title={deleteLabel}
         >
           <i className="bi bi-trash" />
         </button>

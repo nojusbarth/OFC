@@ -11,6 +11,7 @@ import { SetPositionSection } from "./main_sections/SetPositionSection";
 import { GroupTransformSection } from "./main_sections/GroupTransformSection";
 import { ImageImportSection } from "./main_sections/ImageImportSection";
 import { RootColorSection } from "./color_sections/RootColorSection";
+import { useTranslation } from "react-i18next";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -24,6 +25,7 @@ export function DroneEditorComponent({
 }: {
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   /* ---------- Used Controllers ---------- */
   const timerController: ITimeController = controller.getTimeController();
 
@@ -136,15 +138,14 @@ export function DroneEditorComponent({
             rounded-0 border-2 border-secondary border-end-0 border-top-0 border-bottom-0"
     >
       <Card.Header className="d-flex justify-content-between align-items-center bg-light border-bottom">
-        <span className="fw-bold">Aktionen</span>
+        <span className="fw-bold">{t("editor.droneEditor.title")}</span>
         {/* Selected Drones Info */}
         <div className="text-muted small">
-          {selectedDrones.length}{" "}
-          {selectedDrones.length == 1 ? "Drohne" : "Drohnen"} ausgewählt
+          {t("editor.droneEditor.selectedCount", { count: selectedDrones.length })}
         </div>
         <div className="d-flex gap-2">
           <button
-            title={toolTipps.PROJECT_UNDO}
+            title={t(toolTipps.PROJECT_UNDO)}
             className="btn btn-primary btn-sm d-flex gap-2"
             onClick={() => {
               controller.undo();
@@ -153,7 +154,7 @@ export function DroneEditorComponent({
             <i className="bi bi-arrow-counterclockwise"></i>
           </button>
           <button
-            title={toolTipps.PROJECT_REDO}
+            title={t(toolTipps.PROJECT_REDO)}
             className="btn btn-primary btn-sm d-flex gap-2"
             onClick={() => {
               controller.redo();

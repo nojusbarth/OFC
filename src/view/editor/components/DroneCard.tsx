@@ -9,6 +9,7 @@ import { IController } from "../../../controller/interface/IController";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { selectGroupOfDrone } from "../../../controller/interface/ControllerUtils";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -32,6 +33,7 @@ export function DroneCard({
   onDroneClick: (droneId: number, isShift: boolean) => void;
   dragListeners?: any;
 }) {
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(true);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -121,7 +123,7 @@ export function DroneCard({
           borderRadius: "12px",
           padding: "4px",
         }}
-        title={isSelected ? toolTipps.DRONE_UNSELECT : toolTipps.DRONE_SELECT}
+        title={isSelected ? t(toolTipps.DRONE_UNSELECT) : t(toolTipps.DRONE_SELECT)}
       >
         <Card
           onClick={(e) => onDroneClick(droneId, e.shiftKey)}
@@ -174,7 +176,7 @@ export function DroneCard({
           {/* Remove Button */}
           <button
             className="drone-manager drone-card delete position-absolute top-0 end-0 m-1 p-1"
-            title={toolTipps.DRONE_DELETE}
+            title={t(toolTipps.DRONE_DELETE)}
             onClick={(e) => {
               e.stopPropagation();
               controller.removeDrone(droneId);

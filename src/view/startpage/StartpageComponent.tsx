@@ -3,6 +3,7 @@ import {IController} from "../../controller/interface/IController";
 import {PopupComponent} from "./PopupComponent";
 import {Result} from "../../repository/Result";
 import "./StartpageComponent.css";
+import { useTranslation } from "react-i18next";
 
 
 //Teile der HTML-Formatierung mithilfe von KI erstellt.
@@ -15,6 +16,7 @@ import "./StartpageComponent.css";
  * @returns JSX-Element der Startpage
  */
 export function StartpageComponent({ controller, toggleStartpage }: { controller: IController; toggleStartpage: () => void; }) {
+  const { t } = useTranslation();
   // State Hooks
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
@@ -34,8 +36,8 @@ export function StartpageComponent({ controller, toggleStartpage }: { controller
         setShowPopup(false);
         toggleStartpage();
       } else {
-        setMessageType("Dateifehler");
-        setMessage(result.getError()?.message || "Unbekannter Fehler beim Laden der Datei.");
+        setMessageType(t("startpage.errors.fileErrorTitle"));
+        setMessage(result.getError()?.message || t("startpage.errors.unknownFileLoadError"));
         setShowPopup(true);
       }
     });
@@ -47,8 +49,8 @@ export function StartpageComponent({ controller, toggleStartpage }: { controller
       setShowPopup(false);
       toggleStartpage();
     } else {
-      setMessageType("Projekt konnte nicht geöffnet werden");
-      setMessage(result.getError()?.message || "Versuchen Sie es stattdessen über das Öffnen einer Projektdatei.");
+      setMessageType(t("startpage.errors.couldNotOpenProjectTitle"));
+      setMessage(result.getError()?.message || t("startpage.errors.tryOpeningProjectFile"));
       setShowPopup(true);
     }
   }
@@ -63,11 +65,11 @@ export function StartpageComponent({ controller, toggleStartpage }: { controller
   return (
     <div className="bg-gradients d-flex align-items-center justify-content-center">
       <div className="flex-column align-items-center justify-content-center">
-        <img className="mb-3" style={{ width: "100%"}} src="/ofc.png" alt="Olympian Flight Control (OFC)"/>
+        <img className="mb-3" style={{ width: "100%"}} src="/ofc.png" alt={t("startpage.logoAlt")}/>
         <div className="card shadow-sm mb-5" style={{ maxWidth: "500px", width: "100%" }}>
           <div className="card-body">
             <h2 className="text-center logo-subtitle mb-3">
-              Olympian Flight Control
+              {t("startpage.title")}
             </h2>
             <hr/>
             <form>
@@ -81,18 +83,18 @@ export function StartpageComponent({ controller, toggleStartpage }: { controller
               <button type="button" className="btn btn-primary shadow-sm w-100 mb-2" onClick={onOpenProject}
                       disabled={!file}>
                 <i className="bi bi-folder me-2" />
-                Projekt öffnen
+                {t("startpage.openProject")}
               </button>
               <button type="button" className="btn btn-outline-primary shadow-sm w-100" onClick={onOpenLastProject}
                       disabled={!controller.getProject().canLoadLastProject()}>
                 <i className="bi bi-arrow-clockwise me-2" />
-                Zuletzt geöffnetes Projekt öffnen
+                {t("startpage.openLastProject")}
               </button>
 
               <hr />
               <button type="button" className="btn btn-primary shadow-sm w-100" onClick={onCreateProject}>
                 <i className="bi bi-file-earmark-plus me-2" />
-                Projekt erstellen
+                {t("startpage.createProject")}
               </button>
             </form>
           </div>

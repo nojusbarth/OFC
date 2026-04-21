@@ -1,0 +1,245 @@
+{
+	"common": {
+		"cancel": "Abbrechen",
+		"save": "Speichern",
+		"close": "Schließen",
+		"delete": "Löschen",
+		"apply": "Anwenden",
+		"create": "Erstellen",
+		"yes": "Ja",
+		"unknownError": "Unbekannter Fehler"
+	},
+	"units": {
+		"meters": "Meter",
+		"seconds": "Sekunden"
+	},
+	"axes": {
+		"x": "X",
+		"y": "Y",
+		"z": "Z"
+	},
+	"dayTime": {
+		"values": {
+			"noon": "Tag",
+			"sunset": "Dämmerung",
+			"night": "Nacht"
+		}
+	},
+	"dayTimeCalculator": {
+		"defaultCity": "Karlsruhe",
+		"locationNotFound": "Der Ort \"{{city}}\" wurde nicht gefunden.",
+		"title": "Tageszeit berechnen",
+		"cityLabel": "Stadt / Ort eingeben",
+		"dateLabel": "Datum",
+		"timeLabel": "Uhrzeit",
+		"resultFor": "Ergebnis für {{location}}: {{dayTime}}",
+		"searchingLocation": "Suche Ort...",
+		"calculateAndApply": "Berechnen & Anwenden"
+	},
+	"startpage": {
+		"logoAlt": "Olympian Flight Control (OFC)",
+		"title": "Olympian Flight Control",
+		"openProject": "Projekt öffnen",
+		"openLastProject": "Zuletzt geöffnetes Projekt öffnen",
+		"createProject": "Projekt erstellen",
+		"errors": {
+			"fileErrorTitle": "Dateifehler",
+			"unknownFileLoadError": "Unbekannter Fehler beim Laden der Datei.",
+			"couldNotOpenProjectTitle": "Projekt konnte nicht geöffnet werden",
+			"tryOpeningProjectFile": "Versuchen Sie es stattdessen über das Öffnen einer Projektdatei."
+		}
+	},
+	"editor": {
+		"tooltips": {
+			"backHome": "Zurück zur Startseite",
+			"toSettings": "Zu den Projekteinstellungen",
+			"toDroneSettings": "Zu den Drohneneinstellungen",
+			"recordStart": "Aufnahme starten \n(Strg + R)",
+			"recordStop": "Aufnahme stoppen \n(Strg + R)",
+			"animationStart": "Animation starten \n(Leertaste)",
+			"animationStop": "Animation stoppen \n(Leertaste)",
+			"projectSave": "Änderungen speichern \n(Strg + S)",
+			"projectUndo": "Änderung rückgängig machen \n(Strg + Z)",
+			"projectRedo": "Änderung wiederherstellen \n(Strg + Shift + Z)",
+			"projectWaypointExport": "Format exportieren \n(Strg + E)",
+			"droneAdd": "Drohne hinzufügen \n(Strg + Shift + N)",
+			"droneDelete": "Drohne löschen \n(Entf)",
+			"droneSelect": "Alle Drohnen auswählen \n(Strg + A)",
+			"droneUnselect": "Alle Drohnen abwählen \n(Esc)",
+			"timeSet": "Zeit ändern\nLetzte Sekunde: (Links Pfeil)\nNächste Sekunde: (Rechts Pfeil)"
+		},
+		"timeline": {
+			"changeSpeed": "Geschwindigkeit ändern"
+		},
+		"settings": {
+			"title": "Einstellungen",
+			"groups": {
+				"project": "Projekt",
+				"export": "Export"
+			},
+			"daytime": {
+				"title": "Tageszeit",
+				"description": "Beleuchtung im 3D-Viewport",
+				"calculate": "Berechnen"
+			},
+			"safetyDistance": {
+				"title": "Sicherheitsabstand",
+				"description": "Mindestabstand zwischen Drohnen"
+			},
+			"endTime": {
+				"title": "Endzeit",
+				"description": "Gesamtdauer der Animation"
+			},
+			"export": {
+				"waypointTitle": "Waypoint-Export",
+				"waypointDescription": "Exportiere als Waypoint-at-Time Format",
+				"exportWaypoints": "Waypoints exportieren"
+			}
+		},
+		"droneManager": {
+			"title_one": "Drohne ({{count}})",
+			"title_other": "Drohnen ({{count}})",
+			"add": "Hinzufügen",
+			"group": "Gruppieren",
+			"ungroup": "Gruppe auflösen"
+		},
+		"droneEditor": {
+			"title": "Aktionen",
+			"selectedCount_one": "{{count}} Drohne ausgewählt",
+			"selectedCount_other": "{{count}} Drohnen ausgewählt"
+		},
+		"keyframes": {
+			"add": "Keyframe hinzufügen",
+			"droneKeyframes": "Drohnen Keyframes",
+			"positionKeyframes": "Position Keyframes",
+			"colorKeyframes": "Farb-Keyframes",
+			"none": "Keine Keyframes vorhanden",
+			"noId": "Keine ID"
+		},
+		"group": {
+			"positionSet": "Position setzen",
+			"tabs": {
+				"offset": "Offset",
+				"rotation": "Rotation",
+				"format": "Format"
+			},
+			"offsetTitle": "Offset angeben",
+			"rotationTitle": "Rotation angeben",
+			"rotationX": "X Rot",
+			"rotationY": "Y Rot",
+			"rotationZ": "Z Rot",
+			"formatTitle": "Format anwenden",
+			"formatRandom": "Random",
+			"formatHorizontal": "Horizontal",
+			"formatVertical": "Vertikal",
+			"formatGrid": "Grid",
+			"verticalFormation": "Vertikale Formation",
+			"horizontalFormation": "Horizontale Formation",
+			"gridFormation": "Grid Formation",
+			"randomFormation": "Random Formation",
+			"center": "Mittelpunkt",
+			"spacingYAxis": "Abstand (Y-Achse)",
+			"spacingXAxis": "Abstand (X-Achse)",
+			"spacing": "Abstand",
+			"spacingAndPlane": "Abstand & Ebene",
+			"spacingX": "X Abstand",
+			"spacingY": "Y Abstand",
+			"referencePosition": "Referenz Position",
+			"bounds": "Bounds (+/-)"
+		},
+		"color": {
+			"tabs": {
+				"plain": "Plain",
+				"random": "Random",
+				"flicker": "Flicker",
+				"gradient": "Gradient",
+				"wave": "Welle"
+			},
+			"common": {
+				"pickLedColor": "LED-Farbe wählen"
+			},
+			"plain": {
+				"title": "Farbe setzen"
+			},
+			"random": {
+				"title": "Random Farben",
+				"variationStrength": "Variationsstärke (%)",
+				"variationHelp": "0 = keine Variation, 100 = maximale Variation"
+			},
+			"flicker": {
+				"title": "Flicker konfigurieren",
+				"baseColor": "Basis-Farbe (aktuelle Drohnenfarbe)",
+				"flickerColor": "Flicker-Farbe",
+				"frequency": "Frequenz (Hz)",
+				"frequencyHelp": "0.1-5 Hz (Wechsel pro Sekunde)",
+				"duration": "Dauer (s)",
+				"durationHelp": "Wie lange der Flicker-Effekt dauert"
+			},
+			"gradient": {
+				"title": "Gradient konfigurieren",
+				"startColor": "Start-Farbe (aktuelle Drohnenfarbe)",
+				"endColor": "End-Farbe",
+				"duration": "Farbwechsel-Dauer (s)",
+				"durationHelp": "Wie lange der Gradient-Effekt dauert",
+				"granularity": "Granularität (s)",
+				"granularityHelp": "Kleiner = glatter Verlauf, größer = weniger Keyframes (max. 40 Schritte)"
+			},
+			"wave": {
+				"typeTitle": "Typ der Farb-Welle",
+				"ariaWaveType": "Wellentyp",
+				"linear": "Linear",
+				"radial": "Radial",
+				"configure": "Welle konfigurieren",
+				"radialConfigure": "Radiale Welle konfigurieren",
+				"color": "Wellen-Farbe",
+				"wavelength": "Wellenlänge (m)",
+				"rangeSmall": "0.1-20 m",
+				"rangeLarge": "0.1-50 m/s",
+				"startPosition": "Startposition der Welle (X, Y, Z)",
+				"xStart": "X Start",
+				"yStart": "Y Start",
+				"zStart": "Z Start",
+				"direction": "Wellenrichtung (X, Y, Z)",
+				"xDir": "X Dir",
+				"yDir": "Y Dir",
+				"zDir": "Z Dir",
+				"directionHelp": "Ausbreitung im Raum (-1 bis 1 pro Achse)",
+				"speed": "Geschwindigkeit (m/s)",
+				"radialSpeed": "Wellengeschwindigkeit (m/s)"
+			}
+		},
+		"imageImport": {
+			"formationTitle": "Bild Formation",
+			"importFile": "Datei importieren",
+			"dropImageHere": "Bild hier ablegen",
+			"clickToSelectFile": "oder klicken, um eine Datei auszuwählen",
+			"activePixels": "{{active}} / {{total}} Pixel aktiv",
+			"clickForAnotherImage": "Klicken, um anderes Bild auszuwählen",
+			"targetResolution": "Wunsch Auflösung",
+			"width": "Breite",
+			"height": "Höhe",
+			"maxPixelsInfo": "Maximal 2500 Pixel insgesamt (Breite × Höhe)",
+			"droneSpacing": "Drohnenabstand",
+			"spacingX": "Abstand X",
+			"spacingY": "Abstand Y",
+			"spacingInfo": "Abstand der Drohnen im Raum",
+			"ignoreBackground": "Hintergrundfarbe ignorieren",
+			"white": "Weiß",
+			"black": "Schwarz",
+			"transparent": "Transparent",
+			"maxDronesNoticePrefix": "Dieses Projekt unterstützt maximal",
+			"drones": "Drohnen",
+			"selectedDrones_one": "Ausgewählte Drohnen: {{count}}",
+			"selectedDrones_other": "Ausgewählte Drohnen: {{count}}",
+			"createFromNew": "Aus Neu erstellen",
+			"createFromSelected": "Aus Auswahl erstellen",
+			"confirmationRequired": "Bestätigung erforderlich",
+			"tooFewDrones": "Es fehlen {{count}} Drohnen. Sollen diese erstellt werden?",
+			"tooManyDrones": "{{count}} Drohnen sind zu viel ausgewählt. Trotzdem fortfahren?",
+			"errors": {
+				"maxDronesExceeded": "Maximale Drohnenanzahl von {{maxDrones}} überschritten.",
+				"noDronesSelected": "Keine Drohnen ausgewählt."
+			}
+		}
+	}
+}

@@ -5,6 +5,7 @@ import {
   PositionInputComponent,
 } from "../SharedComponents";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -24,6 +25,7 @@ export function GridFormatSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [center, setCenter] = useState<Vector3>(new Vector3(0, 0, 0));
 
   const [spacingX, setSpacingX] = useState<number>(2);
@@ -143,24 +145,24 @@ export function GridFormatSection({
   };
 
   return (
-    <KeyframeEditorComponent title="Grid Formation">
+    <KeyframeEditorComponent title={t("editor.group.gridFormation")}>
       {/* Center */}
       <div className="mb-3">
-        <div className="text-muted small mb-2">Mittelpunkt</div>
+        <div className="text-muted small mb-2">{t("editor.group.center")}</div>
 
         <div className="d-flex gap-2">
           <PositionInputComponent
-            title="X"
+            title={t("axes.x")}
             currentValue={center.x}
             onChangePosition={(v) => handleCenterChange("x", v)}
           />
           <PositionInputComponent
-            title="Y"
+            title={t("axes.y")}
             currentValue={center.y}
             onChangePosition={(v) => handleCenterChange("y", v)}
           />
           <PositionInputComponent
-            title="Z"
+            title={t("axes.z")}
             currentValue={center.z}
             onChangePosition={(v) => handleCenterChange("z", v)}
           />
@@ -169,17 +171,17 @@ export function GridFormatSection({
 
       {/* Spacing + Plane Selection */}
       <div className="mb-3">
-        <div className="text-muted small mb-2">Abstand & Ebene</div>
+        <div className="text-muted small mb-2">{t("editor.group.spacingAndPlane")}</div>
 
         <div className="d-flex gap-2 align-items-end">
           <PositionInputComponent
-            title="X Abstand"
+            title={t("editor.group.spacingX")}
             currentValue={spacingX}
             onChangePosition={(v) => setSpacingX(Math.max(0, v))}
           />
 
           <PositionInputComponent
-            title="Y Abstand"
+            title={t("editor.group.spacingY")}
             currentValue={spacingY}
             onChangePosition={(v) => setSpacingY(Math.max(0, v))}
           />
@@ -213,7 +215,7 @@ export function GridFormatSection({
         onClick={handleApply}
         disabled={selectedDrones.length === 0}
       >
-        Anwenden
+        {t("common.apply")}
       </button>
     </KeyframeEditorComponent>
   );

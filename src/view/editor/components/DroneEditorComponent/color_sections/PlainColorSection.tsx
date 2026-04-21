@@ -3,6 +3,7 @@ import { IUndoableController } from "../../../../../controller/interface/IUndoab
 import { KeyframeEditorComponent } from "../SharedComponents";
 import { AddKeyframeComponent } from "../SharedComponents";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export function PlainColorSection({
   selectedDrones,
@@ -11,6 +12,7 @@ export function PlainColorSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [color, setColor] = useState<Color>(new Color(0xffffff));
   const handleColorChange = (hexColor: string) => {
     setColor(new Color(hexColor));
@@ -25,9 +27,9 @@ export function PlainColorSection({
   };
 
   return (
-    <KeyframeEditorComponent title="Farbe Setzen">
+    <KeyframeEditorComponent title={t("editor.color.plain.title")}>
       <div>
-        <label className="small">LED-Farbe wählen</label>
+        <label className="small">{t("editor.color.common.pickLedColor")}</label>
         <input
           id="drone-color-input"
           type="color"

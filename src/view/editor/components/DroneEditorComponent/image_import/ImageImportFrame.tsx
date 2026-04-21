@@ -1,5 +1,6 @@
 import { ImageImportDialog } from "./ImageImportDialog";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -17,6 +18,7 @@ interface Props {
  * @returns JSX-Modal für den Bildimport oder `null`, wenn ausgeblendet.
  */
 export function ImageImportFrame({ show, onClose, controller }: Props) {
+  const { t } = useTranslation();
   if (!show) return null;
 
   return (
@@ -32,7 +34,7 @@ export function ImageImportFrame({ show, onClose, controller }: Props) {
             {/* Title Row */}
             <div className="d-flex w-100 justify-content-between align-items-center">
               <h4 className="modal-title fw-semibold mb-0">
-                Datei importieren
+                {t("editor.imageImport.importFile")}
               </h4>
 
               <button type="button" className="btn-close" onClick={onClose} />
@@ -49,7 +51,7 @@ export function ImageImportFrame({ show, onClose, controller }: Props) {
           {/* Footer */}
           <div className="modal-footer">
             <button className="btn btn-secondary" onClick={onClose}>
-              Schließen
+              {t("common.close")}
             </button>
           </div>
         </div>

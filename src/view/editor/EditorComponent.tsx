@@ -6,6 +6,7 @@ import { JSX, useEffect, useState } from "react";
 import { IUndoableController } from "../../controller/interface/IUndoableController";
 import { DRONE_EDITOR_WIDTH, DRONE_MANAGER_HEIGHT, toolTipps } from "./config";
 import { Card } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -25,6 +26,7 @@ export function EditorComponent({
     toggleStartpage: () => void;
     viewport: JSX.Element;
 }) {
+    const { t } = useTranslation();
     /* ---------- Used Controllers ---------- */
     const project = controller.getProject();
 
@@ -99,7 +101,7 @@ export function EditorComponent({
                     <div className="rounded-0 justify-content-end border-secondary border-0 d-flex flex-row align-items-end gap-4 p-3 w-100">
                         <button
                             className="btn btn-link p-0"
-                            title={toolTipps.BACK_HOME}
+                            title={t(toolTipps.BACK_HOME)}
                             onClick={toggleStartPage}
                         >
                             <i
@@ -109,7 +111,7 @@ export function EditorComponent({
                         </button>
                         <button
                             className="btn btn-link p-0"
-                            title={toolTipps.PROJECT_SAVE}
+                            title={t(toolTipps.PROJECT_SAVE)}
                             onClick={exportProjektToFile}
                         >
                             <i
@@ -119,7 +121,7 @@ export function EditorComponent({
                         </button>
                         <button
                             className="btn btn-link p-0"
-                            title={showSettings ? toolTipps.TO_DRONE_SETTINGS : toolTipps.TO_SETTINGS}
+                            title={showSettings ? t(toolTipps.TO_DRONE_SETTINGS) : t(toolTipps.TO_SETTINGS)}
                             onClick={toggleSettingsMenu}
                         >
                             {showSettings ? (

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { Form, Modal, Spinner } from "react-bootstrap";
 import { DayTime } from "../../../repository/entity/DayTime";
-import { mapDayTimeToDisplayName } from "../utils/dayTimeMapper";
 import {
   calculateDayTimeFromSunPosition,
   convertToUTCWithLongitude,
 } from "../utils/dayTimeCalculator";
+import { useTranslation } from "react-i18next";
 
 async function getCoords(cityName: string) {
     try {
@@ -34,6 +34,7 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
     onHide: () => void;
     onResult: (dayTime: DayTime) => void;
 }) {
+    const { t } = useTranslation();
     // Form States
     const [cityInput, setCityInput] = useState("");
     const [dateStr, setDateStr] = useState(new Date().toISOString().split('T')[0]);
@@ -49,12 +50,12 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
         setIsLoading(true);
         setErrorMsg(null);
 
-        const city = cityInput ? cityInput : "Karlsruhe";
+        const city = cityInput ? cityInput : t("dayTimeCalculator.defaultCity");
 
         const coords = await getCoords(city);
 
         if (!coords) {
-            setErrorMsg(`Der Ort "${cityInput}" wurde nicht gefunden.`);
+            setErrorMsg(t("dayTimeCalculator.locationNotFound", { city: cityInput }));
             setIsLoading(false);
             return;
         }
@@ -77,16 +78,16 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
     return (
         <Modal show={show} onHide={onHide} centered>
             <Modal.Header closeButton>
-                <Modal.Title>Tageszeit berechnen</Modal.Title>
+                <Modal.Title>{t("dayTimeCalculator.title")}</Modal.Title>
             </Modal.Header>
 
             <Modal.Body>
                 <Form>
                     <Form.Group className="mb-3">
-                        <Form.Label>Stadt / Ort eingeben</Form.Label>
+                        <Form.Label>{t("dayTimeCalculator.cityLabel")}</Form.Label>
                         <Form.Control
                             type="text"
-                            placeholder="Karlsruhe"
+                            placeholder={t("dayTimeCalculator.defaultCity")}
                             value={cityInput}
                             onChange={(e) => setCityInput(e.target.value)}
                             isInvalid={!!errorMsg}
@@ -100,7 +101,7 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
                     <div className="row">
                         <div className="col-6">
                             <Form.Group className="mb-3">
-                                <Form.Label>Datum</Form.Label>
+                                <Form.Label>{t("dayTimeCalculator.dateLabel")}</Form.Label>
                                 <Form.Control
                                     type="date"
                                     value={dateStr}
@@ -110,7 +111,7 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
                         </div>
                         <div className="col-6">
                             <Form.Group className="mb-3">
-                                <Form.Label>Uhrzeit</Form.Label>
+                                <Form.Label>{t("dayTimeCalculator.timeLabel")}</Form.Label>
                                 <Form.Control
                                     type="time"
                                     value={timeStr}
@@ -121,7 +122,10 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
                     </div>
                 </Form>
                 {localResult && (
-                    <p>Ergebnis für {localResult.text}: {mapDayTimeToDisplayName(localResult.type)}</p>
+                    <p>{t("dayTimeCalculator.resultFor", {
+                        location: localResult.text,
+                        dayTime: t(mapDayTimeToTranslationKey(localResult.type)),
+                    })}</p>
                 )}
             </Modal.Body>
 
@@ -129,7 +133,7 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
                 <button
                     className="btn btn-primary btn-sm d-flex gap-2"
                     onClick={onHide}>
-                    Abbrechen
+                    {t("common.cancel")}
                 </button>
                 <button
                     className="btn btn-primary btn-sm d-flex gap-2"
@@ -140,13 +144,24 @@ export function DayTimeCalculatorModal({ show, onHide, onResult }: {
                     {isLoading ? (
                         <>
                             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-                            {' '} Suche Ort...
+                            {" "} {t("dayTimeCalculator.searchingLocation")}
                         </>
                     ) : (
-                        'Berechnen & Anwenden'
+                        t("dayTimeCalculator.calculateAndApply")
                     )}
                 </button>
             </Modal.Footer>
         </Modal>
     );
+}
+
+function mapDayTimeToTranslationKey(dayTime: DayTime): string {
+    switch (dayTime) {
+        case DayTime.NOON:
+            return "dayTime.values.noon";
+        case DayTime.SUNSET:
+            return "dayTime.values.sunset";
+        case DayTime.NIGHT:
+            return "dayTime.values.night";
+    }
 }

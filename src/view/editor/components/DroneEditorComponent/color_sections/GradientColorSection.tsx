@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { AddKeyframeComponent } from "../SharedComponents";
 import { Form } from "react-bootstrap";
 import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
+import { useTranslation } from "react-i18next";
 
 
 
@@ -16,6 +17,7 @@ export function GradientColorSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [baseColor, setBaseColor] = useState<Color>(new Color(0xffffff));
   const [targetColor, setTargetColor] = useState<Color>(new Color(0x000000));
   const [duration, setDuration] = useState<number>(1);
@@ -57,10 +59,10 @@ export function GradientColorSection({
   };
 
   return (
-    <KeyframeEditorComponent title="Gradient konfigurieren">
+    <KeyframeEditorComponent title={t("editor.color.gradient.title")}>
       {/* Base Color */}
       <div>
-        <label className="small">Start-Farbe (aktuelle Drohnenfarbe)</label>
+        <label className="small">{t("editor.color.gradient.startColor")}</label>
         <input
           id="drone-base-color-input"
           type="color"
@@ -77,7 +79,7 @@ export function GradientColorSection({
 
       {/* Target Color */}
       <div>
-        <label className="small">End-Farbe</label>
+        <label className="small">{t("editor.color.gradient.endColor")}</label>
         <input
           id="drone-gradient-target-color-input"
           type="color"
@@ -94,7 +96,7 @@ export function GradientColorSection({
 
       {/* Duration */}
       <Form.Group>
-        <Form.Label className="small">Farbwechsel-dauer (s)</Form.Label>
+        <Form.Label className="small">{t("editor.color.gradient.duration")}</Form.Label>
         <Form.Control
           type="number"
           size="sm"
@@ -104,11 +106,11 @@ export function GradientColorSection({
           onChange={(e) => setDuration(parseFloat(e.target.value) || 1)}
           className="border-secondary"
         />
-        <Form.Text className="text-muted">Wie lange der Gradient-Effekt dauert</Form.Text>
+        <Form.Text className="text-muted">{t("editor.color.gradient.durationHelp")}</Form.Text>
       </Form.Group>
 
       <Form.Group>
-        <Form.Label className="small">Granularität (s)</Form.Label>
+        <Form.Label className="small">{t("editor.color.gradient.granularity")}</Form.Label>
         <Form.Control
           type="number"
           size="sm"
@@ -120,7 +122,7 @@ export function GradientColorSection({
           className="border-secondary"
         />
         <Form.Text className="text-muted">
-          Kleiner = glatter Verlauf, größer = weniger Keyframes (max. 40 Schritte)
+          {t("editor.color.gradient.granularityHelp")}
         </Form.Text>
       </Form.Group>
 

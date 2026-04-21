@@ -10,6 +10,7 @@ import {
   IgnoreColor,
 } from "./ImageAnalysis";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { useTranslation } from "react-i18next";
 
 
 // Dieser Abschnitt ist teilweise KI generiert
@@ -27,6 +28,7 @@ export function ImageImportDialog({
 }: {
     controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [fileName, setFileName] = useState<string | null>(null);
@@ -157,7 +159,9 @@ export function ImageImportDialog({
       closeConsentDialog();
     } catch (error) {
       alert(
-        error instanceof Error ? error.message : "Unbekannter Fehler",
+        error instanceof Error
+          ? t(error.message, { maxDrones: 3000 })
+          : t("common.unknownError"),
       );
     }
   };
@@ -179,9 +183,9 @@ export function ImageImportDialog({
           }}
         >
           <div style={{ fontSize: "2rem" }}>📷</div>
-          <h5 className="fw-semibold mt-3">Bild hier ablegen</h5>
+          <h5 className="fw-semibold mt-3">{t("editor.imageImport.dropImageHere")}</h5>
           <div className="text-muted">
-            oder klicken, um eine Datei auszuwählen
+            {t("editor.imageImport.clickToSelectFile")}
           </div>
         </div>
       )}
@@ -206,11 +210,14 @@ export function ImageImportDialog({
           <div className="mt-3 fw-semibold">{fileName}</div>
 
           <div className="text-muted small">
-            {validPixelCount} / {targetWidth * targetHeight} Pixel aktiv
+            {t("editor.imageImport.activePixels", {
+              active: validPixelCount,
+              total: targetWidth * targetHeight,
+            })}
           </div>
 
           <div className="text-muted small mt-2">
-            Klicken, um anderes Bild auszuwählen
+            {t("editor.imageImport.clickForAnotherImage")}
           </div>
         </div>
       )}
@@ -222,11 +229,11 @@ export function ImageImportDialog({
 
           {/* Wunsch Auflösung */}
           <div className="mb-4">
-            <div className="fw-semibold mb-2">Wunsch Auflösung</div>
+            <div className="fw-semibold mb-2">{t("editor.imageImport.targetResolution")}</div>
 
             <div className="d-flex gap-3">
               <div className="flex-fill">
-                <label className="form-label small text-muted">Breite</label>
+                <label className="form-label small text-muted">{t("editor.imageImport.width")}</label>
                 <input
                   type="number"
                   className="form-control"
@@ -246,7 +253,7 @@ export function ImageImportDialog({
               </div>
 
               <div className="flex-fill">
-                <label className="form-label small text-muted">Höhe</label>
+                <label className="form-label small text-muted">{t("editor.imageImport.height")}</label>
                 <input
                   type="number"
                   className="form-control"
@@ -267,16 +274,16 @@ export function ImageImportDialog({
             </div>
 
             <div className="text-muted small mt-2">
-              Maximal 2500 Pixel insgesamt (Breite × Höhe)
+              {t("editor.imageImport.maxPixelsInfo")}
             </div>
           </div>
           {/* Pixelabstand */}
           <div className="mb-4">
-            <div className="fw-semibold mb-2">Drohnenabstand</div>
+            <div className="fw-semibold mb-2">{t("editor.imageImport.droneSpacing")}</div>
 
             <div className="d-flex gap-3">
               <div className="flex-fill">
-                <label className="form-label small text-muted">Abstand X</label>
+                <label className="form-label small text-muted">{t("editor.imageImport.spacingX")}</label>
                 <input
                   type="number"
                   className="form-control"
@@ -290,7 +297,7 @@ export function ImageImportDialog({
               </div>
 
               <div className="flex-fill">
-                <label className="form-label small text-muted">Abstand Y</label>
+                <label className="form-label small text-muted">{t("editor.imageImport.spacingY")}</label>
                 <input
                   type="number"
                   className="form-control"
@@ -305,13 +312,13 @@ export function ImageImportDialog({
             </div>
 
             <div className="text-muted small mt-2">
-              Abstand der Drohnen im Raum
+              {t("editor.imageImport.spacingInfo")}
             </div>
           </div>
 
           {/* Farbe ignorieren */}
           <div className="mb-4">
-            <div className="fw-semibold mb-2">Hintergrundfarbe ignorieren</div>
+            <div className="fw-semibold mb-2">{t("editor.imageImport.ignoreBackground")}</div>
 
             <div className="btn-group">
               <button
@@ -323,7 +330,7 @@ export function ImageImportDialog({
                 }`}
                 onClick={() => setIgnoreColor("white")}
               >
-                Weiß
+                {t("editor.imageImport.white")}
               </button>
 
               <button
@@ -335,7 +342,7 @@ export function ImageImportDialog({
                 }`}
                 onClick={() => setIgnoreColor("black")}
               >
-                Schwarz
+                {t("editor.imageImport.black")}
               </button>
 
               <button
@@ -347,19 +354,19 @@ export function ImageImportDialog({
                 }`}
                 onClick={() => setIgnoreColor("transparent")}
               >
-                Transparent
+                {t("editor.imageImport.transparent")}
               </button>
             </div>
           </div>
 
           {/* Limit Hinweis */}
           <div className="alert alert-warning small mb-0">
-            Dieses Projekt unterstützt maximal <strong>3000 Drohnen</strong>.
+            {t("editor.imageImport.maxDronesNoticePrefix")} <strong>3000 {t("editor.imageImport.drones")}</strong>.
           </div>
 
           <div className="mt-4 d-flex flex-column gap-3">
             <div className="text-muted small">
-              Ausgewählte Drohnen: {selectedDroneCount}
+              {t("editor.imageImport.selectedDrones", { count: selectedDroneCount })}
             </div>
 
             <div className="d-flex flex-wrap justify-content-center gap-2">
@@ -377,13 +384,13 @@ export function ImageImportDialog({
                   } catch (error) {
                     alert(
                       error instanceof Error
-                        ? error.message
-                        : "Unbekannter Fehler",
+                        ? t(error.message, { maxDrones: 3000 })
+                        : t("common.unknownError"),
                     );
                   }
                 }}
               >
-                Create from New
+                {t("editor.imageImport.createFromNew")}
               </button>
 
               <button
@@ -391,7 +398,7 @@ export function ImageImportDialog({
                 type="button"
                 onClick={openSelectedConsentDialog}
               >
-                Create from Selected
+                {t("editor.imageImport.createFromSelected")}
               </button>
             </div>
           </div>
@@ -409,7 +416,7 @@ export function ImageImportDialog({
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
               <div className="modal-header">
-                <h5 className="modal-title">Bestätigung erforderlich</h5>
+                <h5 className="modal-title">{t("editor.imageImport.confirmationRequired")}</h5>
                 <button
                   type="button"
                   className="btn-close"
@@ -420,15 +427,17 @@ export function ImageImportDialog({
               <div className="modal-body">
                 {consentDialogType === "tooFew" && (
                   <p className="mb-0">
-                    Es fehlen {validPixelCount - selectedDroneCount} Drohnen.
-                    Sollen diese erstellt werden?
+                    {t("editor.imageImport.tooFewDrones", {
+                      count: validPixelCount - selectedDroneCount,
+                    })}
                   </p>
                 )}
 
                 {consentDialogType === "tooMany" && (
                   <p className="mb-0">
-                    {selectedDroneCount - validPixelCount} Drohnen sind zu viel
-                    ausgewählt. Trotzdem fortfahren?
+                    {t("editor.imageImport.tooManyDrones", {
+                      count: selectedDroneCount - validPixelCount,
+                    })}
                   </p>
                 )}
               </div>
@@ -439,7 +448,7 @@ export function ImageImportDialog({
                   className="btn btn-outline-secondary"
                   onClick={closeConsentDialog}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
 
                 <button
@@ -447,7 +456,7 @@ export function ImageImportDialog({
                   className="btn btn-primary"
                   onClick={handleSelectedFormation}
                 >
-                  {consentDialogType === "tooFew" ? "Create" : "Yes"}
+                  {consentDialogType === "tooFew" ? t("common.create") : t("common.yes")}
                 </button>
               </div>
             </div>

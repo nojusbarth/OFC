@@ -5,6 +5,7 @@ import {
   KeyframeEditorComponent,
   PositionInputComponent,
 } from "../SharedComponents";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -21,6 +22,7 @@ export function OffsetSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [offset, setOffset] = useState<Vector3>(new Vector3(0, 0, 0));
 
   const updateGhostPreview = (previewOffset: Vector3) => {
@@ -70,22 +72,22 @@ export function OffsetSection({
   };
 
   return (
-    <KeyframeEditorComponent title="Offset angeben">
+    <KeyframeEditorComponent title={t("editor.group.offsetTitle")}>
       <div className="d-flex flex-column gap-3">
         {/* Eingabefelder */}
         <div className="d-flex align-items-center gap-2">
           <PositionInputComponent
-            title="X"
+            title={t("axes.x")}
             currentValue={offset.x}
             onChangePosition={(value) => handleOffsetChange("x", value)}
           />
           <PositionInputComponent
-            title="Y"
+            title={t("axes.y")}
             currentValue={offset.y}
             onChangePosition={(value) => handleOffsetChange("y", value)}
           />
           <PositionInputComponent
-            title="Z"
+            title={t("axes.z")}
             currentValue={offset.z}
             onChangePosition={(value) => handleOffsetChange("z", value)}
           />
@@ -94,7 +96,7 @@ export function OffsetSection({
         {/* Button darunter */}
         <div className="d-flex justify-content-end">
           <button className="btn btn-primary" onClick={handleApplyOffset}>
-            Anwenden
+            {t("common.apply")}
           </button>
         </div>
       </div>

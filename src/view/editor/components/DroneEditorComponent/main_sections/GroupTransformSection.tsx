@@ -4,6 +4,7 @@ import { OffsetSection } from "../group_sections/OffsetSection";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 import { RotationSection } from "../group_sections/RotationSection";
 import { FormatSection } from "../group_sections/FormatSection";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -21,6 +22,7 @@ export function GroupTransformSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState<string>("offset");
 
   return (
@@ -32,9 +34,9 @@ export function GroupTransformSection({
           className="mb-0"
           justify
         >
-          <Tab eventKey="offset" title="Offset" />
-          <Tab eventKey="rotation" title="Rotation" />
-          <Tab eventKey="format" title="Format" />
+          <Tab eventKey="offset" title={t("editor.group.tabs.offset")} />
+          <Tab eventKey="rotation" title={t("editor.group.tabs.rotation")} />
+          <Tab eventKey="format" title={t("editor.group.tabs.format")} />
         </Tabs>
       </Card.Header>
 

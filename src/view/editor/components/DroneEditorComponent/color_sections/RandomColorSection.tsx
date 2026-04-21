@@ -5,6 +5,7 @@ import { Color } from "three";
 import { useState } from "react";
 import { AddKeyframeComponent } from "../SharedComponents";
 import { Form } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 export function RandomColorSection({
   selectedDrones,
@@ -13,6 +14,7 @@ export function RandomColorSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [color, setColor] = useState<Color>(new Color(0xffffff));
   const [variationStrength, setVariationStrength] = useState<number>(50);
 
@@ -43,10 +45,10 @@ export function RandomColorSection({
   };
 
   return ( 
-    <KeyframeEditorComponent title="Random Farben">
+    <KeyframeEditorComponent title={t("editor.color.random.title")}>
 
       <div>
-        <label className="small">LED-Farbe wählen</label>
+        <label className="small">{t("editor.color.common.pickLedColor")}</label>
         <input
           id="drone-color-input"
           type="color"
@@ -62,7 +64,7 @@ export function RandomColorSection({
       </div>
 
       <Form.Group>
-        <Form.Label className="small">Variationsstärke (%)</Form.Label>
+        <Form.Label className="small">{t("editor.color.random.variationStrength")}</Form.Label>
         <Form.Control
           type="number"
           size="sm"
@@ -73,7 +75,7 @@ export function RandomColorSection({
           onChange={(e) => setVariationStrength(parseFloat(e.target.value) || 0)}
           className="border-secondary"
         />
-        <Form.Text className="text-muted">0 = keine Variation, 100 = maximale Variation</Form.Text>
+        <Form.Text className="text-muted">{t("editor.color.random.variationHelp")}</Form.Text>
       </Form.Group>
 
       <AddKeyframeComponent onClick={handleAddColorKeyframe} />

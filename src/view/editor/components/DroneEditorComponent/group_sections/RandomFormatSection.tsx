@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Vector3 } from "three";
 import { KeyframeEditorComponent, PositionInputComponent } from "../SharedComponents";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -18,6 +19,7 @@ export function RandomFormatSection({
     selectedDrones: number[];
     controller: IUndoableController;
 }) {
+    const { t } = useTranslation();
     const [center, setCenter] = useState<Vector3>(
         new Vector3(0, 0, 0)
     );
@@ -93,31 +95,31 @@ export function RandomFormatSection({
     };
 
     return (
-        <KeyframeEditorComponent title="Random Formation">
+        <KeyframeEditorComponent title={t("editor.group.randomFormation")}>
 
             {/* Reference Position */}
             <div className="mb-3">
                 <div className="text-muted small mb-2">
-                    Referenz Position
+                    {t("editor.group.referencePosition")}
                 </div>
 
                 <div className="d-flex gap-2">
                     <PositionInputComponent
-                        title="X"
+                        title={t("axes.x")}
                         currentValue={center.x}
                         onChangePosition={(v) =>
                             handleCenterChange("x", v)
                         }
                     />
                     <PositionInputComponent
-                        title="Y"
+                        title={t("axes.y")}
                         currentValue={center.y}
                         onChangePosition={(v) =>
                             handleCenterChange("y", v)
                         }
                     />
                     <PositionInputComponent
-                        title="Z"
+                        title={t("axes.z")}
                         currentValue={center.z}
                         onChangePosition={(v) =>
                             handleCenterChange("z", v)
@@ -129,26 +131,26 @@ export function RandomFormatSection({
             {/* Bounds */}
             <div className="mb-3">
                 <div className="text-muted small mb-2">
-                    Bounds (+/-)
+                    {t("editor.group.bounds")}
                 </div>
 
                 <div className="d-flex gap-2">
                     <PositionInputComponent
-                        title="X"
+                        title={t("axes.x")}
                         currentValue={bounds.x}
                         onChangePosition={(v) =>
                             handleBoundsChange("x", v)
                         }
                     />
                     <PositionInputComponent
-                        title="Y"
+                        title={t("axes.y")}
                         currentValue={bounds.y}
                         onChangePosition={(v) =>
                             handleBoundsChange("y", v)
                         }
                     />
                     <PositionInputComponent
-                        title="Z"
+                        title={t("axes.z")}
                         currentValue={bounds.z}
                         onChangePosition={(v) =>
                             handleBoundsChange("z", v)
@@ -163,7 +165,7 @@ export function RandomFormatSection({
                 onClick={handleApply}
                 disabled={selectedDrones.length === 0}
             >
-                Anwenden
+                {t("common.apply")}
             </button>
 
         </KeyframeEditorComponent>

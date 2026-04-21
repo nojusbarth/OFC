@@ -7,6 +7,7 @@ import {
 import { useState } from "react";
 import { Form } from "react-bootstrap";
 import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
+import { useTranslation } from "react-i18next";
 
 export function WaveLinearSection({
   selectedDrones,
@@ -15,6 +16,7 @@ export function WaveLinearSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [waveColor, setWaveColor] = useState<Color>(new Color(0x00a3ff));
   const [wavelength, setWavelength] = useState<number>(2);
   const [startPosition, setStartPosition] = useState<Vector3>(new Vector3(0, 0, 0));
@@ -173,9 +175,9 @@ export function WaveLinearSection({
   };
 
   return ( 
-    <KeyframeEditorComponent title="Welle konfigurieren">
+    <KeyframeEditorComponent title={t("editor.color.wave.configure")}>
       <div>
-        <label className="small">Wellen-Farbe</label>
+        <label className="small">{t("editor.color.wave.color")}</label>
         <input
           id="drone-wave-color-input"
           type="color"
@@ -191,7 +193,7 @@ export function WaveLinearSection({
       </div>
 
       <Form.Group>
-        <Form.Label className="small">Wellenlänge (m)</Form.Label>
+        <Form.Label className="small">{t("editor.color.wave.wavelength")}</Form.Label>
         <Form.Control
           type="number"
           size="sm"
@@ -204,14 +206,14 @@ export function WaveLinearSection({
           }
           className="border-secondary"
         />
-        <Form.Text className="text-muted">0.1-20 m</Form.Text>
+        <Form.Text className="text-muted">{t("editor.color.wave.rangeSmall")}</Form.Text>
       </Form.Group>
 
       <div>
-        <Form.Label className="small">Startposition der Welle (X, Y, Z)</Form.Label>
+        <Form.Label className="small">{t("editor.color.wave.startPosition")}</Form.Label>
         <div className="d-flex align-items-center gap-2">
           <Form.Group className="w-100">
-            <Form.Label className="small">X Start</Form.Label>
+            <Form.Label className="small">{t("editor.color.wave.xStart")}</Form.Label>
             <Form.Control
               type="number"
               size="sm"
@@ -224,7 +226,7 @@ export function WaveLinearSection({
           </Form.Group>
 
           <Form.Group className="w-100">
-            <Form.Label className="small">Y Start</Form.Label>
+            <Form.Label className="small">{t("editor.color.wave.yStart")}</Form.Label>
             <Form.Control
               type="number"
               size="sm"
@@ -237,7 +239,7 @@ export function WaveLinearSection({
           </Form.Group>
 
           <Form.Group className="w-100">
-            <Form.Label className="small">Z Start</Form.Label>
+            <Form.Label className="small">{t("editor.color.wave.zStart")}</Form.Label>
             <Form.Control
               type="number"
               size="sm"
@@ -252,10 +254,10 @@ export function WaveLinearSection({
       </div>
 
       <div>
-        <Form.Label className="small">Wellenrichtung (X, Y, Z)</Form.Label>
+        <Form.Label className="small">{t("editor.color.wave.direction")}</Form.Label>
         <div className="d-flex align-items-center gap-2">
           <Form.Group className="w-100">
-            <Form.Label className="small">X Dir</Form.Label>
+            <Form.Label className="small">{t("editor.color.wave.xDir")}</Form.Label>
             <Form.Control
               type="number"
               size="sm"
@@ -271,7 +273,7 @@ export function WaveLinearSection({
           </Form.Group>
 
           <Form.Group className="w-100">
-            <Form.Label className="small">Y Dir</Form.Label>
+            <Form.Label className="small">{t("editor.color.wave.yDir")}</Form.Label>
             <Form.Control
               type="number"
               size="sm"
@@ -287,7 +289,7 @@ export function WaveLinearSection({
           </Form.Group>
 
           <Form.Group className="w-100">
-            <Form.Label className="small">Z Dir</Form.Label>
+            <Form.Label className="small">{t("editor.color.wave.zDir")}</Form.Label>
             <Form.Control
               type="number"
               size="sm"
@@ -303,12 +305,12 @@ export function WaveLinearSection({
           </Form.Group>
         </div>
         <Form.Text className="text-muted">
-          Ausbreitung im Raum (-1 bis 1 pro Achse)
+          {t("editor.color.wave.directionHelp")}
         </Form.Text>
       </div>
 
       <Form.Group>
-        <Form.Label className="small">Geschwindigkeit (m/s)</Form.Label>
+        <Form.Label className="small">{t("editor.color.wave.speed")}</Form.Label>
         <Form.Control
           type="number"
           size="sm"
@@ -319,7 +321,7 @@ export function WaveLinearSection({
           onChange={(e) => setSpeed(parseAndClamp(e.target.value, speed, 0.1, 50))}
           className="border-secondary"
         />
-        <Form.Text className="text-muted">0.1-50 m/s</Form.Text>
+        <Form.Text className="text-muted">{t("editor.color.wave.rangeLarge")}</Form.Text>
       </Form.Group>
 
       <AddKeyframeComponent onClick={handleAddColorKeyframe} />

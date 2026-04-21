@@ -22,6 +22,7 @@ import {
   rectSortingStrategy,
 } from "@dnd-kit/sortable";
 import { clearAndSelectDrones, clearSelected } from "../../../controller/interface/ControllerUtils";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -37,6 +38,7 @@ export function DroneManagerComponent({
 }: {
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   /* ---------- State Hooks ---------- */
   const [allDrones, setAllDrones] = useState<Array<number>>(
     controller.getDrones(),
@@ -164,26 +166,26 @@ export function DroneManagerComponent({
     rounded-0 border-2 border-secondary border-start-0 border-end-0 border-bottom-0"
     >
       <Card.Header className="d-flex align-items-center border-bottom">
-        <span className="fw-bold">Drohnen ({allDrones.length})</span>
+        <span className="fw-bold">{t("editor.droneManager.title", { count: allDrones.length })}</span>
         <div className="d-flex gap-2 ms-auto">
           <button
             className="btn btn-primary btn-sm d-flex gap-2"
-            title={toolTipps.DRONE_ADD}
+            title={t(toolTipps.DRONE_ADD)}
             onClick={onAddDrone}
           >
             <i className="bi bi-plus" />
-            Hinzufügen
+            {t("editor.droneManager.add")}
           </button>
 
           <button className="btn btn-sm btn-secondary" onClick={onGroupCreate}>
-            Gruppieren
+            {t("editor.droneManager.group")}
           </button>
 
           <button
             className="btn btn-sm btn-outline-danger"
             onClick={onGroupRemove}
           >
-            Gruppe auflösen
+            {t("editor.droneManager.ungroup")}
           </button>
         </div>
       </Card.Header>

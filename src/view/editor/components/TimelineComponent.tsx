@@ -6,6 +6,7 @@ import { IUndoableController } from "../../../controller/interface/IUndoableCont
 import { SPEED_VALUES, toolTipps } from "../config";
 import { IProject } from "../../../controller/interface/IProject";
 import { formatTime } from "../utils/timeFormatter";
+import { useTranslation } from "react-i18next";
 
 // Die Klasse wurde zu Teilen mit Hilfe von KI generiert
 /**
@@ -19,6 +20,7 @@ export function TimelineComponent({
 }: {
     controller: IUndoableController;
 }) {
+    const { t } = useTranslation();
     /* ---------- Used Controllers ---------- */
     const settings: ISettings = controller.getSettings();
     const project: IProject = controller.getProject();
@@ -114,8 +116,8 @@ export function TimelineComponent({
                 <i
                     title={
                         playing
-                            ? toolTipps.ANIMATION_STOP
-                            : toolTipps.ANIMATION_START
+                            ? t(toolTipps.ANIMATION_STOP)
+                            : t(toolTipps.ANIMATION_START)
                     }
                     className={
                         `bi ${playing ? "bi-pause-fill" : "bi-play-fill"}` +
@@ -133,7 +135,7 @@ export function TimelineComponent({
                     onClick={handleSpeedChangeClick}
                 >
                     <i
-                        title="Geschwindigkeit ändern"
+                        title={t("editor.timeline.changeSpeed")}
                         className="bi bi-speedometer2 fs-3"
                         style={{ color: "black" }}
                     />
@@ -157,7 +159,7 @@ export function TimelineComponent({
                 {/* Slider */}
                 <input
                     id="timeline-time-slider"
-                    title={toolTipps.TIME_SET}
+                    title={t(toolTipps.TIME_SET)}
                     type="range"
                     className="form-range flex-grow-1"
                     min={0}
@@ -179,8 +181,8 @@ export function TimelineComponent({
                 <i
                     title={
                         recording
-                            ? toolTipps.RECORD_STOP
-                            : toolTipps.RECORD_START
+                            ? t(toolTipps.RECORD_STOP)
+                            : t(toolTipps.RECORD_START)
                     }
                     className={
                         `bi ${recording ? "bi-stop-fill" : "bi-record-fill"}` +

@@ -5,6 +5,7 @@ import { HorizontalFormatSection } from "./HorizontalFormatSection";
 import { VerticalFormatSection } from "./VerticalFormatSection";
 import { GridFormatSection } from "./GridFormatSection";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { useTranslation } from "react-i18next";
 
 
 // Dieser Abschnitt ist teilweise KI generiert
@@ -22,12 +23,13 @@ export function FormatSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<
     "random" | "horizontal" | "vertical" | "grid"
   >("random");
 
   return (
-    <KeyframeEditorComponent title="Format anwenden">
+    <KeyframeEditorComponent title={t("editor.group.formatTitle")}>
       <div className="d-flex flex-column gap-4">
         {/* Segmented Control – kompakt & zusammenhängend */}
         <div className="btn-group w-100" role="group">
@@ -38,7 +40,7 @@ export function FormatSection({
             }`}
             onClick={() => setMode("random")}
           >
-            Random
+            {t("editor.group.formatRandom")}
           </button>
 
           <button
@@ -48,7 +50,7 @@ export function FormatSection({
             }`}
             onClick={() => setMode("horizontal")}
           >
-            Horizontal
+            {t("editor.group.formatHorizontal")}
           </button>
 
           <button
@@ -58,7 +60,7 @@ export function FormatSection({
             }`}
             onClick={() => setMode("vertical")}
           >
-            Vertical
+            {t("editor.group.formatVertical")}
           </button>
 
           <button
@@ -68,7 +70,7 @@ export function FormatSection({
             }`}
             onClick={() => setMode("grid")}
           >
-            Grid
+            {t("editor.group.formatGrid")}
           </button>
         </div>
 

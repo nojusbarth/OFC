@@ -2,6 +2,7 @@ import { useState } from "react";
 import { KeyframeEditorComponent } from "../SharedComponents";
 import { ImageImportFrame } from "../image_import/ImageImportFrame";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -16,16 +17,17 @@ export function ImageImportSection( {
 }: {
     controller: IUndoableController;
 }) {
+    const { t } = useTranslation();
     const [showModal, setShowModal] = useState(false);
 
     return (
         <>
-            <KeyframeEditorComponent title="Bild Formation">
+            <KeyframeEditorComponent title={t("editor.imageImport.formationTitle")}>
                 <button
                     className="btn btn-primary"
                     onClick={() => setShowModal(true)}
                 >
-                    Datei importieren
+                    {t("editor.imageImport.importFile")}
                 </button>
             </KeyframeEditorComponent>
 

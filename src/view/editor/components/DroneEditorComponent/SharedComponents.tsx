@@ -1,5 +1,6 @@
 import { Card } from "react-bootstrap";
 import { Form } from "react-bootstrap";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -78,10 +79,11 @@ export function PositionInputComponent({
  * @returns JSX-Button mit einheitlichem Stil und Funktionalität.
  */
 export function AddKeyframeComponent({ onClick }: { onClick: () => void }) {
+  const { t } = useTranslation();
   return (
     <button className="btn btn-primary w-100 mb-2 text-white" onClick={onClick}>
       <i className="bi bi-pencil me-2" />
-      Keyframe hinzufügen
+      {t("editor.keyframes.add")}
     </button>
   );
 }

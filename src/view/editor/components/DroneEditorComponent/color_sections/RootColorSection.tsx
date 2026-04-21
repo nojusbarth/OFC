@@ -6,6 +6,7 @@ import { RandomColorSection } from "./RandomColorSection";
 import { FlickerColorSection } from "./FlickerColorSection";
 import { GradientColorSection } from "./GradientColorSection";
 import { WaveColorSection } from "./WaveColorSection";
+import { useTranslation } from "react-i18next";
 
 
 /**
@@ -22,6 +23,7 @@ export function RootColorSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [activeKey, setActiveKey] = useState<string>("plain");
 
   return (
@@ -33,11 +35,11 @@ export function RootColorSection({
           onSelect={(k) => setActiveKey(k || "plain")}
           className="mb-0 flex-nowrap"
         >
-          <Tab eventKey="plain" title="Plain" tabClassName="text-nowrap"/>
-          <Tab eventKey="random" title="Random" tabClassName="text-nowrap"/>
-          <Tab eventKey="flicker" title="Flicker" tabClassName="text-nowrap"/>
-          <Tab eventKey="gradient" title="Gradient" tabClassName="text-nowrap"/>
-          <Tab eventKey="wave" title="Wave" tabClassName="text-nowrap"/>
+          <Tab eventKey="plain" title={t("editor.color.tabs.plain")} tabClassName="text-nowrap"/>
+          <Tab eventKey="random" title={t("editor.color.tabs.random")} tabClassName="text-nowrap"/>
+          <Tab eventKey="flicker" title={t("editor.color.tabs.flicker")} tabClassName="text-nowrap"/>
+          <Tab eventKey="gradient" title={t("editor.color.tabs.gradient")} tabClassName="text-nowrap"/>
+          <Tab eventKey="wave" title={t("editor.color.tabs.wave")} tabClassName="text-nowrap"/>
         </Tabs>
       </div>
       </Card.Header>

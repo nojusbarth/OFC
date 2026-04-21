@@ -51,12 +51,12 @@ export function generateDroneFormationForNew(
     ignoreColor,
   );
   if (pixels.length > MAX_DRONES) {
-    throw new Error(`Maximale Drohnenanzahl von ${MAX_DRONES} überschritten.`);
+    throw new Error("editor.imageImport.errors.maxDronesExceeded");
   }
 
   const currentDroneCount = controller.getDrones().length;
   if (pixels.length + currentDroneCount >= MAX_DRONES) {
-    throw new Error(`Maximale Drohnenanzahl von ${MAX_DRONES} überschritten.`);
+    throw new Error("editor.imageImport.errors.maxDronesExceeded");
   }
 
   controller.startBatching();
@@ -93,7 +93,7 @@ export function generateDroneFormationForSelected(
   );
 
   if (selectedDroneIds.length === 0) {
-    throw new Error("Keine Drohnen ausgewählt.");
+    throw new Error("editor.imageImport.errors.noDronesSelected");
   }
 
   const requiredNewDroneCount = Math.max(
@@ -103,7 +103,7 @@ export function generateDroneFormationForSelected(
   const currentDroneCount = controller.getDrones().length;
 
   if (currentDroneCount + requiredNewDroneCount > MAX_DRONES) {
-    throw new Error(`Maximale Drohnenanzahl von ${MAX_DRONES} überschritten.`);
+    throw new Error("editor.imageImport.errors.maxDronesExceeded");
   }
 
   controller.startBatching();

@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { AddKeyframeComponent } from "../SharedComponents";
 import { Form } from "react-bootstrap";
 import { ColorKeyFrame } from "../../../../../repository/entity/ColorKeyFrame";
+import { useTranslation } from "react-i18next";
 
 export function FlickerColorSection({
   selectedDrones,
@@ -14,6 +15,7 @@ export function FlickerColorSection({
   selectedDrones: number[];
   controller: IUndoableController;
 }) {
+  const { t } = useTranslation();
   const [baseColor, setBaseColor] = useState<Color>(new Color(0xffffff));
   const [flickerColor, setFlickerColor] = useState<Color>(new Color(0x000000));
   const [frequency, setFrequency] = useState<number>(2);
@@ -55,10 +57,10 @@ export function FlickerColorSection({
   };
 
   return (
-    <KeyframeEditorComponent title="Flicker konfigurieren">
+    <KeyframeEditorComponent title={t("editor.color.flicker.title")}>
       {/* Base Color */}
       <div>
-        <label className="small">Basis-Farbe (aktuelle Drohnenfarbe)</label>
+        <label className="small">{t("editor.color.flicker.baseColor")}</label>
         <input
           id="drone-base-color-input"
           type="color"
@@ -75,7 +77,7 @@ export function FlickerColorSection({
 
       {/* Flicker Color */}
       <div>
-        <label className="small">Flicker-Farbe</label>
+        <label className="small">{t("editor.color.flicker.flickerColor")}</label>
         <input
           id="drone-flicker-color-input"
           type="color"
@@ -92,7 +94,7 @@ export function FlickerColorSection({
 
       {/* Frequency */}
       <Form.Group>
-        <Form.Label className="small">Frequenz (Hz)</Form.Label>
+        <Form.Label className="small">{t("editor.color.flicker.frequency")}</Form.Label>
         <Form.Control
           type="number"
           size="sm"
@@ -103,12 +105,12 @@ export function FlickerColorSection({
           onChange={(e) => setFrequency(parseFloat(e.target.value) || 1)}
           className="border-secondary"
         />
-        <Form.Text className="text-muted">0.1-5 Hz (Wechsel pro Sekunde)</Form.Text>
+        <Form.Text className="text-muted">{t("editor.color.flicker.frequencyHelp")}</Form.Text>
       </Form.Group>
 
       {/* Duration */}
       <Form.Group>
-        <Form.Label className="small">Dauer (s)</Form.Label>
+        <Form.Label className="small">{t("editor.color.flicker.duration")}</Form.Label>
         <Form.Control
           type="number"
           size="sm"
@@ -118,7 +120,7 @@ export function FlickerColorSection({
           onChange={(e) => setDuration(parseFloat(e.target.value) || 1)}
           className="border-secondary"
         />
-        <Form.Text className="text-muted">Wie lange der Flicker-Effekt dauert</Form.Text>
+        <Form.Text className="text-muted">{t("editor.color.flicker.durationHelp")}</Form.Text>
       </Form.Group>
 
       <AddKeyframeComponent onClick={handleAddColorKeyframe} />

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { Vector3 } from "three";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController"; // deinen Pfad einsetzen
 import { KeyframeEditorComponent, PositionInputComponent, AddKeyframeComponent } from "../SharedComponents";
+import { useTranslation } from "react-i18next";
 
 // Dieser Abschnitt ist teilweise KI generiert
 
@@ -26,6 +27,7 @@ export function SetPositionSection({
     selectedDrones: number[];
     controller: IUndoableController;
 }) {
+    const { t } = useTranslation();
 
     const handlePositionChange = (axis: "x" | "y" | "z", value: number) => {
         const newPosition = position.clone();
@@ -69,24 +71,24 @@ export function SetPositionSection({
     };
 
     return (
-        <KeyframeEditorComponent title="Position Setzen">
+        <KeyframeEditorComponent title={t("editor.group.positionSet")}>
             <div className="d-flex align-items-center gap-2">
                 <PositionInputComponent
-                    title="X"
+                    title={t("axes.x")}
                     currentValue={position.x}
                     onChangePosition={(value) =>
                         handlePositionChange("x", value)
                     }
                 />
                 <PositionInputComponent
-                    title="Y"
+                    title={t("axes.y")}
                     currentValue={position.y}
                     onChangePosition={(value) =>
                         handlePositionChange("y", value)
                     }
                 />
                 <PositionInputComponent
-                    title="Z"
+                    title={t("axes.z")}
                     currentValue={position.z}
                     onChangePosition={(value) =>
                         handlePositionChange("z", value)
