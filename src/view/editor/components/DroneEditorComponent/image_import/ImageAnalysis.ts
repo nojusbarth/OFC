@@ -123,11 +123,15 @@ export function generateDroneFormationForSelected(
     );
   }
 
-  createDronesForPixels(
+  const createdDroneIds = createDronesForPixels(
     controller,
     remainingPixels.unassignedPixels,
     insertTime,
   );
+
+  const allDroneIds = [...selectedDroneIds, ...createdDroneIds];
+  const groupId = controller.getGroupManager().createGroup();
+  controller.getGroupManager().addDronesToGroup(allDroneIds, groupId);
 
   controller.endBatching();
 }

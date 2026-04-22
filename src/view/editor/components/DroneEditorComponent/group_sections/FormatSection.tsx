@@ -4,6 +4,7 @@ import { RandomFormatSection } from "./RandomFormatSection";
 import { HorizontalFormatSection } from "./HorizontalFormatSection";
 import { VerticalFormatSection } from "./VerticalFormatSection";
 import { GridFormatSection } from "./GridFormatSection";
+import { CircleFormatSection } from "./CircleFormat";
 import { IUndoableController } from "../../../../../controller/interface/IUndoableController";
 import { useTranslation } from "react-i18next";
 
@@ -25,14 +26,14 @@ export function FormatSection({
 }) {
   const { t } = useTranslation();
   const [mode, setMode] = useState<
-    "random" | "horizontal" | "vertical" | "grid"
+    "random" | "horizontal" | "vertical" | "grid" | "circle"
   >("random");
 
   return (
     <KeyframeEditorComponent title={t("editor.group.formatTitle")}>
       <div className="d-flex flex-column gap-4">
         {/* Segmented Control – kompakt & zusammenhängend */}
-        <div className="btn-group w-100" role="group">
+        <div className="d-flex flex-wrap gap-2" role="group">
           <button
             type="button"
             className={`btn btn-sm ${
@@ -72,6 +73,16 @@ export function FormatSection({
           >
             {t("editor.group.formatGrid")}
           </button>
+
+          <button
+            type="button"
+            className={`btn btn-sm ${
+              mode === "circle" ? "btn-primary" : "btn-outline-secondary"
+            }`}
+            onClick={() => setMode("circle")}
+          >
+            {t("editor.group.formatCircle")}
+          </button>
         </div>
 
         {/* Hier kommt später direkt die jeweilige UI rein */}
@@ -80,6 +91,7 @@ export function FormatSection({
         {mode === "horizontal" && <HorizontalFormatSection selectedDrones={selectedDrones} controller={controller} />}
         {mode === "vertical" && <VerticalFormatSection selectedDrones={selectedDrones} controller={controller} />}
         {mode === "grid" && <GridFormatSection selectedDrones={selectedDrones} controller={controller} />}
+        {mode === "circle" && <CircleFormatSection selectedDrones={selectedDrones} controller={controller} />}
       </div>
     </KeyframeEditorComponent>
   );

@@ -18,7 +18,7 @@ export const sceneBounds = {
   minZ: -50,
   maxZ: 50,
   minY: 1,
-  maxY: 50,
+  maxY: 100,
 };
 
 /* ---------------- OrbitControls ---------------- */

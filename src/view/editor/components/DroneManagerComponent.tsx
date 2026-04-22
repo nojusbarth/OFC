@@ -9,7 +9,7 @@ import {
   MeasuringStrategy,
 } from "@dnd-kit/core";
 
-import { Card } from "react-bootstrap";
+import { Card, Dropdown } from "react-bootstrap";
 import { IUndoableController } from "../../../controller/interface/IUndoableController";
 
 import "./DroneManagerComponent.css";
@@ -43,6 +43,7 @@ export function DroneManagerComponent({
   const [allDrones, setAllDrones] = useState<Array<number>>(
     controller.getDrones(),
   );
+  const [droneAddCountInput, setDroneAddCountInput] = useState<string>("1");
 
   //Shif select für Mehrfachauswahl
   const [lastClickedDrone, setLastClickedDrone] = useState<number | null>(null);
@@ -88,6 +89,13 @@ export function DroneManagerComponent({
   const onAddDrone = useCallback(() => {
     controller.addDrone();
   }, [controller]);
+
+  const onAddMultipleDrones = useCallback(() => {
+    const count = Math.max(1, Math.floor(Number(droneAddCountInput) || 1));
+    for (let i = 0; i < count; i++) {
+      controller.addDrone();
+    }
+  }, [controller, droneAddCountInput]);
 
   //Neue Gruppe erstellen
   const onGroupCreate = useCallback(() => {
@@ -168,14 +176,49 @@ export function DroneManagerComponent({
       <Card.Header className="d-flex align-items-center border-bottom">
         <span className="fw-bold">{t("editor.droneManager.title", { count: allDrones.length })}</span>
         <div className="d-flex gap-2 ms-auto">
-          <button
-            className="btn btn-primary btn-sm d-flex gap-2"
-            title={t(toolTipps.DRONE_ADD)}
-            onClick={onAddDrone}
-          >
-            <i className="bi bi-plus" />
-            {t("editor.droneManager.add")}
-          </button>
+          <div className="btn-group">
+            <button
+              className="btn btn-primary btn-sm d-flex gap-2 align-items-center"
+              title={t(toolTipps.DRONE_ADD)}
+              onClick={onAddDrone}
+            >
+              <i className="bi bi-plus" />
+              {t("editor.droneManager.add")}
+            </button>
+            <Dropdown align="end">
+              <Dropdown.Toggle
+                split
+                variant="primary"
+                size="sm"
+                id="drone-add-options"
+                title={t("editor.droneManager.openAddOptions")}
+              >
+                <span className="visually-hidden">{t("editor.droneManager.openAddOptions")}</span>
+              </Dropdown.Toggle>
+              <Dropdown.Menu className="p-3" style={{ minWidth: "220px" }}>
+                <label className="form-label small mb-1" htmlFor="drone-add-count-input">
+                  {t("editor.droneManager.amountLabel")}
+                </label>
+                <input
+                  id="drone-add-count-input"
+                  type="number"
+                  min={1}
+                  step={1}
+                  className="form-control form-control-sm mb-2"
+                  value={droneAddCountInput}
+                  onChange={(e) => setDroneAddCountInput(e.target.value)}
+                />
+                <button
+                  className="btn btn-primary btn-sm w-100"
+                  onClick={onAddMultipleDrones}
+                >
+                  {t("editor.droneManager.addMultiple", {
+                    count: Math.max(1, Math.floor(Number(droneAddCountInput) || 1)),
+                  })}
+                </button>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
 
           <button className="btn btn-sm btn-secondary" onClick={onGroupCreate}>
             {t("editor.droneManager.group")}
